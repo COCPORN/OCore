@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Orleans;
@@ -45,9 +48,28 @@ namespace OCore.Service
 
         private static int MapServiceToRoute(IEndpointRouteBuilder routes, Type grainType, string prefix, ServiceRouter dispatcher, ILogger<ServiceRouter> logger)
         {
-            logger.LogInformation($"Mapping routes for grain '{grainType.FullName}'...");
+            logger.LogInformation($"Mapping routes for service '{grainType.FullName}'");
 
+            var serviceAttribute = (ServiceAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(ServiceAttribute)).SingleOrDefault();
+
+            var methods = grainType.GetMethods();
             int routesRegistered = 0;
+
+            foreach (var method in methods)
+            {
+                
+                Func<string, RequestDelegate, IEndpointConventionBuilder> methodMapFunc = routes.MapPost;
+
+                var routePattern = RoutePatternFactory.Parse($"{prefix}{serviceAttribute.Name}/{method.Name}");
+
+                Func<RoutePattern, RequestDelegate, IEndpointConventionBuilder> mapFunc = (p, d) => methodMapFunc(p.RawText, d);
+                
+                var route = mapFunc.Invoke(routePattern, dispatcher.Dispatch);
+
+                dispatcher.RegisterRoute(routePattern.RawText, method);    
+                              
+                routesRegistered++;
+            }
 
             return routesRegistered;
         }
@@ -60,8 +82,9 @@ namespace OCore.Service
             {
                 var grainType = grainInterfaceMetadata.InterfaceType;
 
-                // Only add to the list grains that either have the top-level route attribute or has one of the method attributes
-                if (grainType.GetCustomAttributes(true).Contains(typeof(ServiceAttribute)))
+                var customAttributes = grainType.GetCustomAttributes(true);
+
+                if (customAttributes.Any(x => x.GetType() == typeof(ServiceAttribute)))
                 {
                     grainTypesToMap.Add(grainType);
                 }
