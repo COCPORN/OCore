@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29324.140
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Service", "OCore.Service\OCore.Service.csproj", "{E55DDE20-3AF7-46D5-8986-80CB0523F418}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.ServiceClient.Http", "OCore.ServiceClient.Http\OCore.ServiceClient.Http.csproj", "{4D84D5FD-2E51-499E-93C8-482AF834F7B2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Service.Http", "OCore.Service.Http\OCore.Service.Http.csproj", "{CE8F149C-D5B2-4BBF-BADF-1C44DFF45558}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8785D0DA-DDE0-4955-A860-759A0E39BCAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo", "Samples\Zoo\Zoo.csproj", "{61273E52-CE31-4967-8C1B-2F4376F0C485}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoo.Interfaces", "Samples\Zoo.Interfaces\Zoo.Interfaces.csproj", "{C894DF21-DBD0-4446-B420-3859714F17EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E55DDE20-3AF7-46D5-8986-80CB0523F418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E55DDE20-3AF7-46D5-8986-80CB0523F418}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E55DDE20-3AF7-46D5-8986-80CB0523F418}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E55DDE20-3AF7-46D5-8986-80CB0523F418}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D84D5FD-2E51-499E-93C8-482AF834F7B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D84D5FD-2E51-499E-93C8-482AF834F7B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D84D5FD-2E51-499E-93C8-482AF834F7B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D84D5FD-2E51-499E-93C8-482AF834F7B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE8F149C-D5B2-4BBF-BADF-1C44DFF45558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE8F149C-D5B2-4BBF-BADF-1C44DFF45558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE8F149C-D5B2-4BBF-BADF-1C44DFF45558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE8F149C-D5B2-4BBF-BADF-1C44DFF45558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C894DF21-DBD0-4446-B420-3859714F17EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C894DF21-DBD0-4446-B420-3859714F17EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C894DF21-DBD0-4446-B420-3859714F17EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C894DF21-DBD0-4446-B420-3859714F17EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{61273E52-CE31-4967-8C1B-2F4376F0C485} = {8785D0DA-DDE0-4955-A860-759A0E39BCAA}
+		{C894DF21-DBD0-4446-B420-3859714F17EE} = {8785D0DA-DDE0-4955-A860-759A0E39BCAA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1769AFD-BFB2-4F50-9BEA-21BA9779EE98}
+	EndGlobalSection
+EndGlobal
