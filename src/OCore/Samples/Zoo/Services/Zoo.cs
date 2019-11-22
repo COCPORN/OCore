@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using OCore.Service;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Zoo.Services
 {
-    public class Zoo : Grain, IZoo
+    public class Zoo : Service, IZoo
     {
         public Task<string> Greet(string name)
         {

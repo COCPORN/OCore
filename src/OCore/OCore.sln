@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8785
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo", "Samples\Zoo\Zoo.csproj", "{61273E52-CE31-4967-8C1B-2F4376F0C485}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoo.Interfaces", "Samples\Zoo.Interfaces\Zoo.Interfaces.csproj", "{C894DF21-DBD0-4446-B420-3859714F17EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo.Interfaces", "Samples\Zoo.Interfaces\Zoo.Interfaces.csproj", "{C894DF21-DBD0-4446-B420-3859714F17EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,6 +5,9 @@ using Orleans;
 using Orleans.Hosting;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Zoo.Services;
+using Zoo.Interfaces;
 
 namespace Zoo
 {
@@ -23,9 +26,15 @@ namespace Zoo
 
             hostBuilder.UseOrleans(b =>
             {
-                b.UseLocalhostClustering();
-                b.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(Services.Zoo).Assembly)
+                b.UseLocalhostClustering();                
+                b.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(TestGrain).Assembly)
                     .WithReferences());
+                b.AddStartupTask(async (services, cancellation) =>
+                {
+                    var grainFactory = services.GetRequiredService<IGrainFactory>();
+                    var zooGrain = grainFactory.GetGrain<IZoo>(0);
+                    var result = await zooGrain.Greet("Lars");
+                });
             });
 
             var host = hostBuilder.Build();
