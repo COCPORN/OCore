@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Zoo.Services
+namespace Zoo.Interfaces
 {
     [Service("Zoo")]
     public interface IZoo : IService

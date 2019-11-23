@@ -29,11 +29,12 @@ namespace Zoo
                 b.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(Services.Zoo).Assembly)
                     .WithReferences());            
             });
-
+            
             var host = hostBuilder.Build();
             await host.StartAsync();
 
             Console.ReadLine();
         }
+
     }
 }

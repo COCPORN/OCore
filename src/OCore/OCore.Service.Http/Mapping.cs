@@ -13,20 +13,13 @@ using System.Linq;
 using System.Text;
 
 
-namespace OCore.Service
+namespace OCore.Service.Http
 {
     public static class Mapping
     {
         public static IEndpointRouteBuilder MapServices(this IEndpointRouteBuilder routes, string prefix = "")
         {
-            if (!string.IsNullOrWhiteSpace(prefix))
-            {
-                prefix = $"{prefix}/";
-            }
-            else
-            {
-                prefix = "/";
-            }
+
 
             var dispatcher = routes.ServiceProvider.GetRequiredService<ServiceRouter>();
             var logger = routes.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<ServiceRouter>();
@@ -58,13 +51,20 @@ namespace OCore.Service
             foreach (var method in methods)
             {
                 
-                Func<string, RequestDelegate, IEndpointConventionBuilder> methodMapFunc = routes.MapPost;
 
-                var routePattern = RoutePatternFactory.Parse($"{prefix}{serviceAttribute.Name}/{method.Name}");
-
-                Func<RoutePattern, RequestDelegate, IEndpointConventionBuilder> mapFunc = (p, d) => methodMapFunc(p.RawText, d);
-                
-                var route = mapFunc.Invoke(routePattern, dispatcher.Dispatch);
+                var routePattern = RoutePatternFactory.Parse($"{prefix}/{serviceAttribute.Name}/{method.Name}");
+                var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);
+                var cors = routes.MapMethods(routePattern.RawText, new string[] { "OPTIONS" }, dispatcher.Cors);
+                //var route = mapFunc.Invoke(routePattern, dispatcher.Dispatch);
+                //cors.RequireCors(cb =>
+                //{
+                //    cb.AllowAnyOrigin();
+                //    //cb.AllowAnyMethod();
+                //    //cb.AllowAnyHeader();
+                //    //cb.SetIsOriginAllowedToAllowWildcardSubdomains();
+                //    //cb.SetIsOriginAllowed(s => true);
+                //    cb.Build();
+                //});
 
                 dispatcher.RegisterRoute(routePattern.RawText, method);    
                               
