@@ -45,12 +45,11 @@ namespace OCore.Service.Http
 
         public Task Dispatch(HttpContext context)
         {
+            AddCors(context);
             var endpoint = (RouteEndpoint)context.GetEndpoint();
             var pattern = endpoint.RoutePattern;
 
-            var invoker = routes[pattern.RawText];
-
-            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            var invoker = routes[pattern.RawText];            
 
             var grain = clusterClient.GetGrain(invoker.GrainType, 0);
             if (grain == null)
@@ -65,12 +64,17 @@ namespace OCore.Service.Http
 
         internal Task Cors(HttpContext context)
         {
-            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            context.Response.Headers.Add("Access-Control-Allow-Methods", "POST");
-            context.Response.Headers.Add("Access-Control-Allow-Headers", "content-type");
+            AddCors(context);
             context.Response.Headers.Add("Connection", "keep-alive");
 
             return Task.CompletedTask;
+        }
+
+        private static void AddCors(HttpContext context)
+        {
+            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "POST");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "content-type");
         }
     }
 }

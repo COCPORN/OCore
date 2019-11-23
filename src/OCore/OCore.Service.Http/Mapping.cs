@@ -19,11 +19,9 @@ namespace OCore.Service.Http
     {
         public static IEndpointRouteBuilder MapServices(this IEndpointRouteBuilder routes, string prefix = "")
         {
-
-
             var dispatcher = routes.ServiceProvider.GetRequiredService<ServiceRouter>();
             var logger = routes.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<ServiceRouter>();
-            var appPartsMgr = routes.ServiceProvider.GetRequiredService<IApplicationPartManager>();
+            var appPartsMgr = routes.ServiceProvider.GetRequiredService<IApplicationPartManager>();            
 
             var grainInterfaceFeature = appPartsMgr.CreateAndPopulateFeature<GrainInterfaceFeature>();
             var grainTypesToMap = DiscoverGrainTypesToMap(grainInterfaceFeature);
@@ -49,22 +47,10 @@ namespace OCore.Service.Http
             int routesRegistered = 0;
 
             foreach (var method in methods)
-            {
-                
-
+            {             
                 var routePattern = RoutePatternFactory.Parse($"{prefix}/{serviceAttribute.Name}/{method.Name}");
                 var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);
                 var cors = routes.MapMethods(routePattern.RawText, new string[] { "OPTIONS" }, dispatcher.Cors);
-                //var route = mapFunc.Invoke(routePattern, dispatcher.Dispatch);
-                //cors.RequireCors(cb =>
-                //{
-                //    cb.AllowAnyOrigin();
-                //    //cb.AllowAnyMethod();
-                //    //cb.AllowAnyHeader();
-                //    //cb.SetIsOriginAllowedToAllowWildcardSubdomains();
-                //    //cb.SetIsOriginAllowed(s => true);
-                //    cb.Build();
-                //});
 
                 dispatcher.RegisterRoute(routePattern.RawText, method);    
                               

@@ -10,9 +10,28 @@ namespace Zoo.Services
 {
     public class Zoo : Service, IZoo
     {
+        public Task<UserRegistrationResponse> AddUser(User user)
+        {
+            return Task.FromResult(new UserRegistrationResponse
+            {
+                Status = "That went pswimmingly!",
+                Code = 69
+            });
+        }
+
         public Task<string> Greet(string name)
         {
-            return Task.FromResult("Du er en sau");
+            return Task.FromResult($"Du er en sau, {name}");
+        }
+
+        public Task<DateTimeOffset> MakeAppointment(DateTimeOffset nextAvailableFrom, int numberOfAppointments)
+        {
+            return Task.FromResult(nextAvailableFrom.AddHours(24));
+        }
+
+        public Task Noop()
+        {
+            return Task.CompletedTask;
         }
     }
 }

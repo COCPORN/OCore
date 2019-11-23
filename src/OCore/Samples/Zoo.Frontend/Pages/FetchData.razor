@@ -27,6 +27,13 @@ else
             var (response, status) = await Client.Invoke<IZoo, string>("Greet", "Larziboy");
             greeting = response;
             Console.WriteLine($"{response}/{status.ToString()}");
+
+            var (r, s) = await Client.Invoke<IZoo, UserRegistrationResponse>("AddUser", new User {
+                Name = "LarziBOY!",
+                BirthDay = new DateTime(1974, 05, 21)
+            });
+
+            Console.WriteLine($"{r.Status}/{status.ToString()}");
         }
         catch (Exception ex)
         {

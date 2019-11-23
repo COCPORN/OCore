@@ -3,6 +3,7 @@ using Microsoft.Extensions.Primitives;
 using Orleans;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Pipelines;
 using System.Linq;
 using System.Reflection;
@@ -11,9 +12,14 @@ using System.Threading.Tasks;
 
 namespace OCore.Service.Http
 {
+    class Parameter
+    {
+        public Type Type { get; set; }
+        public string Name { get; set; }
+    }
+
     public class GrainInvoker
     {
-
         MethodInfo methodInfo;
         MethodInfo getResult;
 
@@ -23,28 +29,81 @@ namespace OCore.Service.Http
         IServiceProvider serviceProvider;
         public Type GrainType => methodInfo.DeclaringType;
 
+        List<Parameter> parameters = new List<Parameter>();
+
         public GrainInvoker(IServiceProvider serviceProvider, MethodInfo methodInfo)
         {
             this.methodInfo = methodInfo;
             this.serviceProvider = serviceProvider;
 
+            BuildParameterMap();
             BuildResultDelegate();
         }
 
         public async Task Invoke(IGrain grain, HttpContext context)
         {
-            var grainCall = (Task)methodInfo.Invoke(grain, new object[] { "Hello" });
+            object[] parameterList = await GetParameterList(context);
+            var grainCall = (Task)methodInfo.Invoke(grain, parameterList);
             await grainCall;
 
             if (getResult != null)
             {
                 object result = getResult.Invoke(null, new[] { grainCall });
                 if (result != null)
-                {                    
+                {
                     context.Response.ContentType = "application/json";
 
                     await Serialize(result, context.Response.BodyWriter);
                 }
+            }
+        }
+
+        private async Task<object[]> GetParameterList(HttpContext context)
+        {
+            var parameterList = new List<object>();
+            using (var reader = new StreamReader(context.Request.Body))
+            {
+                var body = await reader.ReadToEndAsync();
+
+                var deserialized = JsonSerializer.Deserialize<object[]>(body);
+
+                if (deserialized.Length != parameters.Count)
+                {
+                    throw new InvalidOperationException($"Parameter count mismatch");
+                }
+
+                int i = 0;
+                foreach (var parameter in parameters)
+                {
+                    parameterList.Add(ProjectValue(deserialized[i++], parameter));
+                }
+            }
+            return parameterList.ToArray();
+        }
+
+        static Dictionary<Type, Func<object, object>> Converters = new Dictionary<Type, Func<object, object>>()
+        {
+            { typeof(string), s => s.ToString() },
+            { typeof(int), s => int.Parse(s.ToString()) },
+            { typeof(DateTime), s => DateTime.Parse(s.ToString()) },
+            { typeof(DateTimeOffset), s => DateTimeOffset.Parse(s.ToString()) },
+            { typeof(TimeSpan), s => TimeSpan.Parse(s.ToString()) },
+            { typeof(double), s => double.Parse(s.ToString()) },
+            { typeof(float), s => float.Parse(s.ToString()) },
+            { typeof(decimal), s => decimal.Parse(s.ToString()) }
+        };
+
+        private object ProjectValue(object deserializedValue, Parameter parameter)
+        {
+            if (Converters.TryGetValue(parameter.Type, out var converter))
+            {
+                return converter(deserializedValue);
+            }
+            else
+            {
+                // This is no doubt a hack. Let's leave it as is for now
+                var serialized = JsonSerializer.Serialize(deserializedValue);                
+                return JsonSerializer.Deserialize(serialized, parameter.Type);
             }
         }
 
@@ -59,6 +118,20 @@ namespace OCore.Service.Http
                 && methodInfo.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
             {
                 getResult = getResultMethod.MakeGenericMethod(methodInfo.ReturnType.GenericTypeArguments[0]);
+            }
+        }
+
+        private void BuildParameterMap()
+        {
+            var parameters = methodInfo.GetParameters();
+
+            foreach (var parameter in parameters)
+            {
+                this.parameters.Add(new Parameter
+                {
+                    Name = parameter.Name,
+                    Type = parameter.ParameterType
+                });
             }
         }
 
