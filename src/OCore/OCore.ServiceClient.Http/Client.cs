@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
+using DynamicProxyImplementation;
 
 namespace OCore.ServiceClient.Http
 {
@@ -19,6 +20,38 @@ namespace OCore.ServiceClient.Http
         public Client(HttpClient httpClient)
         {
             this.httpClient = httpClient;            
+        }
+
+        public T GetService<T>()
+        {
+            DynamicProxyFactory<HttpDynamicProxy<T>> factory = new DynamicProxyFactory<HttpDynamicProxy<T>>(new DynamicInterfaceImplementor());
+            return factory.CreateDynamicProxy<T>(this);
+        }
+
+        public async Task<T> Invoke<T>(Type interfaceType, string method, params object[] parameters)
+        {
+            var serviceAttribute = (ServiceAttribute)interfaceType
+               .GetCustomAttributes(true)
+               .Where(attr => attr.GetType() == typeof(ServiceAttribute))
+               .SingleOrDefault();
+
+            var requestUri = CreateUri(options, serviceAttribute, interfaceType, method);
+
+            var requestMessage = new HttpRequestMessage()
+            {
+                Method = new HttpMethod("POST"),
+                RequestUri = new Uri(requestUri),
+                Content = new StringContent(JsonSerializer.Serialize(parameters))
+            };
+
+            requestMessage.Content.Headers.ContentType =
+                new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+            var response = await httpClient.SendAsync(requestMessage);
+            var responseStatusCode = response.StatusCode;
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonSerializer.Deserialize<T>(responseBody);
+            return responseObject;
         }
 
         public async Task<(TReturn, System.Net.HttpStatusCode)> Invoke<TInterface, TReturn>(string method, params object[] parameters)

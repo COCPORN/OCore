@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @inject OCore.ServiceClient.Http.Client Client
 @using Zoo.Interfaces
+@using  OCore.ServiceClient.Http
 
 <h1>Weather forecast</h1>
 
@@ -34,6 +35,11 @@ else
             });
 
             Console.WriteLine($"{r.Status}/{status.ToString()}");
+
+            var client = Client.GetService<IZoo>();
+
+            var r1 = await client.Greet("Lars Thomas");
+            Console.WriteLine($"{r1}");
         }
         catch (Exception ex)
         {
