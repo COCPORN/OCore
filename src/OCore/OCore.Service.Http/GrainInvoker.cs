@@ -20,20 +20,20 @@ namespace OCore.Service.Http
 
     public class GrainInvoker
     {
-        MethodInfo methodInfo;
+        public MethodInfo MethodInfo { get; set; }
         MethodInfo getResult;
 
         private static readonly MethodInfo getResultMethod = typeof(GrainInvoker).GetMethod(nameof(GetResult), BindingFlags.Static | BindingFlags.NonPublic);
         private static object GetResult<T>(Task<T> input) => (object)input.GetAwaiter().GetResult();
 
         IServiceProvider serviceProvider;
-        public Type GrainType => methodInfo.DeclaringType;
+        public Type GrainType => MethodInfo.DeclaringType;
 
         List<Parameter> parameters = new List<Parameter>();
 
         public GrainInvoker(IServiceProvider serviceProvider, MethodInfo methodInfo)
         {
-            this.methodInfo = methodInfo;
+            this.MethodInfo = methodInfo;
             this.serviceProvider = serviceProvider;
 
             BuildParameterMap();
@@ -43,7 +43,7 @@ namespace OCore.Service.Http
         public async Task Invoke(IGrain grain, HttpContext context)
         {
             object[] parameterList = await GetParameterList(context);
-            var grainCall = (Task)methodInfo.Invoke(grain, parameterList);
+            var grainCall = (Task)MethodInfo.Invoke(grain, parameterList);
             await grainCall;
 
             if (getResult != null)
@@ -114,16 +114,16 @@ namespace OCore.Service.Http
 
         void BuildResultDelegate()
         {
-            if (methodInfo.ReturnType.IsGenericType
-                && methodInfo.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
+            if (MethodInfo.ReturnType.IsGenericType
+                && MethodInfo.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
             {
-                getResult = getResultMethod.MakeGenericMethod(methodInfo.ReturnType.GenericTypeArguments[0]);
+                getResult = getResultMethod.MakeGenericMethod(MethodInfo.ReturnType.GenericTypeArguments[0]);
             }
         }
 
         private void BuildParameterMap()
         {
-            var parameters = methodInfo.GetParameters();
+            var parameters = MethodInfo.GetParameters();
 
             foreach (var parameter in parameters)
             {

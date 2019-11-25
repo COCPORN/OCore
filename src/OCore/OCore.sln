@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo.Interfaces", "Samples\Z
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo.Frontend", "Samples\Zoo.Frontend\Zoo.Frontend.csproj", "{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.EventAggregator", "OCore.EventAggregator\OCore.EventAggregator.csproj", "{3EE2A815-3F1E-4BE2-B1B2-E0408D719974}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EE2A815-3F1E-4BE2-B1B2-E0408D719974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EE2A815-3F1E-4BE2-B1B2-E0408D719974}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EE2A815-3F1E-4BE2-B1B2-E0408D719974}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EE2A815-3F1E-4BE2-B1B2-E0408D719974}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
