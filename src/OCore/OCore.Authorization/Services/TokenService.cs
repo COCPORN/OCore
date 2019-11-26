@@ -1,11 +1,12 @@
-﻿using System;
+﻿using OCore.Services;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Services
 {
-    public class TokenService : Service.Service, ITokenService
+    public class TokenService : Service, ITokenService
     {
         public async Task AddToken(Guid token, Guid account)
         {

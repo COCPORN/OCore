@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace OCore.Service.Http
+namespace OCore.Services.Http
 {
     public static class Mapping
     {

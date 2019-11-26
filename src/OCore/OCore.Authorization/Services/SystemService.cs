@@ -1,11 +1,12 @@
-﻿using System;
+﻿using OCore.Services;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Services
 {
-    public class SystemService : Service.Service, ISystemService
+    public class SystemService : Service, ISystemService
     {
         public async Task Initialize(Guid token, Guid accountId)
         {

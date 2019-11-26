@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OCore.Service
+namespace OCore.Services
 {
     /// <summary>
     /// The Service attribute, indicating that the interface is

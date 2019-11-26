@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OCore.Service
+namespace OCore.Services
 {
     public interface IService : IGrainWithIntegerKey
     {

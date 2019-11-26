@@ -1,11 +1,12 @@
-﻿using System;
+﻿using OCore.Services;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Services
 {
-    public class RoleService : Service.Service, IRoleService
+    public class RoleService : Service, IRoleService
     {
         public Task AddRole(Guid accountId, string role)
         {

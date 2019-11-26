@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using OCore.Service.Http;
+using OCore.Services.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OCore.Service
+namespace OCore.Services
 {
     public static class Extensions
     {

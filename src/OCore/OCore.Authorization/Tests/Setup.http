@@ -1,0 +1,19 @@
+@account-id = 909551a5-5eba-4007-8639-b3bf078575be
+@token = efccdbdf-9c57-416a-ae6e-992a8809971e
+@api-key = 5afe7202-f049-43cc-a657-a1a8cec12988
+
+### Setup system
+POST http://localhost:9000/service/OCore.System/Initialize
+
+["{{token}}", "{{account-id}}"]
+
+### Get roles
+POST http://localhost:9000/service/OCore.Role/GetRoles
+apikey: {{api-key}}
+
+"{{account-id}}"
+
+
+### Get resources
+POST http://localhost:9000/service/OCore.Resource/GetResources
+apikey: {{api-key}}

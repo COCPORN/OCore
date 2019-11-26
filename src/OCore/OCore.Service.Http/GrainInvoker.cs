@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace OCore.Service.Http
+namespace OCore.Services.Http
 {
     class Parameter
     {

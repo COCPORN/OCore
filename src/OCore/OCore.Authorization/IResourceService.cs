@@ -6,13 +6,10 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization
 {
-    [Service("OCore.Authorization")]
-    public interface IAuthorizationService : IService
+    [Service("OCore.Resource")]
+    public interface IResourceService : IService
     {
-        
         [Authorize]
-        Task<string> Hello();
-
-
+        Task<List<Resource>> GetResources();
     }
 }

@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace OCore.Service.Http
+namespace OCore.Services.Http
 {
     public class ServiceRouter
     {

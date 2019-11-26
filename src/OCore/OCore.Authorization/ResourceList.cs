@@ -1,4 +1,4 @@
-﻿using OCore.Service;
+﻿using OCore.Services;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace OCore.Authorization
                 .CurrentDomain
                 .GetAssemblies()
                 .SelectMany(x => x.GetTypes())
-                .Where(x => x.IsSubclassOf(typeof(Service.Service)))                
+                .Where(x => x.IsSubclassOf(typeof(Service)))                
                 .SelectMany(x => x.GetInterfaces())
                 .Where(x => x.GetCustomAttributes(true).Select(z => z is ServiceAttribute).Any());                
             return serviceInterfaces

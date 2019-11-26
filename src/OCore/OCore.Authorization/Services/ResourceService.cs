@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization.Services
 {
-    public class AuthorizationService : Service, IAuthorizationService
+    public class ResourceService : Service, IResourceService
     {
-        public Task<string> Hello()
+        public Task<List<Resource>> GetResources()
         {
-            return Task.FromResult("Hello from Authorization service");
+            return Task.FromResult(ResourceEnumerator.Resources);
         }
     }
 }
