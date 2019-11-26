@@ -1,4 +1,5 @@
-﻿using OCore.Service;
+﻿using OCore.Authorization;
+using OCore.Service;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Zoo.Services
 {
     public class Zoo : Service, IZoo
     {
+        [Authorize]
         public Task<UserRegistrationResponse> AddUser(User user)
         {
             return Task.FromResult(new UserRegistrationResponse
@@ -19,6 +21,7 @@ namespace Zoo.Services
             });
         }
 
+        
         public Task<string> Greet(string name)
         {
             return Task.FromResult($"Du er en sau, {name}");

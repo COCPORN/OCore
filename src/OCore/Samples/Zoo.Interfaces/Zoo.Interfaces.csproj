@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\OCore.Authorization\OCore.Authorization.csproj" />
     <ProjectReference Include="..\..\OCore.Service\OCore.Service.csproj" />
   </ItemGroup>
 

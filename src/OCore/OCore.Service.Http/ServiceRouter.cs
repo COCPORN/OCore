@@ -93,7 +93,7 @@ namespace OCore.Service.Http
         private void RunAuthorizationFilters(HttpContext context, GrainInvoker invoker)
         {
             var actionContext = new ActionContext(context, new RouteData(), new ActionDescriptor());
-            var authorizationFilterContext = new AuthorizationFilterContext(actionContext, null);
+            var authorizationFilterContext = new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
 
             if (authorizationFilters.TryGetValue(invoker.MethodInfo, out var filters))
             {
@@ -101,7 +101,8 @@ namespace OCore.Service.Http
             }
             else
             {
-                filters = invoker.MethodInfo.GetCustomAttributes(true)
+                var attributes = invoker.MethodInfo.GetCustomAttributes(true);
+                filters = attributes
                     .Where(x => x is IAuthorizationFilter)
                     .Select(x => x as IAuthorizationFilter);
                 authorizationFilters.Add(invoker.MethodInfo, filters);

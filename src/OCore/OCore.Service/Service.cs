@@ -7,5 +7,10 @@ namespace OCore.Service
 {
     public class Service : Grain
     {
+        protected T GetService<T>() where T: IGrainWithIntegerKey
+        {
+            return GrainFactory.GetGrain<T>(0);
+        }
+
     }
 }

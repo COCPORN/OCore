@@ -1,4 +1,5 @@
-﻿using OCore.Service;
+﻿using OCore.Authorization;
+using OCore.Service;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,10 @@ namespace Zoo.Interfaces
     [Service("Zoo")]
     public interface IZoo : IService
     {
+        [Authorize]
         Task<string> Greet(string name);
 
+        [Authorize]
         Task<DateTimeOffset> MakeAppointment(DateTimeOffset nextAvailableFrom, int numberOfAppointments);
 
         Task<UserRegistrationResponse> AddUser(User user);

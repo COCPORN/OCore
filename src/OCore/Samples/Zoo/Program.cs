@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Zoo.Services;
+using OCore.Authorization;
 
 namespace Zoo
 {
@@ -25,11 +26,18 @@ namespace Zoo
 
             hostBuilder.UseOrleans(b =>
             {
-                b.UseLocalhostClustering();                
-                b.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(Services.Zoo).Assembly)
-                    .WithReferences());            
+                b.UseLocalhostClustering();
+                b.AddMemoryGrainStorage("PubSubStore");
+                b.AddSimpleMessageStreamProvider("BaseStreamProvider");               
+                b.AddMemoryGrainStorageAsDefault();                
+                b.AddOCoreAuthorization();
+                b.ConfigureApplicationParts(parts => parts
+                    .AddApplicationPart(typeof(Services.Zoo).Assembly)
+                    .WithReferences());
             });
-            
+
+            var resources = ResourceEnumerator.Resources;
+
             var host = hostBuilder.Build();
             await host.StartAsync();
 

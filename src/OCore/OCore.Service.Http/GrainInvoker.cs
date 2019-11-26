@@ -65,17 +65,36 @@ namespace OCore.Service.Http
             {
                 var body = await reader.ReadToEndAsync();
 
-                var deserialized = JsonSerializer.Deserialize<object[]>(body);
-
-                if (deserialized.Length != parameters.Count)
+                if (string.IsNullOrEmpty(body) == true)
                 {
-                    throw new InvalidOperationException($"Parameter count mismatch");
+                    if (parameters.Count != 0)
+                    {
+                        throw new InvalidOperationException($"Parameter count mismatch");
+                    }
                 }
-
-                int i = 0;
-                foreach (var parameter in parameters)
+                else if (body[0] == '[')
                 {
-                    parameterList.Add(ProjectValue(deserialized[i++], parameter));
+
+                    var deserialized = JsonSerializer.Deserialize<object[]>(body);
+
+                    if (deserialized.Length != parameters.Count)
+                    {
+                        throw new InvalidOperationException($"Parameter count mismatch");
+                    }
+
+                    int i = 0;
+                    foreach (var parameter in parameters)
+                    {
+                        parameterList.Add(ProjectValue(deserialized[i++], parameter));
+                    }
+                }
+                else
+                {
+                    if (parameters.Count != 1)
+                    {
+                        throw new InvalidOperationException($"Parameter count mismatch");
+                    }
+                    parameterList.Add(JsonSerializer.Deserialize(body, parameters[0].Type));
                 }
             }
             return parameterList.ToArray();
@@ -102,7 +121,7 @@ namespace OCore.Service.Http
             else
             {
                 // This is no doubt a hack. Let's leave it as is for now
-                var serialized = JsonSerializer.Serialize(deserializedValue);                
+                var serialized = JsonSerializer.Serialize(deserializedValue);
                 return JsonSerializer.Deserialize(serialized, parameter.Type);
             }
         }
