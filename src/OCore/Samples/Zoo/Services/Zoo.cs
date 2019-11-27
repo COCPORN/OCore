@@ -10,8 +10,7 @@ using Zoo.Interfaces;
 namespace Zoo.Services
 {
     public class Zoo : Service, IZoo
-    {
-        [Authorize]
+    {        
         public Task<UserRegistrationResponse> AddUser(User user)
         {
             return Task.FromResult(new UserRegistrationResponse
