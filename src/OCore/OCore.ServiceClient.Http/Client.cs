@@ -18,7 +18,12 @@ namespace OCore.ServiceClient.Http
 
         public Client(HttpClient httpClient)
         {
-            this.httpClient = httpClient;            
+            this.httpClient = httpClient;
+            options = new ClientOptions
+            {
+                BaseUrl = "http://localhost:9000",
+                Prefix = "service"
+            };
         }
 
         public async Task<(TReturn, System.Net.HttpStatusCode)> Invoke<TInterface, TReturn>(string method, params object[] parameters)
@@ -49,16 +54,7 @@ namespace OCore.ServiceClient.Http
 
         private string CreateUri(ClientOptions options, ServiceAttribute serviceAttribute, Type serviceType, string method)
         {
-            var serviceName = serviceAttribute?.Name ?? serviceType.Name;
-
-            if (options == null)
-            {
-                options = new ClientOptions
-                {
-                    BaseUrl = "http://localhost:9000",
-                    Prefix = "service"
-                };
-            }
+            var serviceName = serviceAttribute?.Name ?? serviceType.Name;   
 
             return $"{options.BaseUrl}/{options.Prefix}/{serviceName}/{method}";
         }
