@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using OCore.Entities;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,7 @@ namespace OCore.Authorization.Grains
         public DateTimeOffset SetupTime { get; set; }
     }
 
-    public class SystemSetupGrain : Grain<SystemSetupState>, ISystemSetup
+    public class SystemSetupGrain : Entity<SystemSetupState>, ISystemSetup
     {
         public Task<bool> IsSystemSetup()
         {

@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\OCore.Authorization\OCore.Authorization.csproj" />
-    <ProjectReference Include="..\..\OCore.Service\OCore.Service.csproj" />
+    <ProjectReference Include="..\..\OCore.Services\OCore.Services.csproj" />
   </ItemGroup>
 
 </Project>

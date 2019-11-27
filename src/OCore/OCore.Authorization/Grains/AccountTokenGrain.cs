@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using OCore.Entities;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,7 @@ namespace OCore.Authorization.Grains
         public DateTimeOffset ExpiresAt { get; set; } = DateTimeOffset.MaxValue;
     }
 
-    public class AccountTokenGrain : Grain<AccountTokenState>, IAccountToken
+    public class AccountTokenGrain : Entity<AccountTokenState>, IAccountToken
     {
         public Task<Guid> GetAccountId()
         {

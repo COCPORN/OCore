@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using OCore.Entities;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace OCore.Authorization.Grains
         public HashSet<string> Roles { get; set; } = new HashSet<string>();
     }
 
-    public class AccountRolesGrain : Grain<AccountRolesState>, IAccountRoles
+    public class AccountRolesGrain : Entity<AccountRolesState>, IAccountRoles
     {
         public Task AddRole(string role)
         {

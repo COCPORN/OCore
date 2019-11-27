@@ -17,3 +17,4 @@ Features (partially to come, look at this as a TODO list in no particular order)
 - Data entities
 - Audited entities
 - Data polling
+- Idempotent actions
