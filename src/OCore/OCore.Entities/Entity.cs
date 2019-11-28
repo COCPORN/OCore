@@ -131,6 +131,12 @@ namespace OCore.Entities
                 }
                 return s.Data;
             }
+
+            set
+            {
+                EntityState<T> s = base.State;
+                s.Data = value;
+            }
         }
 
         protected virtual Task OnCreating()

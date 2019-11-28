@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OCore.Authorization\OCore.Authorization.csproj" />
+    <ProjectReference Include="..\OCore.Entities.Data.Http\OCore.Entities.Data.Http.csproj" />
+    <ProjectReference Include="..\OCore.Services.Http\OCore.Services.Http.csproj" />
+  </ItemGroup>
+
+
+
+</Project>

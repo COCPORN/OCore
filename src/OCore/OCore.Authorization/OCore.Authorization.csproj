@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
     <ProjectReference Include="..\OCore.Entities\OCore.Entities.csproj" />
     <ProjectReference Include="..\OCore.Services\OCore.Services.csproj" />
   </ItemGroup>

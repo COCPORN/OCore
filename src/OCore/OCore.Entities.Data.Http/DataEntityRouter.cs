@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OCore.Http;
 using Orleans;
@@ -12,17 +10,18 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace OCore.Services.Http
+namespace OCore.Entities.Data.Http
 {
-    public class ServiceRouter : Router
+    public class DataEntityRouter : Router
     {
+
         IClusterClient clusterClient;
         IServiceProvider serviceProvider;
         ILogger logger;
 
-        public ServiceRouter(IClusterClient clusterClient,
-            IServiceProvider serviceProvider,
-            ILogger<ServiceRouter> logger)
+        public DataEntityRouter(IClusterClient clusterClient,
+                IServiceProvider serviceProvider,
+                ILogger<DataEntityRouter> logger)
         {
             this.clusterClient = clusterClient;
             this.serviceProvider = serviceProvider;
@@ -34,7 +33,7 @@ namespace OCore.Services.Http
         public void RegisterRoute(string pattern, MethodInfo methodInfo)
         {
             CheckGrainType(methodInfo.DeclaringType);
-            routes.Add(pattern, new ServiceGrainInvoker(serviceProvider, methodInfo));
+            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, methodInfo));
         }
 
         private void CheckGrainType(Type grainInterfaceType)
@@ -66,7 +65,6 @@ namespace OCore.Services.Http
 
             return invoker.Invoke(grain, context);
         }
-
 
     }
 }

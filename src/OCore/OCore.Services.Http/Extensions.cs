@@ -10,10 +10,7 @@ namespace OCore.Services
 {
     public static class Extensions
     {
-        public static IServiceCollection AddDefaultOCore(this IServiceCollection serviceCollection)
-        {
-            return AddServiceRouter(serviceCollection);
-        }
+
 
         public static IServiceCollection AddServiceRouter(this IServiceCollection services)
         {
@@ -21,12 +18,6 @@ namespace OCore.Services
                 .AddSingleton<ServiceRouter>();
         }
 
-        public static void UseDefaultOCore(this IApplicationBuilder app)
-        {            
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapServices("service");
-            });
-        }
+
     }
 }

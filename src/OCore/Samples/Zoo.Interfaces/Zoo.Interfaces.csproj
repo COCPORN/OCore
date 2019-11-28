@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\OCore.Authorization\OCore.Authorization.csproj" />
+    <ProjectReference Include="..\..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
     <ProjectReference Include="..\..\OCore.Services\OCore.Services.csproj" />
   </ItemGroup>
 

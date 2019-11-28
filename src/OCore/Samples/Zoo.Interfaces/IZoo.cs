@@ -23,6 +23,7 @@ namespace Zoo.Interfaces
         public int Code { get; set; }
     }
 
+
     [Service("Zoo")]
     public interface IZoo : IService
     {
@@ -35,5 +36,9 @@ namespace Zoo.Interfaces
         Task<UserRegistrationResponse> AddUser(User user);
 
         Task Noop();
+
+        Task AcceptNewAnimal(Animal animal);
+
+        Task<string> SayHelloToAnimal(string name);
     }
 }

@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OCore.Core;
 using Orleans;
 using Orleans.ApplicationParts;
+using Orleans.Concurrency;
 using Orleans.Metadata;
 using System;
 using System.Collections.Generic;
@@ -24,14 +26,15 @@ namespace OCore.Services.Http
             var appPartsMgr = routes.ServiceProvider.GetRequiredService<IApplicationPartManager>();            
 
             var grainInterfaceFeature = appPartsMgr.CreateAndPopulateFeature<GrainInterfaceFeature>();
-            var grainTypesToMap = DiscoverGrainTypesToMap(grainInterfaceFeature);
+
+            var servicesToMap = DiscoverServicesToMap(grainInterfaceFeature);
 
             int routesCreated = 0;
             // Map each grain type to a route based on the attributes
-            foreach (var grainType in grainTypesToMap)
+            foreach (var serviceType in servicesToMap)
             {
-                routesCreated += MapServiceToRoute(routes, grainType, prefix, dispatcher, logger);
-            }
+                routesCreated += MapServiceToRoute(routes, serviceType, prefix, dispatcher, logger);
+            }            
 
             logger.LogInformation($"{routesCreated} route(s) were created for grains.");
             return routes;
@@ -41,13 +44,24 @@ namespace OCore.Services.Http
         {
             logger.LogInformation($"Mapping routes for service '{grainType.FullName}'");
 
+            var internalAttribute = (InternalAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(InternalAttribute)).SingleOrDefault();
+
+            if (internalAttribute != null)
+            {
+                return 0;
+            }
+
             var serviceAttribute = (ServiceAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(ServiceAttribute)).SingleOrDefault();
 
             var methods = grainType.GetMethods();
             int routesRegistered = 0;
 
             foreach (var method in methods)
-            {             
+            {
+                internalAttribute = (InternalAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(InternalAttribute)).SingleOrDefault();
+
+                if (internalAttribute != null) continue;
+
                 var routePattern = RoutePatternFactory.Parse($"{prefix}/{serviceAttribute.Name}/{method.Name}");
                 var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);
                 var cors = routes.MapMethods(routePattern.RawText, new string[] { "OPTIONS" }, dispatcher.Cors);
@@ -60,7 +74,7 @@ namespace OCore.Services.Http
             return routesRegistered;
         }
 
-        private static List<Type> DiscoverGrainTypesToMap(GrainInterfaceFeature grainInterfaceFeature)
+        private static List<Type> DiscoverServicesToMap(GrainInterfaceFeature grainInterfaceFeature)
         {
             var grainTypesToMap = new List<Type>();
 

@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\OCore.Authorization\OCore.Authorization.csproj" />
-    <ProjectReference Include="..\..\OCore.Services.Http\OCore.Services.Http.csproj" />
+    <ProjectReference Include="..\..\OCore.DefaultSetup\OCore.DefaultSetup.csproj" />
     <ProjectReference Include="..\Zoo.Interfaces\Zoo.Interfaces.csproj" />
   </ItemGroup>
 

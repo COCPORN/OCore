@@ -1,0 +1,8 @@
+### Accept new animal
+POST http://localhost:9000/service/Zoo/AcceptNewAnimal
+
+{
+    "Name": "Julius",
+    "Kind": "Monkey",
+    "Noise": "Chatter"
+}
