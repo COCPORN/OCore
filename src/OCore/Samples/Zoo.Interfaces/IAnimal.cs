@@ -10,7 +10,7 @@ namespace Zoo.Interfaces
     {
         public string Name { get; set; }
 
-        public string Kind { get; set; }
+        public string Species { get; set; }
 
         public string Noise { get; set; }
     }

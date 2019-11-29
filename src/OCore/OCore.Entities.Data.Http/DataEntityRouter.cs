@@ -39,9 +39,9 @@ namespace OCore.Entities.Data.Http
         private void CheckGrainType(Type grainInterfaceType)
         {
             var ifaces = grainInterfaceType.GetInterfaces();
-            if (ifaces.Contains(typeof(IGrainWithIntegerKey)) == false)
+            if (ifaces.Contains(typeof(IDataEntity)) == false)
             {
-                throw new InvalidOperationException("Service is not of correct type");
+                throw new InvalidOperationException("Data entities must implement IDataEntity");
             }
 
         }

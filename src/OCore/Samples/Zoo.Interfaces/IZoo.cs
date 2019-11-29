@@ -31,7 +31,7 @@ namespace Zoo.Interfaces
         Task<string> Greet(string name);
 
         [Authorize]
-        Task<DateTimeOffset> MakeAppointment(DateTimeOffset nextAvailableFrom, int numberOfAppointments);
+        Task<DateTimeOffset> MakeAppointment(DateTimeOffset nextAvailableFrom, int numberOfAppointments = 1);
 
         Task<UserRegistrationResponse> AddUser(User user);
 

@@ -37,9 +37,9 @@ namespace OCore.Services.Http
 
                 if (string.IsNullOrEmpty(body) == true)
                 {
-                    if (Parameters.Count != 0)
+                    while (parameterList.Count < Parameters.Count)
                     {
-                        throw new InvalidOperationException($"Parameter count mismatch");
+                        parameterList.Add(Type.Missing);
                     }
                 }
                 else if (body[0] == '[')
@@ -47,16 +47,22 @@ namespace OCore.Services.Http
 
                     var deserialized = JsonSerializer.Deserialize<object[]>(body);
 
-                    if (deserialized.Length != Parameters.Count)
-                    {
-                        throw new InvalidOperationException($"Parameter count mismatch");
-                    }
+                    //if (deserialized.Length != Parameters.Count)
+                    //{
+                    //    throw new InvalidOperationException($"Parameter count mismatch");
+                    //}
 
                     int i = 0;
-                    foreach (var parameter in Parameters)
+                    foreach (var parameter in deserialized)
                     {
-                        parameterList.Add(ProjectValue(deserialized[i++], parameter));
+                        parameterList.Add(ProjectValue(parameter, Parameters[i++]));
                     }
+
+                    while (parameterList.Count < Parameters.Count)
+                    {
+                        parameterList.Add(Type.Missing);
+                    }
+
                 }
                 else
                 {

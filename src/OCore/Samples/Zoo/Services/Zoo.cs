@@ -24,7 +24,7 @@ namespace Zoo.Services
 
             var data = await animalEntity.Read();
 
-            return $"Hello! I am a dumb fucking {data.Kind} and I {await animalEntity.MakeNoise()}!";
+            return $"Hello! I am a dumb fucking {data.Species} and I {await animalEntity.MakeNoise()}!";
         }
 
         public Task<UserRegistrationResponse> AddUser(User user)
