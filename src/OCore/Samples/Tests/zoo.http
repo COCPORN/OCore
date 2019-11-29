@@ -11,4 +11,36 @@ POST http://localhost:9000/service/Zoo/AcceptNewAnimal
 ### Accept new animal
 POST http://localhost:9000/service/Zoo/SayHelloToAnimal
 
-"Julius"
+"Pulio"
+
+### Accept make appointment (test default parameter)
+POST http://localhost:9000/service/Zoo/MakeAppointment
+apikey: 0AA4BBDE-AD54-459B-BEEB-1F6CD30B2198
+
+["2017-01-14"]
+
+### DataEntity method call
+POST http://localhost:9000/data/Animal/Julius/MakeNoise
+
+[4]
+
+### DataEntity CREATE
+POST http://localhost:9000/data/Animal/Pulio2
+
+{
+    "Name": "Julian",
+    "Species": "Monkey",
+    "Noise": "Hump"
+}
+
+### DataEntity GET
+GET http://localhost:9000/data/Animal/Pulio
+
+### DataEntity UPDATE
+PUT http://localhost:9000/data/Animal/Pulio
+
+{
+    "Name": "Julian",
+    "Species": "MonkeyBallz",
+    "Noise": "Hump"
+}

@@ -6,8 +6,10 @@ using OCore.Http;
 using Orleans;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace OCore.Entities.Data.Http
@@ -30,23 +32,26 @@ namespace OCore.Entities.Data.Http
 
         private readonly Dictionary<string, GrainInvoker> routes = new Dictionary<string, GrainInvoker>(StringComparer.InvariantCultureIgnoreCase);
 
-        public void RegisterRoute(string pattern, MethodInfo methodInfo)
+        public void RegisterCommandRoute(string pattern, MethodInfo methodInfo)
         {
-            CheckGrainType(methodInfo.DeclaringType);
-            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, methodInfo));
+            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, methodInfo.DeclaringType, methodInfo.DeclaringType, methodInfo, null));
         }
 
-        private void CheckGrainType(Type grainInterfaceType)
+        public void RegisterCrudRoute(string pattern, 
+            MethodInfo methodInfo, 
+            Type grainType, 
+            HttpMethod httpMethod, 
+            Type interfaceType,
+            Type entityType)
         {
-            var ifaces = grainInterfaceType.GetInterfaces();
-            if (ifaces.Contains(typeof(IDataEntity)) == false)
+            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, grainType, interfaceType, methodInfo, entityType)
             {
-                throw new InvalidOperationException("Data entities must implement IDataEntity");
-            }
-
+                IsCrudOperation = true,
+                HttpMethod = httpMethod,                
+            });
         }
 
-        public Task Dispatch(HttpContext context)
+        public Task DispatchCustomOperation(HttpContext context)
         {
             AddCors(context);
             var endpoint = (RouteEndpoint)context.GetEndpoint();
@@ -56,7 +61,36 @@ namespace OCore.Entities.Data.Http
             RunAuthorizationFilters(context, invoker);
             RunActionFilters(context, invoker);
 
-            var grain = clusterClient.GetGrain(invoker.GrainType, 0);
+            var getGrainId = GetGrainId(context);
+
+            var grain = clusterClient.GetGrain(invoker.GrainType, getGrainId);
+            if (grain == null)
+            {
+                context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                return Task.CompletedTask;
+            }
+
+            return invoker.Invoke(grain, context);
+        }
+
+        private string GetGrainId(HttpContext context)
+        {
+            return context.Request.RouteValues["entityId"].ToString();
+        }
+
+        public Task DispatchCrudOperation(HttpContext context, HttpMethod httpMethod)
+        {
+            AddCors(context);
+            var endpoint = (RouteEndpoint)context.GetEndpoint();
+            var pattern = endpoint.RoutePattern;
+
+            var invoker = routes[$"{pattern.RawText}:{httpMethod}"];
+
+             
+            RunAuthorizationFilters(context, invoker);
+            RunActionFilters(context, invoker);
+
+            var grain = clusterClient.GetGrain(invoker.GrainType, GetGrainId(context));
             if (grain == null)
             {
                 context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;

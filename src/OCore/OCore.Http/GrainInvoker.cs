@@ -3,7 +3,9 @@ using Orleans;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipelines;
+using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -18,20 +20,23 @@ namespace OCore.Http
     public abstract class GrainInvoker
     {
         public MethodInfo MethodInfo { get; set; }
-        protected MethodInfo GetResult { get; set;  }
+        protected MethodInfo GetResult { get; set; }
 
         private static readonly MethodInfo getResultMethod = typeof(GrainInvoker).GetMethod(nameof(GetResultDelegate), BindingFlags.Static | BindingFlags.NonPublic);
         private static object GetResultDelegate<T>(Task<T> input) => input.GetAwaiter().GetResult();
 
         IServiceProvider serviceProvider;
-        public Type GrainType => MethodInfo.DeclaringType;
+
+        public Type GrainType { get; private set; }        
 
         protected List<Parameter> Parameters = new List<Parameter>();
 
-        public GrainInvoker(IServiceProvider serviceProvider, MethodInfo methodInfo)
+
+        public GrainInvoker(IServiceProvider serviceProvider, Type grainType, MethodInfo methodInfo)
         {
-            this.MethodInfo = methodInfo;
             this.serviceProvider = serviceProvider;
+            GrainType = grainType;            
+            MethodInfo = methodInfo;
 
             BuildParameterMap();
             BuildResultDelegate();
@@ -65,7 +70,9 @@ namespace OCore.Http
         public async Task Invoke(IGrain grain, HttpContext context)
         {
             object[] parameterList = await GetParameterList(context);
-            var grainCall = (Task)MethodInfo.Invoke(grain, parameterList);
+            Task grainCall;
+            grainCall = (Task)MethodInfo.Invoke(grain, parameterList);
+
             await grainCall;
 
             if (GetResult != null)

@@ -6,7 +6,32 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities.Data
 {
-    public interface IDataEntity { }
+    public enum Operation
+    {
+        Create,
+        Update,
+        Upsert,
+        Read,
+        Delete
+    }
+
+    public class OperationRequest
+    {
+        public Operation Operation { get; set; }
+
+        public object Payload { get; set; }
+
+    }
+
+    public class OperationResponse
+    {
+        public object Payload { get; set; }
+    }
+
+    public interface IDataEntity
+    {
+
+    }
 
     public interface IDataEntity<T> : IDataEntity, IGrainWithStringKey
     {
@@ -42,5 +67,12 @@ namespace OCore.Entities.Data
         /// </summary>
         /// <returns></returns>
         Task Delete();
+
+        /// <summary>
+        /// Non-generic interface to getting stuff done
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        //Task<OperationResponse> PerformOperation(OperationRequest request);
     }
 }

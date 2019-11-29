@@ -22,8 +22,8 @@ namespace OCore.Services.Http
     public class ServiceGrainInvoker : GrainInvoker
     {
 
-        public ServiceGrainInvoker(IServiceProvider serviceProvider, MethodInfo methodInfo) : 
-            base(serviceProvider, methodInfo)
+        public ServiceGrainInvoker(IServiceProvider serviceProvider, Type grainType, MethodInfo methodInfo) : 
+            base(serviceProvider, grainType, methodInfo)
         {
         }
 
@@ -37,32 +37,25 @@ namespace OCore.Services.Http
 
                 if (string.IsNullOrEmpty(body) == true)
                 {
-                    while (parameterList.Count < Parameters.Count)
-                    {
-                        parameterList.Add(Type.Missing);
-                    }
+                    AddDefaultParameters(parameterList);
                 }
                 else if (body[0] == '[')
                 {
 
                     var deserialized = JsonSerializer.Deserialize<object[]>(body);
 
-                    //if (deserialized.Length != Parameters.Count)
-                    //{
-                    //    throw new InvalidOperationException($"Parameter count mismatch");
-                    //}
+                    if (deserialized.Length > Parameters.Count)
+                    {
+                        throw new InvalidOperationException($"Parameter count too high");
+                    }
 
                     int i = 0;
                     foreach (var parameter in deserialized)
                     {
                         parameterList.Add(ProjectValue(parameter, Parameters[i++]));
                     }
-
-                    while (parameterList.Count < Parameters.Count)
-                    {
-                        parameterList.Add(Type.Missing);
-                    }
-
+                    
+                    AddDefaultParameters(parameterList);
                 }
                 else
                 {
@@ -76,6 +69,13 @@ namespace OCore.Services.Http
             return parameterList.ToArray();
         }
 
+        private void AddDefaultParameters(List<object> parameterList)
+        {
+            while (parameterList.Count < Parameters.Count)
+            {
+                parameterList.Add(Type.Missing);
+            }
+        }
 
 
     }

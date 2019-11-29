@@ -15,9 +15,9 @@ namespace Zoo.Interfaces
         public string Noise { get; set; }
     }
 
-
+    [DataEntity("Animal")]
     public interface IAnimal : IDataEntity<Animal>
     {
-        Task<string> MakeNoise();
+        Task<string> MakeNoise(int times = 1);
     }
 }

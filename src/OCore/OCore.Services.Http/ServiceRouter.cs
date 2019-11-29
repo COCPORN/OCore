@@ -34,7 +34,7 @@ namespace OCore.Services.Http
         public void RegisterRoute(string pattern, MethodInfo methodInfo)
         {
             CheckGrainType(methodInfo.DeclaringType);
-            routes.Add(pattern, new ServiceGrainInvoker(serviceProvider, methodInfo));
+            routes.Add(pattern, new ServiceGrainInvoker(serviceProvider, methodInfo.DeclaringType, methodInfo));
         }
 
         private void CheckGrainType(Type grainInterfaceType)
