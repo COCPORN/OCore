@@ -17,12 +17,6 @@ namespace OCore.Http
         public string Name { get; set; }
     }
 
-    public class FetchFailure
-    {
-        public string Status { get; set; } = "Failure";
-        public string Message { get; set; }
-    }
-
     public abstract class GrainInvoker
     {
         public MethodInfo MethodInfo { get; set; }
@@ -129,10 +123,7 @@ namespace OCore.Http
                 }
                 else if (task.IsFaulted)
                 {
-                    results.Add(new FetchFailure
-                    {
-                        Message = task.Exception.Message
-                    });
+                    results.Add(null);                   
                 }
             }
 
