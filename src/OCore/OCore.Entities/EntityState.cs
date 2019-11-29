@@ -22,6 +22,8 @@ namespace OCore.Entities
 
         public string KeyExtension { get; set; }
 
+        public string TenantId { get; set; }
+
         public T Data;
     }
 }

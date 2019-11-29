@@ -13,5 +13,11 @@ namespace OCore.Authorization.Services
             var accountToken = GrainFactory.GetGrain<IAccountToken>(token);
             await accountToken.LinkToAccountId(account);            
         }
+
+        public Task<Guid> GetAccount(Guid token)
+        {
+            var accountToken = GrainFactory.GetGrain<IAccountToken>(token);
+            return accountToken.GetAccountId();
+        }
     }
 }

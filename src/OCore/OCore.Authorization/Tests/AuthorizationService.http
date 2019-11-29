@@ -1,1 +1,4 @@
-﻿### POST
+﻿### Hello, authorization
+POST http://localhost:9000/service/OCore.Authorization/Hello
+apikey: 8DDBD07E-3F23-48E3-B220-8F78C6E7F8DC
+

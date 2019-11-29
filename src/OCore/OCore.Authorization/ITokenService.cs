@@ -11,5 +11,7 @@ namespace OCore.Authorization
     {
         [Authorize]
         Task AddToken(Guid token, Guid account);
+
+        Task<Guid> GetAccount(Guid token);
     }
 }

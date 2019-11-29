@@ -2,6 +2,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Orleans.Runtime;
+using OCore.Authorization.Abstractions.Request;
 
 namespace OCore.Entities
 {
@@ -22,15 +24,32 @@ namespace OCore.Entities
                 this,
                 Logger,
                 Version);
-
-            // Keys for indexing
+            
             if (base.State.Created == false)
             {
                 if (GetType().GetCustomAttributes(typeof(SuppressIndexingAttribute), true).Length == 0)
                 {
+                    var requestPayload = Payload.GetOrDefault();
+
+                    if (requestPayload != null)
+                    {
+                        base.State.TenantId = requestPayload.TenantId;
+                    }
+
                     if (this is IGrainWithStringKey)
                     {
-                        base.State.KeyString = this.GetPrimaryKeyString();
+                        var primaryKeyString = this.GetPrimaryKeyString();
+
+                        if (base.State.TenantId != null)
+                        {
+                            var suffix = $"::{base.State.TenantId}";
+                            if (primaryKeyString.EndsWith(suffix))
+                            {
+                                primaryKeyString = primaryKeyString.Substring(0, primaryKeyString.Length - suffix.Length);
+                            }
+                        }
+
+                        base.State.KeyString = primaryKeyString;
                     }
                     else if (this is IGrainWithGuidCompoundKey)
                     {
@@ -50,6 +69,7 @@ namespace OCore.Entities
                         base.State.KeyLong = this.GetPrimaryKeyLong(out var keyExtension);
                         base.State.KeyExtension = keyExtension;
                     }
+
                 }
             }
 

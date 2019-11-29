@@ -1,9 +1,8 @@
 ﻿using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace OCore.Authorization
+namespace OCore.Authorization.Abstractions.Request
 {
     public class Payload
     {

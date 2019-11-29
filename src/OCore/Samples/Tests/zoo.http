@@ -20,12 +20,12 @@ apikey: 0AA4BBDE-AD54-459B-BEEB-1F6CD30B2198
 ["2017-01-14"]
 
 ### DataEntity method call
-POST http://localhost:9000/data/Animal/Julius/MakeNoise
+POST http://localhost:9000/data/Animal/Pulio/MakeNoise
 
 [4]
 
 ### DataEntity CREATE
-POST http://localhost:9000/data/Animal/Pulio2
+POST http://localhost:9000/data/Animal/Pulio
 
 {
     "Name": "Julian",
@@ -44,3 +44,11 @@ PUT http://localhost:9000/data/Animal/Pulio
     "Species": "MonkeyBallz",
     "Noise": "Hump"
 }
+
+### DataEntity DELETE
+DELETE http://localhost:9000/data/Animal/Pulio
+
+
+### DataEntity multiget
+GET http://localhost:9000/data/Animal/Pulio,Julius
+

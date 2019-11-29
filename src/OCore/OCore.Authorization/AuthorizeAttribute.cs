@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
+using OCore.Authorization.Abstractions.Request;
 using Orleans.Runtime;
 using System;
 using System.Linq;
@@ -89,41 +90,41 @@ namespace OCore.Authorization
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {            
-            var identityPayload = new Payload { };
+            var requestPayload = new Payload { };
 
             if (Guid.TryParse(context.HttpContext.Request.Headers[options.TokenHeader], out var token))
             {
-                identityPayload.Token = token;
+                requestPayload.Token = token;
             }
 
             if (Guid.TryParse(context.HttpContext.Request.Headers[options.ApiKeyHeader], out var apiKey))
             {
-                identityPayload.ApiKey = apiKey;
+                requestPayload.ApiKey = apiKey;
             }
 
-            if (identityPayload.ApiKey != Guid.Empty && identityPayload.Token != Guid.Empty)
+            if (requestPayload.ApiKey != Guid.Empty && requestPayload.Token != Guid.Empty)
             {
                 throw new InvalidOperationException("Both authtoken and apikey provided, please provide one or the other");
             }
 
             if (context.HttpContext.Request.Headers.TryGetValue(options.TokenHeader, out var t))
             {
-                identityPayload.TenantId = t.FirstOrDefault();
+                requestPayload.TenantId = t.FirstOrDefault();
             }
 
-            if (identityPayload.ApiKey != Guid.Empty && string.IsNullOrEmpty(identityPayload.TenantId) == false)
+            if (requestPayload.ApiKey != Guid.Empty && string.IsNullOrEmpty(requestPayload.TenantId) == false)
             {
                 throw new InvalidOperationException("Apikey present with tenant ID, please provide either an apikey or authorizationtoken + tenantId");
             }
 
             if (Requirements != Requirements.None 
-                && identityPayload.ApiKey == Guid.Empty 
-                && identityPayload.Token == Guid.Empty)
+                && requestPayload.ApiKey == Guid.Empty 
+                && requestPayload.Token == Guid.Empty)
             {
                 throw new UnauthorizedAccessException("Provide either API key or token");
             }
 
-            RequestContext.Set("I", identityPayload);
+            RequestContext.Set("I", requestPayload);
         }
     }
 }
