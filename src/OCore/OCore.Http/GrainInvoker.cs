@@ -17,6 +17,12 @@ namespace OCore.Http
         public string Name { get; set; }
     }
 
+    public class FetchFailure
+    {
+        public string Status { get; set; } = "Failure";
+        public string Message { get; set; }
+    }
+
     public abstract class GrainInvoker
     {
         public MethodInfo MethodInfo { get; set; }
@@ -27,7 +33,7 @@ namespace OCore.Http
 
         IServiceProvider serviceProvider;
 
-        public Type GrainType { get; private set; }        
+        public Type GrainType { get; private set; }
 
         protected List<Parameter> Parameters = new List<Parameter>();
 
@@ -35,7 +41,7 @@ namespace OCore.Http
         public GrainInvoker(IServiceProvider serviceProvider, Type grainType, MethodInfo methodInfo)
         {
             this.serviceProvider = serviceProvider;
-            GrainType = grainType;            
+            GrainType = grainType;
             MethodInfo = methodInfo;
 
             BuildParameterMap();
@@ -85,6 +91,53 @@ namespace OCore.Http
                     await Serialize(result, context.Response.BodyWriter);
                 }
             }
+        }
+
+        public async Task Invoke(IGrain[] grains, HttpContext context)
+        {
+            object[] parameterList = await GetParameterList(context);
+            List<Task> grainCalls = new List<Task>();
+            foreach (var grain in grains)
+            {
+                grainCalls.Add((Task)MethodInfo.Invoke(grain, parameterList));
+            }
+
+            try
+            {
+                await Task.WhenAll(grainCalls);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            List<object> results = new List<object>();
+
+            foreach (var task in grainCalls)
+            {
+                if (task.IsCompletedSuccessfully)
+                {
+                    if (GetResult != null)
+                    {
+                        object result = GetResult.Invoke(null, new[] { task });
+                        results.Add(result);
+                    }
+                    else
+                    {
+                        results.Add(null);
+                    }
+                }
+                else if (task.IsFaulted)
+                {
+                    results.Add(new FetchFailure
+                    {
+                        Message = task.Exception.Message
+                    });
+                }
+            }
+
+            context.Response.ContentType = "application/json";
+            await Serialize(results, context.Response.BodyWriter);
         }
 
         public async ValueTask Serialize(object obj, PipeWriter writer)

@@ -78,7 +78,7 @@ namespace OCore.Entities.Data.Http
             return context.Request.RouteValues["entityId"].ToString();
         }
 
-        public Task DispatchCrudOperation(HttpContext context, HttpMethod httpMethod)
+        public async Task DispatchCrudOperation(HttpContext context, HttpMethod httpMethod)
         {
             AddCors(context);
             var endpoint = (RouteEndpoint)context.GetEndpoint();
@@ -90,14 +90,37 @@ namespace OCore.Entities.Data.Http
             RunAuthorizationFilters(context, invoker);
             RunActionFilters(context, invoker);
 
-            var grain = clusterClient.GetGrain(invoker.GrainType, GetGrainId(context));
-            if (grain == null)
-            {
-                context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
-                return Task.CompletedTask;
-            }
+            var grainDescriptor = GetGrainId(context);
 
-            return invoker.Invoke(grain, context);
+            if (grainDescriptor.Contains(","))
+            {
+                var grainIds = grainDescriptor.Split(',');
+                List<IGrain> grains = new List<IGrain>();
+                foreach (var grainId in grainIds)
+                {
+                    var grain = clusterClient.GetGrain(invoker.GrainType, grainId);
+                    if (grain == null)
+                    {
+                        context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                        return;
+                    }
+                    grains.Add(clusterClient.GetGrain(invoker.GrainType, grainId));
+                }
+
+                await invoker.Invoke(grains.ToArray(), context);                                   
+            }
+            else
+            {
+                var grainId = grainDescriptor;
+                var grain = clusterClient.GetGrain(invoker.GrainType, grainId);
+                if (grain == null)
+                {
+                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                    return;
+                }
+
+                await invoker.Invoke(grain, context);
+            }
         }
 
     }
