@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization
 {
-    interface ITenantAccount : IGrainWithGuidCompoundKey
+    /// <summary>
+    /// This is keyed on base account ID with the tenant ID as extension
+    /// </summary>
+    public interface ITenantAccount : IGrainWithGuidCompoundKey
     {
         Task Create(Guid accountId);
 

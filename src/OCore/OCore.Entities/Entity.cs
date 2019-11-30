@@ -14,7 +14,6 @@ namespace OCore.Entities
 
         ILogger Logger => (ILogger<Entity<T>>)ServiceProvider.GetService(typeof(ILogger<Entity<T>>));
 
-
         public override async Task OnActivateAsync()
         {
             entityLogic = new EntityLogic<T>(base.State,
@@ -69,7 +68,6 @@ namespace OCore.Entities
                         base.State.KeyLong = this.GetPrimaryKeyLong(out var keyExtension);
                         base.State.KeyExtension = keyExtension;
                     }
-
                 }
             }
 
@@ -88,7 +86,7 @@ namespace OCore.Entities
 
         protected int Version { get; set; }
 
-        void AssureEntityActivated()
+        void EnsureEntityActivated()
         {
             if (activated == false)
             {
@@ -100,7 +98,7 @@ namespace OCore.Entities
         {
             get
             {
-                AssureEntityActivated();
+                EnsureEntityActivated();
                 return base.State.KeyString;
             }
         }
@@ -109,7 +107,7 @@ namespace OCore.Entities
         {
             get
             {
-                AssureEntityActivated();
+                EnsureEntityActivated();
                 return base.State.KeyGuid.Value;
             }
         }
@@ -117,7 +115,7 @@ namespace OCore.Entities
         {
             get
             {
-                AssureEntityActivated();
+                EnsureEntityActivated();
                 return base.State.KeyLong.Value;
             }
         }
@@ -125,7 +123,7 @@ namespace OCore.Entities
         {
             get
             {
-                AssureEntityActivated();
+                EnsureEntityActivated();
                 return base.State.KeyExtension;
             }
         }

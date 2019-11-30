@@ -8,12 +8,9 @@ namespace Zoo
     class Program
     {
         static async Task Main(string[] args)
-        {
-            var hostBuilder = new HostBuilder();
-            await hostBuilder.LetsGo(typeof(Services.Zoo));
-            
+        {            
+            await DeveloperExtensions.LetsGo();            
             Console.ReadLine();
         }
-
     }
 }

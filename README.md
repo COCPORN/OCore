@@ -35,18 +35,21 @@ Look at the sample for an example to setup OCore quickly using default configura
 
 - Automatically register and publish all Services with HTTP endpoints
 - Automatically register Data Entities with HTTP endpoints
+- Setup an Orleans local development cluster
 
-Get started (silly developer wrapper on the hostbuilder setup):
+Get started (silly developer wrapper on the hostbuilder setup). We all know what you want to do! You want to GO! So LET'S GO!
+
+Install the NuGet package `OCore.Setup`, then:
 
 ```csharp
-
+    class Program
+    {
         static async Task Main(string[] args)
-        {
-            var hostBuilder = new HostBuilder();
-            await hostBuilder.LetsGo(typeof(Services.Zoo));
-            
+        {            
+            await OCore.Setup.DeveloperExtensions.LetsGo();            
             Console.ReadLine();
         }
+    }
 ```
 
 ## Service setup
@@ -55,7 +58,7 @@ Documentation TODO, functionality currently lives in `OCore.Authorization`.
 
 # Service 
 
-An OCore Service is a stateless, reentrant integer keyed grain. It can _optionally_ be automatically published to an HTTP endpoint. An exposed Service is an opinionated alternative to an ASPNET Core `Controller`, with these benefits:
+An OCore Service is a stateless, reentrant integer keyed grain. It can _optionally_ be automatically published to an HTTP endpoint. An exposed Service will always be hit with identity `0`, so there will be no explosion of grains on the server. An exposed Service is an opinionated alternative to an ASPNET Core `Controller`, with these benefits:
 
 - No plumbing to get to the cluster
 - No chance of accidentally putting business logic in the controllers
@@ -154,7 +157,7 @@ I am toying with the idea of making a strongly typed client using Roslyn code ge
 
 # Data Entities
 
-An OCore Data Entity is promiscuous, providing full access to its internal state. Data Entities can _optionally_ serve their innards over HTTP. They can also be extended with commands.
+An OCore Data Entity is promiscuous, providing full access to its internal state. Data Entities can _optionally_ serve their innards over HTTP. They can also be extended with commands. Also, the authorization framework can decide which Data Entities an API key has access to, more about this later.
 
 ## Implicit access
 
@@ -234,12 +237,12 @@ POST http://localhost:9000/data/ShortenedUrl/SomeId/Visit
 
 This will call the `Visit`-method updating the counter, and return the `RedirectTo`-string.
 
-## Multifetch
+## Multi fetch
 
 Using `GET`, you can do multifetch using HTTP:
 
 ```
-### Multifetch
+### Multi fetch
 GET http://localhost:9000/data/SomeDataEntity/Id1,Id2,Id5
 ```
 
@@ -270,3 +273,13 @@ TODO: Data Entities will play nice with the authorization and tenancy system, so
 - The Grain key is deconstructed into `KeyString`, `KeyGuid`, `KeyLong` and `KeyExtension`
 - `Entity<T>` adds tenant information so that it is easy to get to, using `TenantId`
 - API is very similar to that of `Grain<T>`, so in most cases it will be a drop-in replace. **NOTE**: The shape of the stored data is _different_, so you cannot change this after you have started storing data. If in doubt, just use `Entity<T>` for everything
+
+# Events [WIP]
+
+OCore has a system for event handling based on Orleans Streams that provides:
+
+- Event aggregation (a uniform way to raise events)
+- Workload management (configurable number of workers handling events)
+- Controlled event handling
+- Handling of poison events
+

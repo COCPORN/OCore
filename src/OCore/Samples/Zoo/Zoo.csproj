@@ -11,15 +11,14 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.0.0">
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Orleans.Server" Version="3.0.0" />    
+    <PackageReference Include="Microsoft.Orleans.Server" Version="3.0.1" />    
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OCore.Authorization\OCore.Authorization.csproj" />
     <ProjectReference Include="..\..\OCore.Setup\OCore.Setup.csproj" />
     <ProjectReference Include="..\Zoo.Interfaces\Zoo.Interfaces.csproj" />
   </ItemGroup>
