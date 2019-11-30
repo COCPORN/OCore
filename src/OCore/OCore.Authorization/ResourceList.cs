@@ -10,7 +10,7 @@ namespace OCore.Authorization
 {
 
 
-    public class Resource
+    public abstract class Resource
     {
         public string ResourceName { get; private set; }
         public Permissions Permissions { get; private set; }
@@ -22,6 +22,13 @@ namespace OCore.Authorization
         }
     }
 
+
+    public class ServiceResource : Resource
+    {
+        public ServiceResource(string resourceName, Permissions permission) : base(resourceName, permission)
+        {
+        }
+    }
 
     public static class ResourceEnumerator
     {
@@ -55,7 +62,7 @@ namespace OCore.Authorization
                                                  .Select(z =>
                                                  {
                                                      var aa = (AuthorizeAttribute)z;
-                                                     return new Resource(CreateResourceName(x, y), aa.Permissions);
+                                                     return new ServiceResource(CreateResourceName(x, y), aa.Permissions) as Resource;
                                                  }))).ToList();
         }
 

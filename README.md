@@ -36,6 +36,19 @@ Look at the sample for an example to setup OCore quickly using default configura
 - Automatically register and publish all Services with HTTP endpoints
 - Automatically register Data Entities with HTTP endpoints
 
+Get started (silly developer wrapper on the hostbuilder setup):
+
+```csharp
+
+        static async Task Main(string[] args)
+        {
+            var hostBuilder = new HostBuilder();
+            await hostBuilder.LetsGo(typeof(Services.Zoo));
+            
+            Console.ReadLine();
+        }
+```
+
 ## Service setup
 
 Documentation TODO, functionality currently lives in `OCore.Authorization`.
@@ -129,6 +142,16 @@ public interface IAuthorizedService : IService
 
 There will be support for `ActionFilter`s.
 
+## Service client
+
+There is currently a loosely typed Service client that works in Blazor and other dotnet projects (the interface for this _will change_):
+
+```csharp
+var (response, status) = await Client.Invoke<IMyService, string>("Hello", "COCPORN");
+```
+
+I am toying with the idea of making a strongly typed client using Roslyn code generation.
+
 # Data Entities
 
 An OCore Data Entity is promiscuous, providing full access to its internal state. Data Entities can _optionally_ serve their innards over HTTP. They can also be extended with commands.
@@ -166,7 +189,7 @@ public interface IShortenedUrl : IDataEntity<ShortenedUrlState>
 
 
 ```csharp
-public class ShortenedUrlDataEntity : DataEntity<ShortenedUrlState> 
+public class ShortenedUrlDataEntity : DataEntity<ShortenedUrlState>, IShortenedUrl
 {
     public async Task<string> Visit() 
     {

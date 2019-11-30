@@ -1,19 +1,17 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OCore.DefaultSetup;
-using OCore.Services;
 
-namespace Zoo
+namespace OCore.Setup
 {
-    class Startup
+    public class DeveloperStartup
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();            
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDefaultOCore();
         }
 
@@ -25,7 +23,7 @@ namespace Zoo
             }
 
             app.UseRouting();
-            app.UseDefaultOCore();            
+            app.UseDefaultOCore();
         }
     }
 }

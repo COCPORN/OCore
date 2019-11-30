@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using OCore.Entities.Data.Http;
 using OCore.Services;
 using OCore.Services.Http;
-using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Hosting;
+using Orleans;
+using Orleans.Hosting;
+using OCore.Authorization;
 
 namespace OCore.DefaultSetup
 {
@@ -20,9 +25,10 @@ namespace OCore.DefaultSetup
         {
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapServices("service");
+                endpoints.MapServices("services");
                 endpoints.MapDataEntities("data");
             });
         }
+
     }
 }

@@ -117,29 +117,32 @@ namespace OCore.Authorization.Filters
             }
         }
 
-        private async Task CheckRoles(AuthorizeAttribute attribute, IIncomingGrainCallContext context, Payload payload)
+        private Task CheckRoles(AuthorizeAttribute attribute, IIncomingGrainCallContext context, Payload payload)
         {
-            if (attribute != null)
-            {
-                var resourceRole = grainFactory.GetGrain<IResourceAccessDescriptions>(0);
-                var resourceName = attribute.ResourceName;
-                var requiredPermissions = attribute.Permissions;
-                var accessDescriptions = await resourceRole.GetAccessDescriptions(resourceName);
+            //if (attribute != null)
+            //{
+            //    //var resourceRole = grainFactory.GetGrain<IResourceAccessDescriptions>(0);
+            //    var resourceService = grainFactory.GetGrain<IResourceService>(0);
+            //    var resources = await resourceService.GetResources();
+            //    var resourceName = attribute.ResourceName;
+            //    var requiredPermissions = attribute.Permissions;
+            //    var accessDescriptions = await resourceRole.GetAccessDescriptions(resourceName);
 
-                if (accessDescriptions.Count == 0)
-                {
-                    throw new UnauthorizedAccessException("Resource is unreachable");
-                }
+            //    if (accessDescriptions.Count == 0)
+            //    {
+            //        throw new UnauthorizedAccessException("Resource is unreachable");
+            //    }
 
-                foreach (var role in payload.Roles)
-                {
-                    if (accessDescriptions.Any(x => x.Role == role && x.Permissions.HasFlag(attribute.Permissions)))
-                    {
-                        return;
-                    }
-                }
-                throw new UnauthorizedAccessException();
-            }
+            //    foreach (var role in payload.Roles)
+            //    {
+            //        if (accessDescriptions.Any(x => x.Role == role && x.Permissions.HasFlag(attribute.Permissions)))
+            //        {
+            //            return;
+            //        }
+            //    }
+            //    throw new UnauthorizedAccessException();
+            //}
+            return Task.CompletedTask;
         }
 
         async Task CheckApiKey(string resourceName, Payload payload)

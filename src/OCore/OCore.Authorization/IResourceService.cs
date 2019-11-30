@@ -11,5 +11,6 @@ namespace OCore.Authorization
     {
         [Authorize]
         Task<List<Resource>> GetResources();
+
     }
 }

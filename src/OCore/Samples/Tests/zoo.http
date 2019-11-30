@@ -1,5 +1,5 @@
 ### Accept new animal
-POST http://localhost:9000/service/Zoo/AcceptNewAnimal
+POST http://localhost:9000/services/Zoo/AcceptNewAnimal
 
 {
     "Name": "Julius",
@@ -9,12 +9,12 @@ POST http://localhost:9000/service/Zoo/AcceptNewAnimal
 
 
 ### Accept new animal
-POST http://localhost:9000/service/Zoo/SayHelloToAnimal
+POST http://localhost:9000/services/Zoo/SayHelloToAnimal
 
-"Pulio"
+"Julius"
 
 ### Accept make appointment (test default parameter)
-POST http://localhost:9000/service/Zoo/MakeAppointment
+POST http://localhost:9000/services/Zoo/MakeAppointment
 apikey: 0AA4BBDE-AD54-459B-BEEB-1F6CD30B2198
 
 ["2017-01-14"]
@@ -22,7 +22,7 @@ apikey: 0AA4BBDE-AD54-459B-BEEB-1F6CD30B2198
 ### DataEntity method call
 POST http://localhost:9000/data/Animal/Pulio/MakeNoise
 
-[4]
+[44]
 
 ### DataEntity CREATE
 POST http://localhost:9000/data/Animal/Pulio
@@ -40,7 +40,7 @@ GET http://localhost:9000/data/Animal/Pulio
 PUT http://localhost:9000/data/Animal/Pulio
 
 {
-    "Name": "Julian",
+    "Name": "Pulio",
     "Species": "MonkeyBallz",
     "Noise": "Hump"
 }
@@ -50,5 +50,5 @@ DELETE http://localhost:9000/data/Animal/Pulio
 
 
 ### DataEntity multiget
-GET http://localhost:9000/data/Animal/Pulio,Julius
+GET http://localhost:9000/data/Animal/Julius,Pulio
 
