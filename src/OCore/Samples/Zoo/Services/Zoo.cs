@@ -36,12 +36,13 @@ namespace Zoo.Services
             });
         }
 
-        
+        [Authorize]
         public Task<string> Greet(string name)
         {
             return Task.FromResult($"Du er en sau, {name}");
         }
-
+        
+        [Authorize]
         public Task<DateTimeOffset> MakeAppointment(DateTimeOffset nextAvailableFrom, int numberOfAppointments)
         {
             return Task.FromResult(nextAvailableFrom.AddHours(24));

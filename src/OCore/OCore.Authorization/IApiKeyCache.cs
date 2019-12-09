@@ -8,6 +8,6 @@ namespace OCore.Authorization
 {
     public interface IApiKeyCache : IGrainWithGuidKey
     {
-        Task<ApiKey> GetApiKey();
+        Task<ApiKeyState> GetApiKey();
     }
 }

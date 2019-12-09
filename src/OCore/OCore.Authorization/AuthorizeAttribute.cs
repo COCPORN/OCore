@@ -54,7 +54,9 @@ namespace OCore.Authorization
     }
 
 
-
+    [AttributeUsage(AttributeTargets.Method,
+                   AllowMultiple = false,
+                   Inherited = true)]
     public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     {
         AuthorizeOptions options;

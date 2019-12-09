@@ -1,4 +1,6 @@
-﻿using Orleans;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OCore.Authorization.Filters;
+using Orleans;
 using Orleans.Hosting;
 using System;
 using System.Collections.Generic;
@@ -12,7 +14,8 @@ namespace OCore.Authorization
         {
             siloBuilder
                 .ConfigureApplicationParts(apm => apm.AddApplicationPart(typeof(Services.AuthorizationService).Assembly)
-                .WithReferences());
+                    .WithReferences())
+                .ConfigureServices(services => services.AddSingleton<IIncomingGrainCallFilter, AuthorizationFilter>());
         }
     }
 }

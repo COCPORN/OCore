@@ -29,7 +29,7 @@ namespace OCore.Services.Http
             this.logger = logger;
         }
 
-        private readonly Dictionary<string, GrainInvoker> routes = new Dictionary<string, GrainInvoker>(StringComparer.InvariantCultureIgnoreCase);
+        readonly Dictionary<string, GrainInvoker> routes = new Dictionary<string, GrainInvoker>(StringComparer.InvariantCultureIgnoreCase);
 
         public void RegisterRoute(string pattern, MethodInfo methodInfo)
         {
@@ -39,12 +39,11 @@ namespace OCore.Services.Http
 
         private void CheckGrainType(Type grainInterfaceType)
         {
-            var ifaces = grainInterfaceType.GetInterfaces();
-            if (ifaces.Contains(typeof(IGrainWithIntegerKey)) == false)
+            var interfaces = grainInterfaceType.GetInterfaces();
+            if (interfaces.Contains(typeof(IGrainWithIntegerKey)) == false)
             {
                 throw new InvalidOperationException("Service is not of correct type");
             }
-
         }
 
         public Task Dispatch(HttpContext context)

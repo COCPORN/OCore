@@ -19,6 +19,7 @@ Features (partially to come, look at this as a TODO list in no particular order)
 - Data entities
     - HTTP exposure
     - Auto CRUD
+    - Subscription over SignalR
 - Audited entities
 - Data polling
 - Idempotent actions
@@ -70,7 +71,8 @@ Define an interface to the service. Decide mentally if you want this to be an ex
 
 ```csharp
 [Service("MyService")]
-public interface IMyService : IService {
+public interface IMyService : IService 
+{
     Task<string> Hello(string name);
 }
 ```
@@ -78,8 +80,10 @@ public interface IMyService : IService {
 Then implement it:
 
 ```csharp
-public class MyService : Service {
-    public Task<string> Hello(string name) {
+public class MyService : Service 
+{
+    public Task<string> Hello(string name) 
+    {
         return Task.FromResult($"Hello, {name}");
     }
 }
@@ -135,15 +139,17 @@ public interface IShyService: IService
 You can decorate methods with attributes that implement `IAuthorizationFilter`:
 
 ```csharp
-[Service("AuthorizedService")]
-public interface IAuthorizedService : IService 
-{
+public class AuthorizedService : IAuthorizedService, Service 
+{    
     [Authorize]
-    Task<Guid> TellMeASecret(int left, int right);
+    Task<Guid> TellMeASecret(int left, int right) 
+    {
+        // ...
+    }
 }
 ```
 
-There will be support for `ActionFilter`s.
+There will be support for `ActionFilter`s. The 
 
 ## Service client
 

@@ -6,34 +6,13 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities.Data
 {
-    public enum Operation
-    {
-        Create,
-        Update,
-        Upsert,
-        Read,
-        Delete
-    }
-
-    public class OperationRequest
-    {
-        public Operation Operation { get; set; }
-
-        public object Payload { get; set; }
-
-    }
-
-    public class OperationResponse
-    {
-        public object Payload { get; set; }
-    }
 
     public interface IDataEntity
     {
 
     }
 
-    public interface IDataEntity<T> : IDataEntity, IGrainWithStringKey
+    public interface IDataEntity<T> : IDataEntity
     {
         /// <summary>
         /// Create new data entity. This call will fail if the entity already exists.

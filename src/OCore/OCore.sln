@@ -29,13 +29,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Core", "OCore.Core\OC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http", "OCore.Http\OCore.Http.csproj", "{88EC200F-AD12-4A51-91FC-B8B41B5E01EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Authorization.Abstractions", "OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj", "{0FFE0444-230C-426A-A1C6-58A65B7C437C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Authorization.Abstractions", "OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj", "{0FFE0444-230C-426A-A1C6-58A65B7C437C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Setup", "OCore.Setup\OCore.Setup.csproj", "{80361609-3DEE-4E37-B7C1-AC24E1DFFF7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Events", "OCore.Events\OCore.Events.csproj", "{B030A082-31E5-43C7-B7E7-8CAC478A501A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Events", "OCore.Events\OCore.Events.csproj", "{B030A082-31E5-43C7-B7E7-8CAC478A501A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Idempotency", "OCore.Idempotency\OCore.Idempotency.csproj", "{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Idempotency", "OCore.Idempotency\OCore.Idempotency.csproj", "{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Authorization.RateLimiting", "OCore.Authorization.RateLimiting\OCore.Authorization.RateLimiting.csproj", "{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,6 +109,10 @@ Global
 		{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

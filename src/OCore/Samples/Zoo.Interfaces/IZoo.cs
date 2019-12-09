@@ -27,9 +27,8 @@ namespace Zoo.Interfaces
     [Service("Zoo")]
     public interface IZoo : IService
     {
-        [Authorize]
         Task<string> Greet(string name);
-
+        
         [Authorize]
         Task<DateTimeOffset> MakeAppointment(DateTimeOffset nextAvailableFrom, int numberOfAppointments = 1);
 
