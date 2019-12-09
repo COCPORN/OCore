@@ -3,17 +3,17 @@
 @api-key = 5afe7202-f049-43cc-a657-a1a8cec12988
 
 ### Setup system
-POST http://localhost:9000/service/OCore.System/Initialize
+POST http://localhost:9000/services/OCore.System/Initialize
 
 ["{{token}}", "{{account-id}}"]
 
 ### Get roles
-POST http://localhost:9000/service/OCore.Role/GetRoles
+POST http://localhost:9000/services/OCore.Role/GetRoles
 apikey: {{api-key}}
 
 "{{account-id}}"
 
 
 ### Get resources
-POST http://localhost:9000/service/OCore.Resource/GetResources
+POST http://localhost:9000/services/OCore.Resource/GetResources
 apikey: {{api-key}}
