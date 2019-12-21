@@ -25,7 +25,9 @@ namespace OCore.Authorization
     /// <summary>
     /// Api keys are keyed on guid
     /// </summary>
-    public interface IApiKey : IDataEntity<ApiKeyState>, IEntity, IGrainWithGuidKey
+    /// 
+    [DataEntity("OCore.ApiKey")]
+    public interface IApiKey : IDataEntity<ApiKeyState>, IGrainWithGuidKey
     {
         Task Activate();
         Task Deactivate();

@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Builder;
 using System.Reflection;
+using Orleans.Runtime;
 
 namespace OCore.Entities.Data.Http
 {
@@ -97,14 +98,18 @@ namespace OCore.Entities.Data.Http
 
         private static int MapCrudMethods(string dataEntityName, Type declaringType, IEndpointRouteBuilder routes, string prefix, DataEntityRouter dispatcher, int routesRegistered)
         {
+            RoutePattern routePattern = null;
 
-            var routePattern = RoutePatternFactory.Parse($"{prefix}/{dataEntityName}/{{entityId}}");
+            Type concreteGrainType = FindConcreteGrainType(declaringType);
+
+            var interfaces = concreteGrainType.GetInterfaces();
+
+            routePattern = MapRouteToGrainType(dataEntityName, prefix, interfaces);
+
             routes.MapPost(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Post));
             routes.MapGet(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Get));
             routes.MapPut(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Put));
             routes.MapDelete(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Delete));
-
-            //var cors = routes.MapMethods(routePattern.RawText, new string[] { "OPTIONS" }, dispatcher.Cors);            
 
             var dataEntityType = (
                 from iType in declaringType.GetInterfaces()
@@ -129,6 +134,36 @@ namespace OCore.Entities.Data.Http
             return routesRegistered;
         }
 
+        private static Type FindConcreteGrainType(Type declaringType)
+        {
+            // We have the interface. Let's find the class that actually implements
+            // the grain
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => declaringType.IsAssignableFrom(p)
+                            && p != declaringType
+                            && p.Name.Contains("CodeGen") == false)
+                .Single();
+        }
+
+        private static RoutePattern MapRouteToGrainType(string dataEntityName, string prefix, Type[] interfaces)
+        {
+            RoutePattern routePattern;
+            if (interfaces.Contains(typeof(IGrainWithGuidKey)))
+            {
+                routePattern = RoutePatternFactory.Parse($"{prefix}/{dataEntityName}/{{entityId}}");
+            }
+            else if (interfaces.Contains(typeof(IGrainWithStringKey)))
+            {
+                routePattern = RoutePatternFactory.Parse($"{prefix}/{dataEntityName}/{{entityId}}");
+            }
+            else
+            {
+                throw new InvalidOperationException("I cannot understand which type of grain type this is");
+            }
+
+            return routePattern;
+        }
 
     }
 }

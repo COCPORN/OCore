@@ -12,9 +12,11 @@ namespace OCore.Authorization.Abstractions.Request
 
         public List<string> ApiKeyApplications { get; set; }
 
+        public Guid? OriginalAccountId { get; set; }
+
         public Guid? AccountId { get; set; }
 
-        public bool AccountIdHasBeenProjected { get; set; }
+        public bool AccountIdHasBeenProjected => OriginalAccountId != Guid.Empty;
 
         public string TenantId { get; set; }
 

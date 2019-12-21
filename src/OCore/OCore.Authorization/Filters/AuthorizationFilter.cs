@@ -23,6 +23,7 @@ namespace OCore.Authorization.Filters
 
         public async Task Invoke(IIncomingGrainCallContext context)
         {
+            // TODO: Cache this
             var attributes = context.ImplementationMethod.GetCustomAttributes(true);
             var attribute = attributes.FirstOrDefault(x => x is AuthorizeAttribute) as AuthorizeAttribute;
 
@@ -110,8 +111,8 @@ namespace OCore.Authorization.Filters
                 }
                 else
                 {
-                    payload.AccountId = tenantAccountId;
-                    payload.AccountIdHasBeenProjected = true;
+                    payload.OriginalAccountId = payload.AccountId;
+                    payload.AccountId = tenantAccountId;                    
                     payload.Roles = null;
                 }
             }

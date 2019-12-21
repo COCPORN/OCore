@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Orleans;
 using Orleans.Hosting;
 using OCore.Authorization;
+using OCore.Http.OpenApi;
 
 namespace OCore.DefaultSetup
 {
@@ -27,6 +28,7 @@ namespace OCore.DefaultSetup
             {
                 endpoints.MapServices("services");
                 endpoints.MapDataEntities("data");
+                endpoints.MapOpenApi("api-docs");
             });
         }
 
