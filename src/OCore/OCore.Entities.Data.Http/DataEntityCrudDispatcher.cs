@@ -16,14 +16,17 @@ namespace OCore.Entities.Data.Http
     {        
         DataEntityGrainInvoker invoker;
         IClusterClient clusterClient;
+        Type interfaceType;
 
         public DataEntityCrudDispatcher(IEndpointRouteBuilder routeBuilder, 
             string prefix,
             string dataEntityName,
             KeyStrategy keyStrategy,
+            Type interfaceType,
             Type dataEntityType,
             HttpMethod httpMethod) : base(prefix, dataEntityName, keyStrategy)
         {
+            this.interfaceType = interfaceType;
             MethodInfo methodInfo = null;
             switch (httpMethod)
             {          
@@ -58,7 +61,7 @@ namespace OCore.Entities.Data.Http
             httpContext.RunActionFilters(invoker);
 
             var grainId = GetKey(httpContext);
-            var grain = clusterClient.GetGrain(invoker.GrainType, grainId.Key);
+            var grain = clusterClient.GetGrain(interfaceType, grainId.Key);
             if (grain == null)
             {
                 httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
@@ -72,6 +75,7 @@ namespace OCore.Entities.Data.Http
             string prefix,
             string dataEntityName,
             KeyStrategy keyStrategy,
+            Type interfaceType,
             Type dataEntityType,
             HttpMethod httpMethod)
         {
@@ -79,6 +83,7 @@ namespace OCore.Entities.Data.Http
                 prefix,
                 dataEntityName, 
                 keyStrategy, 
+                interfaceType,
                 dataEntityType, 
                 httpMethod);
         }
