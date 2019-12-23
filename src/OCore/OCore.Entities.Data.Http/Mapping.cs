@@ -65,20 +65,29 @@ namespace OCore.Entities.Data.Http
 
             var dataEntityAttribute = (DataEntityAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(DataEntityAttribute)).SingleOrDefault();
 
+            var keyStrategy = KeyStrategy.Identity;
+
             if (dataEntityAttribute != null)
             {
                 dataEntityName = dataEntityAttribute.Name;
+                keyStrategy = dataEntityAttribute.KeyStrategy;
             }
 
             Type declaringType;
-            (routesRegistered, declaringType) = MapCustomMethods(dataEntityName, routes, prefix, dispatcher, methods, routesRegistered);
+            (routesRegistered, declaringType) = MapCustomMethods(dataEntityName, keyStrategy, routes, prefix, dispatcher, methods, routesRegistered);
 
-            routesRegistered = MapCrudMethods(dataEntityName, declaringType, routes, prefix, dispatcher, routesRegistered);
+            routesRegistered = MapCrudMethods(dataEntityName, declaringType, keyStrategy, routes, prefix, dispatcher, routesRegistered);
 
             return routesRegistered;
         }
 
-        private static (int, Type) MapCustomMethods(string dataEntityName, IEndpointRouteBuilder routes, string prefix, DataEntityRouter dispatcher, System.Reflection.MethodInfo[] methods, int routesRegistered)
+        private static (int, Type) MapCustomMethods(string dataEntityName,
+            KeyStrategy keyStrategy,
+            IEndpointRouteBuilder routes,
+            string prefix,
+            DataEntityRouter dispatcher,
+            MethodInfo[] methods,
+            int routesRegistered)
         {
             Type declaringType = null;
             foreach (var method in methods)
@@ -96,20 +105,11 @@ namespace OCore.Entities.Data.Http
             return (routesRegistered, declaringType);
         }
 
-        private static int MapCrudMethods(string dataEntityName, Type declaringType, IEndpointRouteBuilder routes, string prefix, DataEntityRouter dispatcher, int routesRegistered)
-        {
-            RoutePattern routePattern = null;
-
+        private static int MapCrudMethods(string dataEntityName, Type declaringType, KeyStrategy keyStrategy, IEndpointRouteBuilder routes, string prefix, DataEntityRouter dispatcher, int routesRegistered)
+        {            
             Type concreteGrainType = FindConcreteGrainType(declaringType);
 
             var interfaces = concreteGrainType.GetInterfaces();
-
-            routePattern = MapRouteToGrainType(dataEntityName, prefix, interfaces);
-
-            routes.MapPost(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Post));
-            routes.MapGet(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Get));
-            routes.MapPut(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Put));
-            routes.MapDelete(routePattern.RawText, ctx => dispatcher.DispatchCrudOperation(ctx, HttpMethod.Delete));
 
             var dataEntityType = (
                 from iType in declaringType.GetInterfaces()
@@ -117,20 +117,21 @@ namespace OCore.Entities.Data.Http
                         && iType.GetGenericTypeDefinition() == typeof(IDataEntity<>)
                 select iType.GetGenericArguments()[0]).First();
 
-            var getMethod = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Read");
-            var putMethod = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Upsert");
-            var postMethod = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Create");
-            var deleteMethod = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Delete");
+            void Register(HttpMethod httpMethod) {
+                DataEntityCrudDispatcher.Register(routes, 
+                    prefix, 
+                    dataEntityName, 
+                    keyStrategy, 
+                    dataEntityType, 
+                    httpMethod);
+            }
 
-            var interfaceType = typeof(IDataEntity<>).MakeGenericType(declaringType);
-
-            dispatcher.RegisterCrudRoute($"{routePattern.RawText}:{HttpMethod.Post}", postMethod, declaringType, HttpMethod.Post, interfaceType, dataEntityType);
-            dispatcher.RegisterCrudRoute($"{routePattern.RawText}:{HttpMethod.Get}", getMethod, declaringType, HttpMethod.Get, interfaceType, dataEntityType);
-            dispatcher.RegisterCrudRoute($"{routePattern.RawText}:{HttpMethod.Put}", putMethod, declaringType, HttpMethod.Put, interfaceType, dataEntityType);
-            dispatcher.RegisterCrudRoute($"{routePattern.RawText}:{HttpMethod.Delete}", deleteMethod, declaringType, HttpMethod.Delete, interfaceType, dataEntityType);
+            Register(HttpMethod.Post);
+            Register(HttpMethod.Get);
+            Register(HttpMethod.Put);
+            Register(HttpMethod.Delete);
 
             routesRegistered += 4;
-
             return routesRegistered;
         }
 

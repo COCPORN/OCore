@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities.Data.Http
 {
-    public class DataEntityRouter : Router
+    public class DataEntityRouter 
     {
 
         IClusterClient clusterClient;
@@ -34,17 +34,16 @@ namespace OCore.Entities.Data.Http
 
         public void RegisterCommandRoute(string pattern, MethodInfo methodInfo)
         {
-            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, methodInfo.DeclaringType, methodInfo.DeclaringType, methodInfo, null));
+            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, methodInfo.DeclaringType, methodInfo, null));
         }
 
         public void RegisterCrudRoute(string pattern, 
             MethodInfo methodInfo, 
             Type grainType, 
-            HttpMethod httpMethod, 
-            Type interfaceType,
+            HttpMethod httpMethod,             
             Type entityType)
         {
-            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, grainType, interfaceType, methodInfo, entityType)
+            routes.Add(pattern, new DataEntityGrainInvoker(serviceProvider, grainType, methodInfo, entityType)
             {
                 IsCrudOperation = true,
                 HttpMethod = httpMethod,                
@@ -52,14 +51,13 @@ namespace OCore.Entities.Data.Http
         }
 
         public Task DispatchCustomOperation(HttpContext context)
-        {
-            AddCors(context);
+        {            
             var endpoint = (RouteEndpoint)context.GetEndpoint();
             var pattern = endpoint.RoutePattern;
 
             var invoker = routes[pattern.RawText];
-            RunAuthorizationFilters(context, invoker);
-            RunActionFilters(context, invoker);
+            context.RunAuthorizationFilters(invoker);
+            context.RunActionFilters(invoker);
 
             var getGrainId = GetGrainId(context);
 
@@ -79,16 +77,15 @@ namespace OCore.Entities.Data.Http
         }
 
         public async Task DispatchCrudOperation(HttpContext context, HttpMethod httpMethod)
-        {
-            AddCors(context);
+        {            
             var endpoint = (RouteEndpoint)context.GetEndpoint();
             var pattern = endpoint.RoutePattern;
 
             var invoker = routes[$"{pattern.RawText}:{httpMethod}"];
 
              
-            RunAuthorizationFilters(context, invoker);
-            RunActionFilters(context, invoker);
+            context.RunAuthorizationFilters(invoker);
+            context.RunActionFilters(invoker);
 
             var grainDescriptor = GetGrainId(context);
 

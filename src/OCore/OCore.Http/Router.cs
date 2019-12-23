@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace OCore.Http
 {
-    public abstract class Router
+    public static class RouterExtensions
     {
 
-        protected void RunActionFilters(HttpContext context, GrainInvoker invoker)
+        public static void RunActionFilters(this HttpContext context, GrainInvoker invoker)
         {
             //var actionExecutingContext = new ActionExecutingContext(new ActionContext(context, new RouteData(), new ActionDescriptor(), new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()));
             //{
@@ -35,10 +36,10 @@ namespace OCore.Http
             //}
         }
 
-        Dictionary<MethodInfo, IEnumerable<IAuthorizationFilter>> authorizationFilters = new Dictionary<MethodInfo, IEnumerable<IAuthorizationFilter>>();
-        Dictionary<MethodInfo, IEnumerable<ActionFilterAttribute>> actionFilters = new Dictionary<MethodInfo, IEnumerable<ActionFilterAttribute>>();
+        static ConcurrentDictionary<MethodInfo, IEnumerable<IAuthorizationFilter>> authorizationFilters = new ConcurrentDictionary<MethodInfo, IEnumerable<IAuthorizationFilter>>();
+        static ConcurrentDictionary<MethodInfo, IEnumerable<ActionFilterAttribute>> actionFilters = new ConcurrentDictionary<MethodInfo, IEnumerable<ActionFilterAttribute>>();
 
-        protected void RunAuthorizationFilters(HttpContext context, GrainInvoker invoker)
+        public static void RunAuthorizationFilters(this HttpContext context, GrainInvoker invoker)
         {
             var actionContext = new ActionContext(context, new RouteData(), new ActionDescriptor());
             var authorizationFilterContext = new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
@@ -53,34 +54,17 @@ namespace OCore.Http
                 filters = attributes
                     .Where(x => x is IAuthorizationFilter)
                     .Select(x => x as IAuthorizationFilter);
-                authorizationFilters.Add(invoker.MethodInfo, filters);
+                authorizationFilters.AddOrUpdate(invoker.MethodInfo, filters, (key, oldvalue) => filters);
                 RunAuthorizationFilters(authorizationFilterContext, filters);
             }
         }
 
-        private void RunAuthorizationFilters(AuthorizationFilterContext authorizationFilterContext, IEnumerable<IAuthorizationFilter> filters)
+        private static void RunAuthorizationFilters(this AuthorizationFilterContext authorizationFilterContext, IEnumerable<IAuthorizationFilter> filters)
         {
             foreach (var filter in filters)
             {
                 filter.OnAuthorization(authorizationFilterContext);
             }
         }
-
-        public Task Cors(HttpContext context)
-        {
-            AddCors(context);
-            context.Response.Headers.Add("Connection", "keep-alive");
-
-            return Task.CompletedTask;
-        }
-
-        protected void AddCors(HttpContext context)
-        {
-            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            context.Response.Headers.Add("Access-Control-Allow-Methods", "POST");
-            context.Response.Headers.Add("Access-Control-Allow-Headers", "content-type");
-        }
-
-
     }
 }

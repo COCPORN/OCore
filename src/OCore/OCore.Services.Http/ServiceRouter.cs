@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Services.Http
 {
-    public class ServiceRouter : Router
+    public class ServiceRouter 
     {
         IClusterClient clusterClient;
         IServiceProvider serviceProvider;
@@ -47,14 +47,13 @@ namespace OCore.Services.Http
         }
 
         public Task Dispatch(HttpContext context)
-        {
-            AddCors(context);
+        {            
             var endpoint = (RouteEndpoint)context.GetEndpoint();
             var pattern = endpoint.RoutePattern;
 
             var invoker = routes[pattern.RawText];
-            RunAuthorizationFilters(context, invoker);
-            RunActionFilters(context, invoker);
+            context.RunAuthorizationFilters(invoker);
+            context.RunActionFilters(invoker);
 
             var grain = clusterClient.GetGrain(invoker.GrainType, 0);
             if (grain == null)

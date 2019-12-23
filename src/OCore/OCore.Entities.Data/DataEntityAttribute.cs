@@ -9,10 +9,10 @@ namespace OCore.Entities.Data
         /// <summary>
         /// The DataEntity will be universally available to anyone who knows the key
         /// </summary>
-        None,
+        Identity,
 
         /// <summary>
-        /// The DataEntity will be bound to the account Id
+        /// The DataEntity will be bound to the account Id (blah.com/data/userconfiguration)
         /// </summary>
         Account,
 
@@ -71,7 +71,7 @@ namespace OCore.Entities.Data
 
         public KeyStrategy KeyStrategy { get; private set; }
 
-        public DataEntityAttribute(string entityName, KeyStrategy keyStrategy = KeyStrategy.None)
+        public DataEntityAttribute(string entityName, KeyStrategy keyStrategy = KeyStrategy.Identity)
         {
             Name = entityName;
             KeyStrategy = KeyStrategy;

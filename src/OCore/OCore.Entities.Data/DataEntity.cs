@@ -3,39 +3,23 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities.Data
 {
-    
+
     public class DataEntity<T> : Entity<T>, IDataEntity<T> where T : new()
     {
- 
-        public Task Create(T data)
+        public virtual Task Create(T data)
         {
             if (Created == false)
             {
                 State = data;
                 return WriteStateAsync();
-            } else
+            }
+            else
             {
                 throw new InvalidOperationException("DataEntity is already created");
             }
         }
 
-        //public async Task<OperationResponse> PerformOperation(OperationRequest request)
-        //{
-        //    switch (request.Operation)
-        //    {
-        //        case Operation.Create:
-        //            await Create((T)request.Payload);
-        //            return new OperationResponse { };
-        //        case Operation.Delete:
-        //            await Delete();
-        //            return new OperationResponse { };
-        //        case Operation.Read:
-        //            var response = await Read();
-        //            return new OperationResponse { Payload = response };
-        //    }
-        //}
-
-        public Task<T> Read()
+        public virtual Task<T> Read()
         {
             if (Created == true)
             {
@@ -47,7 +31,7 @@ namespace OCore.Entities.Data
             }
         }
 
-        public Task Update(T data)
+        public virtual Task Update(T data)
         {
             if (Created == true)
             {
@@ -60,7 +44,7 @@ namespace OCore.Entities.Data
             }
         }
 
-        public Task Upsert(T data)
+        public virtual Task Upsert(T data)
         {
             State = (T)data;
             return WriteStateAsync();
@@ -70,8 +54,9 @@ namespace OCore.Entities.Data
         {
             if (Created == true)
             {
-                return base.Delete();
-            } else
+                return Delete();
+            }
+            else
             {
                 throw new InvalidOperationException("DataEntity not created");
             }

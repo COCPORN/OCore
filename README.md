@@ -17,11 +17,18 @@ Features (partially to come, look at this as a TODO list in no particular order)
 - Rich entities (Grain subclassing to add more information in backing store)
     - Collection querying (for select backends)
 - Data entities
+    - Key strategies
+        - Identity
+        - Tenant
+        - Prefixed
+        - Combined (as in Guid combine)
+        - Sorted
     - HTTP exposure
     - Auto CRUD
     - Subscription over SignalR
     - Identity access control (automap authentication token to account id)
     - Sandboxing ("sandbox on account ID", etc)
+    - Projected data entities (customer profile should become "contact", for instance)
 - Audited entities
 - Data polling
 - Idempotent actions

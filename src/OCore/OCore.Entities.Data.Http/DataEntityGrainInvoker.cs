@@ -23,7 +23,7 @@ namespace OCore.Entities.Data.Http
     {
         Type entityType;
 
-        public DataEntityGrainInvoker(IServiceProvider serviceProvider, Type grainType, Type interfaceType, MethodInfo methodInfo, Type entityType) :
+        public DataEntityGrainInvoker(IServiceProvider serviceProvider, Type grainType, MethodInfo methodInfo, Type entityType) :
             base(serviceProvider, grainType, methodInfo)
         {
             this.entityType = entityType;

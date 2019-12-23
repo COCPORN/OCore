@@ -63,8 +63,7 @@ namespace OCore.Services.Http
                 if (internalAttribute != null) continue;
 
                 var routePattern = RoutePatternFactory.Parse($"{prefix}/{serviceAttribute.Name}/{method.Name}");
-                var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);
-                var cors = routes.MapMethods(routePattern.RawText, new string[] { "OPTIONS" }, dispatcher.Cors);
+                var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);                
 
                 dispatcher.RegisterRoute(routePattern.RawText, method);    
                               
