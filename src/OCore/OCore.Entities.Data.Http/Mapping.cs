@@ -115,17 +115,14 @@ namespace OCore.Entities.Data.Http
                 from iType in declaringType.GetInterfaces()
                 where iType.IsGenericType
                         && iType.GetGenericTypeDefinition() == typeof(IDataEntity<>)
-                select iType.GetGenericArguments()[0]).First();
-
-            var interfaceType = typeof(IDataEntity<>).MakeGenericType(declaringType);
+                select iType.GetGenericArguments()[0]).First();            
 
             void Register(HttpMethod httpMethod) {
                 DataEntityCrudDispatcher.Register(routes, 
                     prefix, 
                     dataEntityName, 
                     keyStrategy, 
-                    declaringType,
-                    interfaceType,
+                    declaringType,                    
                     dataEntityType, 
                     httpMethod);
             }

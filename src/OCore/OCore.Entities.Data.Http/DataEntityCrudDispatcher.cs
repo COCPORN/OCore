@@ -15,8 +15,7 @@ namespace OCore.Entities.Data.Http
     public class DataEntityCrudDispatcher : DataEntityDispatcher
     {        
         DataEntityGrainInvoker invoker;
-        IClusterClient clusterClient;
-        Type interfaceType;
+        IClusterClient clusterClient;        
         Type grainType;
 
         public DataEntityCrudDispatcher(IEndpointRouteBuilder routeBuilder, 
@@ -24,11 +23,9 @@ namespace OCore.Entities.Data.Http
             string dataEntityName,
             KeyStrategy keyStrategy,
             Type grainType,
-            Type interfaceType,
             Type dataEntityType,
             HttpMethod httpMethod) : base(prefix, dataEntityName, keyStrategy)
-        {
-            this.interfaceType = interfaceType;
+        {            
             this.grainType = grainType;
             MethodInfo methodInfo = null;
             switch (httpMethod)
@@ -79,7 +76,6 @@ namespace OCore.Entities.Data.Http
             string dataEntityName,
             KeyStrategy keyStrategy,
             Type grainType,
-            Type interfaceType,
             Type dataEntityType,
             HttpMethod httpMethod)
         {
@@ -87,8 +83,7 @@ namespace OCore.Entities.Data.Http
                 prefix,
                 dataEntityName, 
                 keyStrategy, 
-                grainType,
-                interfaceType,
+                grainType,                
                 dataEntityType, 
                 httpMethod);
         }
