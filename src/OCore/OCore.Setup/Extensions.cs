@@ -18,8 +18,7 @@ namespace OCore.DefaultSetup
         public static IServiceCollection AddDefaultOCore(this IServiceCollection serviceCollection)
         {
             return serviceCollection
-                .AddServiceRouter()
-                .AddDataEntityRouter();
+                .AddServiceRouter();
         }
 
         public static void UseDefaultOCore(this IApplicationBuilder app)
