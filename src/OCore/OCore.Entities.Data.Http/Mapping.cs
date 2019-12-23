@@ -124,6 +124,7 @@ namespace OCore.Entities.Data.Http
                     prefix, 
                     dataEntityName, 
                     keyStrategy, 
+                    declaringType,
                     interfaceType,
                     dataEntityType, 
                     httpMethod);

@@ -17,16 +17,19 @@ namespace OCore.Entities.Data.Http
         DataEntityGrainInvoker invoker;
         IClusterClient clusterClient;
         Type interfaceType;
+        Type grainType;
 
         public DataEntityCrudDispatcher(IEndpointRouteBuilder routeBuilder, 
             string prefix,
             string dataEntityName,
             KeyStrategy keyStrategy,
+            Type grainType,
             Type interfaceType,
             Type dataEntityType,
             HttpMethod httpMethod) : base(prefix, dataEntityName, keyStrategy)
         {
             this.interfaceType = interfaceType;
+            this.grainType = grainType;
             MethodInfo methodInfo = null;
             switch (httpMethod)
             {          
@@ -47,7 +50,7 @@ namespace OCore.Entities.Data.Http
                     methodInfo = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Upsert");
                     break;
             }
-            invoker = new DataEntityGrainInvoker(routeBuilder.ServiceProvider, methodInfo.DeclaringType, methodInfo, dataEntityType)
+            invoker = new DataEntityGrainInvoker(routeBuilder.ServiceProvider, grainType, methodInfo, dataEntityType)
                         {
                             IsCrudOperation = true,
                             HttpMethod = httpMethod,
@@ -61,7 +64,7 @@ namespace OCore.Entities.Data.Http
             httpContext.RunActionFilters(invoker);
 
             var grainId = GetKey(httpContext);
-            var grain = clusterClient.GetGrain(interfaceType, grainId.Key);
+            var grain = clusterClient.GetGrain(grainType, grainId.Key);
             if (grain == null)
             {
                 httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
@@ -75,6 +78,7 @@ namespace OCore.Entities.Data.Http
             string prefix,
             string dataEntityName,
             KeyStrategy keyStrategy,
+            Type grainType,
             Type interfaceType,
             Type dataEntityType,
             HttpMethod httpMethod)
@@ -83,6 +87,7 @@ namespace OCore.Entities.Data.Http
                 prefix,
                 dataEntityName, 
                 keyStrategy, 
+                grainType,
                 interfaceType,
                 dataEntityType, 
                 httpMethod);
