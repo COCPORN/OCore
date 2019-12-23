@@ -9,10 +9,10 @@ namespace OCore.Entities.Data.Http
     public static class Extensions
     {
 
+        // TODO: Remove
         public static IServiceCollection AddDataEntityRouter(this IServiceCollection services)
         {
-            return services
-                .AddSingleton<DataEntityRouter>();
+            return services;
         }
     }
 }
