@@ -10,6 +10,9 @@ using OCore.Http;
 using Orleans;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
+using OCore.Authorization.Abstractions.Request;
+using OCore.Authorization;
+using OCore.Authorization.Abstractions;
 
 namespace OCore.Entities.Data.Http
 {
@@ -17,6 +20,7 @@ namespace OCore.Entities.Data.Http
     {
         DataEntityGrainInvoker invoker;
         IClusterClient clusterClient;
+        IPayloadCompleter payloadCompleter;
         Type grainType;
         HttpMethod httpMethod;
 
@@ -26,11 +30,13 @@ namespace OCore.Entities.Data.Http
             KeyStrategy keyStrategy,
             Type grainType,
             Type dataEntityType,
+            IPayloadCompleter payloadCompleter,
             HttpMethod httpMethod) : base(prefix, dataEntityName, keyStrategy)
         {
             this.grainType = grainType;
             MethodInfo methodInfo = null;
             this.httpMethod = httpMethod;
+            this.payloadCompleter = payloadCompleter;
             switch (httpMethod)
             {
                 case HttpMethod.Post:
@@ -62,8 +68,15 @@ namespace OCore.Entities.Data.Http
         {
             try
             {
+                //httpContext.RunAuthorizationFilters(invoker.MethodInfo.DeclaringType);
                 httpContext.RunAuthorizationFilters(invoker);
                 httpContext.RunActionFilters(invoker);
+
+                var payload = Payload.GetOrDefault();
+                if (payload != null)
+                {
+                    await payloadCompleter.Complete(payload, clusterClient);
+                }
 
                 var grainId = GetKey(httpContext);
                 var grain = clusterClient.GetGrain(grainType, grainId.Key);
@@ -103,6 +116,7 @@ namespace OCore.Entities.Data.Http
             KeyStrategy keyStrategy,
             Type grainType,
             Type dataEntityType,
+            IPayloadCompleter payloadCompleter,
             HttpMethod httpMethod)
         {
             return new DataEntityCrudDispatcher(routeBuilder,
@@ -111,6 +125,7 @@ namespace OCore.Entities.Data.Http
                 keyStrategy,
                 grainType,
                 dataEntityType,
+                payloadCompleter,
                 httpMethod);
         }
 

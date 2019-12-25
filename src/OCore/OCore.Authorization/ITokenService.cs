@@ -1,4 +1,5 @@
-﻿using OCore.Services;
+﻿using OCore.Authorization.Abstractions;
+using OCore.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,6 +13,7 @@ namespace OCore.Authorization
         [Authorize]
         Task AddToken(Guid token, Guid account);
 
+        [Authorize(permissions: Permissions.None)]
         Task<Guid> GetAccount(Guid token);
     }
 }

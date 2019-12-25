@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj" />
     <ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
     <ProjectReference Include="..\OCore.Http\OCore.Http.csproj" />    
   </ItemGroup>

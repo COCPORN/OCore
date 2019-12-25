@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
+using OCore.Authorization.Abstractions.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace OCore.Entities.Data.Http
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{identity}}{methodPostfix}");
                 default:
                     throw new InvalidOperationException("Unknown key strategy");
-            }            
+            }
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace OCore.Entities.Data.Http
                 case KeyStrategy.Identity:
                     return new GrainKey
                     {
-                        Key = context.Request.RouteValues["identity"].ToString(),
+                        Key = GetIdentityFromRoute(context),
                         IsFanable = true
                     };
                 case KeyStrategy.Global:
@@ -82,8 +83,72 @@ namespace OCore.Entities.Data.Http
                         Key = "Global",
                         IsFanable = false
                     };
+                case KeyStrategy.Account:
+                    return new GrainKey
+                    {
+                        Key = GetOriginalAccount(),
+                        IsFanable = false
+                    };
+                case KeyStrategy.AccountPrefix:
+                    return new GrainKey
+                    {
+                        Key = $"{GetOriginalAccount()}:{GetIdentityFromRoute(context)}",
+                        IsFanable = true
+                    };
+                case KeyStrategy.ApiKeyTenant:
+                    return new GrainKey
+                    {
+                        Key = $"{GetTenantIdFromApiKey()}",
+                        IsFanable = false
+                    };
             }
             return null;
+
+        }
+
+        private string GetTenantIdFromApiKey()
+        {
+            var payload = Payload.Get();
+            if (payload.ApiKey != Guid.Empty)
+            {
+                if (string.IsNullOrEmpty(payload.TenantId) == false)
+                {
+                    return payload.TenantId;
+                } else
+                {
+                    throw new UnauthorizedAccessException("Tenant ID is not set");
+                }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Payload is missing API key");
+            }
+        }
+
+        private static string GetIdentityFromRoute(HttpContext context)
+        {
+            return context.Request.RouteValues["identity"].ToString();
+        }
+
+        private string GetOriginalAccount()
+        {
+            var payload = Payload.Get();
+            if (payload.AccountIdHasBeenProjected == true)
+            {
+                return payload.OriginalAccountId.ToString();
+            }
+            else
+            {
+                if (payload.AccountId == null)
+                {
+                    throw new UnauthorizedAccessException("There is no account id in the payload");
+                }
+                else
+                {
+                    return payload.AccountId.ToString();
+                }
+            }
+
         }
 
     }

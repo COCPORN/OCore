@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
+using OCore.Authorization.Abstractions;
 using OCore.Authorization.Abstractions.Request;
 using Orleans.Runtime;
 using System;
@@ -7,71 +8,25 @@ using System.Linq;
 
 namespace OCore.Authorization
 {
-    [Flags]
-    public enum Requirements
-    {
-        /// <summary>
-        /// This end-point is open, use with caution
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// This end-point needs a token, meaning that a normal login account will suffice
-        /// </summary>
-        Token = 1,
-
-        /// <summary>
-        /// TODO: Where do we use this?
-        /// I am not sure when we only use Tenant 
-        /// </summary>
-        Tenant = 2,
-
-        /// <summary>        
-        /// This end-point needs a <i>projected</i> account, meaning that the accound needs 
-        /// to be registered with the relevant tenant
-        /// </summary>
-        TokenAndTenant = Token | Tenant,
-
-        /// <summary>
-        /// API keys are linked to tenants, so the tenant is implicit
-        /// </summary>
-        ApiKey = 4, // An API key is always only valid for a tenant,
-
-        /// <summary>
-        /// <i>Either</i> supply an API-key <i>or</i> a Token + Tenant
-        /// </summary>
-        ApiKeyOrTokenAndTenant = 8,
-    }
-
-    [Flags]
-    public enum Permissions
-    {
-        None = 0,
-        Read = 1,
-        Write = 2,
-        ReadWrite = Read | Write,
-        All = ReadWrite
-    }
-
-
-    [AttributeUsage(AttributeTargets.Method,
-                   AllowMultiple = false,
-                   Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method
+            | AttributeTargets.Class
+            | AttributeTargets.Interface,
+                       AllowMultiple = false,
+                       Inherited = true)]
     public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     {
         AuthorizeOptions options;
-
 
         public AuthorizeAttribute(Permissions permissions = Permissions.All,
             Requirements requirements = Requirements.ApiKeyOrTokenAndTenant,
             bool allowElevatedRequests = true,
             bool elevateRequest = true)
-        {            
+        {
             Permissions = permissions;
             Requirements = requirements;
             AllowElevatedRequests = allowElevatedRequests;
             ElevateRequest = elevateRequest;
-      
+
             // Get these from options, somehow
             this.options = new AuthorizeOptions
             {
@@ -91,8 +46,17 @@ namespace OCore.Authorization
         public bool ElevateRequest { get; private set; }
 
         public void OnAuthorization(AuthorizationFilterContext context)
-        {            
+        {
             var requestPayload = new Payload { };
+
+            // There is now a way to set permissions and requirements
+            // on a boundary that is outside the cluster. Therefore we
+            // need to carry these forward, and make sure they are checked in
+            // the incoming grain call filter when it is first hit, regardless
+            // of whether there is an authorization attribute added to the method
+            // that is hit.
+            requestPayload.InitialPermissions = Permissions;
+            requestPayload.InitialRequirements = Requirements;
 
             if (Guid.TryParse(context.HttpContext.Request.Headers[options.TokenHeader], out var token))
             {
@@ -109,7 +73,7 @@ namespace OCore.Authorization
                 throw new InvalidOperationException("Both authtoken and apikey provided, please provide one or the other");
             }
 
-            if (context.HttpContext.Request.Headers.TryGetValue(options.TokenHeader, out var t))
+            if (context.HttpContext.Request.Headers.TryGetValue(options.TenantHeader, out var t))
             {
                 requestPayload.TenantId = t.FirstOrDefault();
             }
@@ -119,8 +83,8 @@ namespace OCore.Authorization
                 throw new InvalidOperationException("Apikey present with tenant ID, please provide either an apikey or authorizationtoken + tenantId");
             }
 
-            if (Requirements != Requirements.None 
-                && requestPayload.ApiKey == Guid.Empty 
+            if (Requirements != Requirements.None
+                && requestPayload.ApiKey == Guid.Empty
                 && requestPayload.Token == Guid.Empty)
             {
                 throw new UnauthorizedAccessException("Provide either API key or token");

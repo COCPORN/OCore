@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using OCore.Authorization.Abstractions;
 using OCore.Authorization.Abstractions.Request;
 using Orleans;
 using Orleans.Runtime;
@@ -13,63 +14,86 @@ namespace OCore.Authorization.Filters
     public class AuthorizationFilter : IIncomingGrainCallFilter
     {
         IGrainFactory grainFactory;
+        IClusterClient clusterClient;
         readonly ILogger<AuthorizationFilter> logger;
+        IPayloadCompleter payloadCompleter;
 
-        public AuthorizationFilter(IGrainFactory grainFactory, ILogger<AuthorizationFilter> logger)
+        public AuthorizationFilter(IGrainFactory grainFactory,
+            IClusterClient clusterClient,
+            IPayloadCompleter payloadCompleter,
+            ILogger<AuthorizationFilter> logger)
         {
             this.grainFactory = grainFactory;
+            this.clusterClient = clusterClient;
+            this.payloadCompleter = payloadCompleter;
             this.logger = logger;
         }
 
         public async Task Invoke(IIncomingGrainCallContext context)
         {
-            // TODO: Cache this
             var attributes = context.ImplementationMethod.GetCustomAttributes(true);
             var attribute = attributes.FirstOrDefault(x => x is AuthorizeAttribute) as AuthorizeAttribute;
 
-            if (attribute != null && attribute.Requirements != Requirements.None)
+            if (attribute == null || attribute.Requirements == Requirements.None)
             {
-                if (RequestContext.Get("I") is Payload payload)
-                {
-                    // Check to see if request is elevated and elevation is allowed
-                    if (attribute.AllowElevatedRequests == false
-                        || payload.IsRequestElevated == false)
-                    {
-                        if (CheckApiKeyRequirement(attribute) || CheckApiKeyAndTokenAndTenantRequirement(attribute))
-                        {
-                            if (payload.ApiKey != Guid.Empty)
-                            {
-                                await CheckApiKey(attribute.ResourceName, payload);
-                            }
-                            else
-                            {
-                                await CheckTokenAndTenant(context, attribute, payload);
-                            }
-                        }
-                        else
-                        {
-                            await CheckTokenAndTenant(context, attribute, payload);
-                        }
-                    }
-
-                    // Elevate request if it is requested
-                    if (attribute.ElevateRequest == true)
-                    {
-                        payload.IsRequestElevated = true;
-                    }
-                }
-                else
-                {
-                    throw new UnauthorizedAccessException("Resource requires authorization but context was not supplied with an authorization payload");
-                }
+                await context.Invoke();
+                return;
             }
+
+            var payload = Payload.GetOrDefault();
+
+            if (payload == null)
+            {
+                return;
+            }
+
+            await payloadCompleter.Complete(payload, clusterClient);
+
+            // TODO: Cache this
+            //var attributes = context.ImplementationMethod.GetCustomAttributes(true);
+            //var attribute = attributes.FirstOrDefault(x => x is AuthorizeAttribute) as AuthorizeAttribute;
+
+            //if (attribute != null && attribute.Requirements != Requirements.None)
+            //{
+
+            //    // Check to see if request is elevated and elevation is allowed
+            //    if (attribute.AllowElevatedRequests == false
+            //        || payload.IsRequestElevated == false)
+            //    {
+            //        if (CheckApiKeyRequirement(attribute) || CheckApiKeyAndTokenAndTenantRequirement(attribute))
+            //        {
+            //            if (payload.ApiKey != Guid.Empty)
+            //            {
+            //                await CheckApiKey(attribute.ResourceName, payload);
+            //            }
+            //            else
+            //            {
+            //                await CheckTokenAndTenant(context, attribute, payload);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            await CheckTokenAndTenant(context, attribute, payload);
+            //        }
+            //    }
+
+            //    if (attribute.ElevateRequest == true)
+            //    {
+            //        payload.IsRequestElevated = true;
+            //    }
+            //}
+            //else
+            //{
+            //    throw new UnauthorizedAccessException("Resource requires authorization but context was not supplied with an authorization payload");
+            //}
+
 
             await context.Invoke();
         }
 
         private async Task CheckTokenAndTenant(IIncomingGrainCallContext context, AuthorizeAttribute attribute, Payload payload)
         {
-            await GetIdentity(payload);
+            //await GetIdentity(payload);
             await CheckTenancy(attribute, payload);
             await GetRolesForAccount(payload);
             await CheckRoles(attribute, context, payload);
@@ -104,7 +128,7 @@ namespace OCore.Authorization.Filters
                 var tenantService = grainFactory.GetGrain<ITenantService>(0);
 
                 var tenantAccountId = await tenantService.GetTenantAccount(payload.AccountId.Value);
-                
+
                 if (tenantAccountId == Guid.Empty)
                 {
                     throw new UnauthorizedAccessException("Invalid tenancy");
@@ -112,7 +136,7 @@ namespace OCore.Authorization.Filters
                 else
                 {
                     payload.OriginalAccountId = payload.AccountId;
-                    payload.AccountId = tenantAccountId;                    
+                    payload.AccountId = tenantAccountId;
                     payload.Roles = null;
                 }
             }
@@ -178,23 +202,6 @@ namespace OCore.Authorization.Filters
             }
         }
 
-        private async Task GetIdentity(Payload payload)
-        {
-            if (payload.AccountId != null)
-            {
-                return;
-            }
-
-            var tokenService = grainFactory.GetGrain<ITokenService>(0);
-
-            payload.AccountId = await tokenService.GetAccount(payload.Token);
-            
-            if (!payload.AccountId.HasValue)
-            {
-                throw new UnauthorizedAccessException("Invalid token");
-            }
-        }
-
         async Task GetRolesForAccount(Payload payload)
         {
             if (payload.Roles != null)
@@ -203,7 +210,7 @@ namespace OCore.Authorization.Filters
             }
 
             var roleService = grainFactory.GetGrain<IRoleService>(0);
-            payload.Roles = await roleService.GetRoles(payload.AccountId.Value);            
+            payload.Roles = await roleService.GetRoles(payload.AccountId.Value);
         }
 
 

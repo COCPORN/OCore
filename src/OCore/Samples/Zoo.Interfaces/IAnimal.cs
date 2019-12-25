@@ -1,4 +1,5 @@
-﻿using OCore.Entities.Data;
+﻿using OCore.Authorization;
+using OCore.Entities.Data;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Zoo.Interfaces
 
         public string Noise { get; set; }
     }
-
+    
     [DataEntity("Animal")]
     public interface IAnimal : IDataEntity<Animal>
     {

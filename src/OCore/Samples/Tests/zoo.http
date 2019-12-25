@@ -65,3 +65,5 @@ POST http://localhost:9000/data/Menu
 ### Test global methods
 POST http://localhost:9000/data/Menu/Totals
 
+### Let's look at my account!
+GET http://localhost:9000/data/AnimalAccount

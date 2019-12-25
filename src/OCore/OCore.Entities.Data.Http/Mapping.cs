@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Builder;
 using System.Reflection;
 using Orleans.Runtime;
+using OCore.Authorization.Abstractions;
 
 namespace OCore.Entities.Data.Http
 {
@@ -19,6 +20,7 @@ namespace OCore.Entities.Data.Http
         public static IEndpointRouteBuilder MapDataEntities(this IEndpointRouteBuilder routes, string prefix = "")
         {                        
             var appPartsMgr = routes.ServiceProvider.GetRequiredService<IApplicationPartManager>();
+            var payloadCompleter = routes.ServiceProvider.GetRequiredService<IPayloadCompleter>();
 
             var grainInterfaceFeature = appPartsMgr.CreateAndPopulateFeature<GrainInterfaceFeature>();
 
@@ -28,7 +30,7 @@ namespace OCore.Entities.Data.Http
             // Map each grain type to a route based on the attributes
             foreach (var serviceType in dataEntitiesToMap)
             {
-                routesCreated += MapDataEntityToRoute(routes, serviceType, prefix);
+                routesCreated += MapDataEntityToRoute(routes, serviceType, prefix, payloadCompleter);
             }
             
             return routes;
@@ -51,7 +53,7 @@ namespace OCore.Entities.Data.Http
             return grainTypesToMap;
         }
 
-        private static int MapDataEntityToRoute(IEndpointRouteBuilder routes, Type grainType, string prefix)
+        private static int MapDataEntityToRoute(IEndpointRouteBuilder routes, Type grainType, string prefix, IPayloadCompleter payloadCompleter)
         {            
             var methods = grainType.GetMethods();
             int routesRegistered = 0;
@@ -68,8 +70,8 @@ namespace OCore.Entities.Data.Http
                 keyStrategy = dataEntityAttribute.KeyStrategy;
             }
             
-            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, prefix, methods, routesRegistered);
-            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, routes, prefix, routesRegistered);
+            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, payloadCompleter, prefix, methods, routesRegistered);
+            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, routes, payloadCompleter, prefix, routesRegistered);
 
             return routesRegistered;
         }
@@ -77,6 +79,7 @@ namespace OCore.Entities.Data.Http
         private static int MapCustomMethods(string dataEntityName,
             KeyStrategy keyStrategy,
             IEndpointRouteBuilder routeBuilder,
+            IPayloadCompleter payloadCompleter,
             string prefix,            
             MethodInfo[] methods,
             int routesRegistered)
@@ -100,6 +103,7 @@ namespace OCore.Entities.Data.Http
             Type declaringType, 
             KeyStrategy keyStrategy, 
             IEndpointRouteBuilder routeBuilder, 
+            IPayloadCompleter payloadCompleter,
             string prefix,             
             int routesRegistered)
         {            
@@ -116,6 +120,7 @@ namespace OCore.Entities.Data.Http
                     keyStrategy,
                     declaringType,                    
                     dataEntityType, 
+                    payloadCompleter,
                     httpMethod);
             }
 

@@ -50,7 +50,8 @@ namespace OCore.Http
             }
             else
             {
-                var attributes = invoker.MethodInfo.GetCustomAttributes(true);
+                var attributes = invoker.MethodInfo.GetCustomAttributes(true)
+                    .Concat(invoker.GrainType.GetCustomAttributes(true));
                 filters = attributes
                     .Where(x => x is IAuthorizationFilter)
                     .Select(x => x as IAuthorizationFilter);

@@ -1,11 +1,24 @@
 ﻿using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OCore.Authorization.Abstractions.Request
 {
     public class Payload
     {
+        public bool IsInitialStateSatisfied { get; set; }
+
+        public Permissions InitialPermissions { get; set; }
+
+        public Requirements InitialRequirements { get; set; }
+
+        public bool AllowElevatedRequests { get; set; }
+
+        public bool ElevateRequest { get; set; }
+
+        public bool IsCompleted { get; set; }        
+
         public Guid Token { get; set; }
 
         public Guid ApiKey { get; set; }
@@ -16,7 +29,9 @@ namespace OCore.Authorization.Abstractions.Request
 
         public Guid? AccountId { get; set; }
 
-        public bool AccountIdHasBeenProjected => OriginalAccountId != Guid.Empty;
+        public bool AccountIdHasBeenProjected => 
+            OriginalAccountId.HasValue == true
+            && OriginalAccountId.Value != Guid.Empty;
 
         public string TenantId { get; set; }
 
