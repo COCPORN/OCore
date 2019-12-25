@@ -67,23 +67,20 @@ namespace OCore.Entities.Data.Http
                 dataEntityName = dataEntityAttribute.Name;
                 keyStrategy = dataEntityAttribute.KeyStrategy;
             }
-
-            Type declaringType;
-            (routesRegistered, declaringType) = MapCustomMethods(dataEntityName, keyStrategy, routes, prefix, methods, routesRegistered);
-
-            routesRegistered = MapCrudMethods(dataEntityName, declaringType, keyStrategy, routes, prefix, routesRegistered);
+            
+            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, prefix, methods, routesRegistered);
+            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, routes, prefix, routesRegistered);
 
             return routesRegistered;
         }
 
-        private static (int, Type) MapCustomMethods(string dataEntityName,
+        private static int MapCustomMethods(string dataEntityName,
             KeyStrategy keyStrategy,
             IEndpointRouteBuilder routeBuilder,
             string prefix,            
             MethodInfo[] methods,
             int routesRegistered)
-        {
-            Type declaringType = null;
+        {           
             foreach (var method in methods)
             {
                 DataEntityMethodDispatcher.Register(routeBuilder, 
@@ -93,11 +90,10 @@ namespace OCore.Entities.Data.Http
                     method.DeclaringType,
                     method);
 
-                routesRegistered++;
-                declaringType = method.DeclaringType;
+                routesRegistered++;         
             }
 
-            return (routesRegistered, declaringType);
+            return routesRegistered;
         }
 
         private static int MapCrudMethods(string dataEntityName, 

@@ -9,27 +9,30 @@ using System.Threading.Tasks;
 using OCore.Http;
 using Orleans;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
 namespace OCore.Entities.Data.Http
 {
     public class DataEntityCrudDispatcher : DataEntityDispatcher
-    {        
+    {
         DataEntityGrainInvoker invoker;
-        IClusterClient clusterClient;        
+        IClusterClient clusterClient;
         Type grainType;
+        HttpMethod httpMethod;
 
-        public DataEntityCrudDispatcher(IEndpointRouteBuilder routeBuilder, 
+        public DataEntityCrudDispatcher(IEndpointRouteBuilder routeBuilder,
             string prefix,
             string dataEntityName,
             KeyStrategy keyStrategy,
             Type grainType,
             Type dataEntityType,
             HttpMethod httpMethod) : base(prefix, dataEntityName, keyStrategy)
-        {            
+        {
             this.grainType = grainType;
             MethodInfo methodInfo = null;
+            this.httpMethod = httpMethod;
             switch (httpMethod)
-            {          
+            {
                 case HttpMethod.Post:
                     routeBuilder.MapPost(GetRoutePattern().RawText, Dispatch);
                     methodInfo = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Create");
@@ -48,27 +51,50 @@ namespace OCore.Entities.Data.Http
                     break;
             }
             invoker = new DataEntityGrainInvoker(routeBuilder.ServiceProvider, grainType, methodInfo, dataEntityType)
-                        {
-                            IsCrudOperation = true,
-                            HttpMethod = httpMethod,
-                        };
+            {
+                IsCrudOperation = true,
+                HttpMethod = httpMethod,
+            };
             clusterClient = routeBuilder.ServiceProvider.GetRequiredService<IClusterClient>();
         }
 
         public async Task Dispatch(HttpContext httpContext)
         {
-            httpContext.RunAuthorizationFilters(invoker);
-            httpContext.RunActionFilters(invoker);
-
-            var grainId = GetKey(httpContext);
-            var grain = clusterClient.GetGrain(grainType, grainId.Key);
-            if (grain == null)
+            try
             {
-                httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
-                return;
-            }
+                httpContext.RunAuthorizationFilters(invoker);
+                httpContext.RunActionFilters(invoker);
 
-            await invoker.Invoke(grain, httpContext);
+                var grainId = GetKey(httpContext);
+                var grain = clusterClient.GetGrain(grainType, grainId.Key);
+                if (grain == null)
+                {
+                    httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                    return;
+                }
+
+                try
+                {
+                    await invoker.Invoke(grain, httpContext);
+                }
+                catch (DataCreationException ex)
+                {
+                    switch (httpMethod)
+                    {
+                        case HttpMethod.Get:
+                        case HttpMethod.Delete:
+                        case HttpMethod.Put:
+                            throw new StatusCodeException(HttpStatusCode.NotFound, ex.Message, ex);
+                        default: 
+                            throw;
+                    }
+                }
+            }
+            catch (StatusCodeException ex)
+            {
+                httpContext.Response.StatusCode = (int)ex.StatusCode;
+                httpContext.Response.Headers.Clear();
+            }
         }
 
         public static DataEntityCrudDispatcher Register(IEndpointRouteBuilder routeBuilder,
@@ -79,12 +105,12 @@ namespace OCore.Entities.Data.Http
             Type dataEntityType,
             HttpMethod httpMethod)
         {
-            return new DataEntityCrudDispatcher(routeBuilder, 
+            return new DataEntityCrudDispatcher(routeBuilder,
                 prefix,
-                dataEntityName, 
-                keyStrategy, 
-                grainType,                
-                dataEntityType, 
+                dataEntityName,
+                keyStrategy,
+                grainType,
+                dataEntityType,
                 httpMethod);
         }
 

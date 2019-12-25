@@ -12,6 +12,11 @@ namespace OCore.Entities.Data
         Identity,
 
         /// <summary>
+        /// The DataEntity will be universally available to all and have an implied ID of "Global".        
+        /// </summary>
+        Global,        
+
+        /// <summary>
         /// The DataEntity will be bound to the account Id (blah.com/data/userconfiguration)
         /// </summary>
         Account,
@@ -74,7 +79,7 @@ namespace OCore.Entities.Data
         public DataEntityAttribute(string entityName, KeyStrategy keyStrategy = KeyStrategy.Identity)
         {
             Name = entityName;
-            KeyStrategy = KeyStrategy;
+            KeyStrategy = keyStrategy;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new InvalidOperationException("DataEntity is already created");
+                throw new DataCreationException("DataEntity is already created");
             }
         }
 
@@ -27,7 +27,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new InvalidOperationException("DataEntity not created");
+                throw new DataCreationException("DataEntity not created");
             }
         }
 
@@ -40,7 +40,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new InvalidOperationException("DataEntity not created");
+                throw new DataCreationException("DataEntity not created");
             }
         }
 
@@ -58,7 +58,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new InvalidOperationException("DataEntity not created");
+                throw new DataCreationException("DataEntity not created");
             }
         }
     }

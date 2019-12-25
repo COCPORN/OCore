@@ -12,7 +12,7 @@ namespace OCore.Entities.Data
 
     }
 
-    public interface IDataEntity<T> : IDataEntity
+    public interface IDataEntity<T> : IDataEntity, IGrainWithStringKey
     {
         /// <summary>
         /// Create new data entity. This call will fail if the entity already exists.

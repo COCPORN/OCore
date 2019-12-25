@@ -17,7 +17,7 @@ namespace Zoo.Interfaces
     }
 
     [DataEntity("Animal")]
-    public interface IAnimal : IDataEntity<Animal>, IGrainWithStringKey
+    public interface IAnimal : IDataEntity<Animal>
     {
         Task<string> MakeNoise(int times = 1);
     }

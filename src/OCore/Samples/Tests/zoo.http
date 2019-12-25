@@ -52,3 +52,14 @@ DELETE http://localhost:9000/data/Animal/Pulio
 ### DataEntity multiget
 GET http://localhost:9000/data/Animal/Julius,Pulio
 
+### Let's look at the menu (global entity)
+GET http://localhost:9000/data/Menu
+
+### Perhaps we should create it first
+
+POST http://localhost:9000/data/Menu
+
+{
+    "FoodItems": [ "Banana", "Cantaloupe" ]
+}
+

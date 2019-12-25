@@ -44,6 +44,8 @@ namespace OCore.Entities.Data.Http
             {
                 case KeyStrategy.Identity:
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{identity}}{methodPostfix}");
+                case KeyStrategy.Global:
+                    return RoutePatternFactory.Parse($"{prefix}{dataEntityName}{methodPostfix}");
             }
             return null;
         }
@@ -61,6 +63,12 @@ namespace OCore.Entities.Data.Http
                     {
                         Key = context.Request.RouteValues["identity"].ToString(),
                         IsFanable = true
+                    };
+                case KeyStrategy.Global:
+                    return new GrainKey
+                    {
+                        Key = "Global",
+                        IsFanable = false
                     };
             }
             return null;
