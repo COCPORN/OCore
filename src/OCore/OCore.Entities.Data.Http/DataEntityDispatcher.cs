@@ -45,9 +45,21 @@ namespace OCore.Entities.Data.Http
                 case KeyStrategy.Identity:
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{identity}}{methodPostfix}");
                 case KeyStrategy.Global:
+                case KeyStrategy.Account:
+                case KeyStrategy.ApiKeyTenant:
+                case KeyStrategy.ProjectedAccount:
+                case KeyStrategy.ProjectedAccountTenant:
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}{methodPostfix}");
-            }
-            return null;
+                case KeyStrategy.AccountPrefix:
+                case KeyStrategy.AccountCombined:
+                case KeyStrategy.ApiKeyTenantPrefix:
+                case KeyStrategy.ProjectedAccountPrefix:
+                case KeyStrategy.ProjectedAccountTenantPrefix:
+                case KeyStrategy.ProjectedAccountCombined:
+                    return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{identity}}{methodPostfix}");
+                default:
+                    throw new InvalidOperationException("Unknown key strategy");
+            }            
         }
 
         /// <summary>
