@@ -56,10 +56,12 @@ GET http://localhost:9000/data/Animal/Julius,Pulio
 GET http://localhost:9000/data/Menu
 
 ### Perhaps we should create it first
-
 POST http://localhost:9000/data/Menu
 
 {
     "FoodItems": [ "Banana", "Cantaloupe" ]
 }
+
+### Test global methods
+POST http://localhost:9000/data/Menu/Totals
 

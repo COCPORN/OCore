@@ -9,5 +9,9 @@ namespace Zoo.Grains
 {
     public class MenuEntity : DataEntity<Menu>, IMenu
     {
+        public Task<int> Totals()
+        {
+            return Task.FromResult(State.FoodItems.Select(x => x.Length).Sum());
+        }
     }
 }

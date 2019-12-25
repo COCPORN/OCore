@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Zoo.Interfaces
 {
@@ -13,6 +14,6 @@ namespace Zoo.Interfaces
     [DataEntity("Menu", KeyStrategy.Global)]
     public interface IMenu: IDataEntity<Menu>
     {
-        
+        Task<int> Totals();
     }
 }
