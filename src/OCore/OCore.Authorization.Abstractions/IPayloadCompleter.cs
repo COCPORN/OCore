@@ -9,6 +9,17 @@ namespace OCore.Authorization.Abstractions
 {
     public interface IPayloadCompleter
     {
-        Task Complete(Payload payload, IClusterClient clusterClient);
+        Task Complete(Payload payload, 
+            IClusterClient clusterClient
+            );
+
+        Task CheckInitialState(Payload payload,
+            IClusterClient clusterClient);
+
+        Task CheckFor(Payload payload,
+            IClusterClient clusterClient,
+            Permissions permissions,
+            Requirements requirements,
+            bool allowElevatedRequests = true);
     }
 }

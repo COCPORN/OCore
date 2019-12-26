@@ -23,16 +23,31 @@ namespace OCore.Authorization
         /// <param name="payload"></param>
         /// <param name="clusterClient"></param>
         /// <returns></returns>
-        public async Task Complete(Payload payload, IClusterClient clusterClient)
+        public async Task Complete(Payload payload, 
+            IClusterClient clusterClient)
         {
+            // If the payload is completed, this has run to completion previously
             if (payload.IsCompleted == true)
             {
                 return;
             }
 
-            await GetIdentity(payload);
+            if (payload.Token != Guid.Empty)
+            {
+                await GetIdentity(payload);
+
+                if (string.IsNullOrEmpty(payload.TenantId) == false)
+                {
+                    await GetProjectedIdentity(payload);
+                }
+            }
 
             payload.IsCompleted = true;
+        }
+
+        private Task GetProjectedIdentity(Payload payload)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task GetIdentity(Payload payload)
@@ -48,7 +63,10 @@ namespace OCore.Authorization
             }
 
             var tokenService = clusterClient.GetGrain<ITokenService>(0);
-            payload.AccountId = await tokenService.GetAccount(payload.Token);
+            var accountInfo = await tokenService.GetAccount(payload.Token);
+
+            payload.AccountId = accountInfo.AccountId;
+            payload.TenantId = accountInfo.TenantId;
 
             if (payload.AccountId.HasValue == false 
                 || payload.AccountId == Guid.Empty)
@@ -57,5 +75,28 @@ namespace OCore.Authorization
             }
         }
 
+        public async Task CheckInitialState(Payload payload, IClusterClient clusterClient)
+        {
+            if (payload.IsInitialStateSatisfied == false)
+            {
+                switch (payload.InitialRequirements)
+                {
+                    case Requirements.Token:
+                        await GetIdentity(payload);
+                        break;
+                    case Requirements.TokenAndTenant:
+                        await GetProjectedIdentity(payload);
+                        break;
+                }
+                payload.IsInitialStateSatisfied = true;
+            }
+
+            payload.IsInitialStateSatisfied = true;
+        }
+
+        public Task CheckFor(Payload payload, IClusterClient clusterClient, Permissions permissions, Requirements requirements, bool allowElevatedRequests = true)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

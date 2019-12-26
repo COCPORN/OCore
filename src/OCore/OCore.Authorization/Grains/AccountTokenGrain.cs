@@ -11,19 +11,32 @@ namespace OCore.Authorization.Grains
     {
         public Guid AccountId { get; set; }
 
+        public string TenantId { get; set; }
+
         public DateTimeOffset ExpiresAt { get; set; } = DateTimeOffset.MaxValue;
     }
 
     public class AccountTokenGrain : Entity<AccountTokenState>, IAccountToken
     {
-        public Task<Guid> GetAccountId()
+        public Task<AccountInfo> GetAccountId()
         {
-            return Task.FromResult(State.AccountId);
+            return Task.FromResult(new AccountInfo
+            {
+                AccountId = State.AccountId,
+                TenantId = State.TenantId
+            });
         }
 
         public Task LinkToAccountId(Guid accountId)
         {
             State.AccountId = accountId;
+            return WriteStateAsync();
+        }
+
+        public Task LinkToAccountIdAndTenantId(Guid accountId, string tenantId)
+        {
+            State.AccountId = accountId;
+            State.TenantId = tenantId;
             return WriteStateAsync();
         }
     }
