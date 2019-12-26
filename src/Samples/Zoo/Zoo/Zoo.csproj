@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OCore.Setup\OCore.Setup.csproj" />
+    <ProjectReference Include="..\..\..\OCore\OCore.Setup\OCore.Setup.csproj" />
     <ProjectReference Include="..\Zoo.Interfaces\Zoo.Interfaces.csproj" />
   </ItemGroup>
 

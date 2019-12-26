@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OCore.ServiceClient.Http\OCore.ServiceClient.Http.csproj" />
+    <ProjectReference Include="..\..\..\OCore\OCore.Authorization\OCore.Authorization.csproj" />
+    <ProjectReference Include="..\..\..\OCore\OCore.ServiceClient.Http\OCore.ServiceClient.Http.csproj" />
     <ProjectReference Include="..\Zoo.Interfaces\Zoo.Interfaces.csproj" />
   </ItemGroup>
 

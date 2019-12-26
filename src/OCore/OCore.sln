@@ -7,14 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Services", "OCore.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.ServiceClient.Http", "OCore.ServiceClient.Http\OCore.ServiceClient.Http.csproj", "{4D84D5FD-2E51-499E-93C8-482AF834F7B2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8785D0DA-DDE0-4955-A860-759A0E39BCAA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo", "Samples\Zoo\Zoo.csproj", "{61273E52-CE31-4967-8C1B-2F4376F0C485}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo.Interfaces", "Samples\Zoo.Interfaces\Zoo.Interfaces.csproj", "{C894DF21-DBD0-4446-B420-3859714F17EE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoo.Frontend", "Samples\Zoo.Frontend\Zoo.Frontend.csproj", "{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Authorization", "OCore.Authorization\OCore.Authorization.csproj", "{806861BB-7539-4C07-A151-2A79056C15BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Entities", "OCore.Entities\OCore.Entities.csproj", "{1438D92A-E3D0-42F5-8F31-2A6E3F494FE1}"
@@ -39,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Idempotency", "OCore.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Authorization.RateLimiting", "OCore.Authorization.RateLimiting\OCore.Authorization.RateLimiting.csproj", "{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Http.OpenApi", "OCore.Http.OpenApi\OCore.Http.OpenApi.csproj", "{6AC82AB5-CF17-413F-B1A3-B4B87B8E56E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.OpenApi", "OCore.Http.OpenApi\OCore.Http.OpenApi.csproj", "{6AC82AB5-CF17-413F-B1A3-B4B87B8E56E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,18 +47,6 @@ Global
 		{4D84D5FD-2E51-499E-93C8-482AF834F7B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D84D5FD-2E51-499E-93C8-482AF834F7B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D84D5FD-2E51-499E-93C8-482AF834F7B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61273E52-CE31-4967-8C1B-2F4376F0C485}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C894DF21-DBD0-4446-B420-3859714F17EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C894DF21-DBD0-4446-B420-3859714F17EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C894DF21-DBD0-4446-B420-3859714F17EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C894DF21-DBD0-4446-B420-3859714F17EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{806861BB-7539-4C07-A151-2A79056C15BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{806861BB-7539-4C07-A151-2A79056C15BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{806861BB-7539-4C07-A151-2A79056C15BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -122,11 +102,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{61273E52-CE31-4967-8C1B-2F4376F0C485} = {8785D0DA-DDE0-4955-A860-759A0E39BCAA}
-		{C894DF21-DBD0-4446-B420-3859714F17EE} = {8785D0DA-DDE0-4955-A860-759A0E39BCAA}
-		{1C5DA1BB-8DBD-4E3D-8CDC-D44470B4856B} = {8785D0DA-DDE0-4955-A860-759A0E39BCAA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1769AFD-BFB2-4F50-9BEA-21BA9779EE98}

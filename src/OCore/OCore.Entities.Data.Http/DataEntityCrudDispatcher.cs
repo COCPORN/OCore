@@ -67,8 +67,7 @@ namespace OCore.Entities.Data.Http
         public async Task Dispatch(HttpContext httpContext)
         {
             try
-            {
-                //httpContext.RunAuthorizationFilters(invoker.MethodInfo.DeclaringType);
+            {             
                 httpContext.RunAuthorizationFilters(invoker);
                 httpContext.RunActionFilters(invoker);
 
@@ -82,7 +81,7 @@ namespace OCore.Entities.Data.Http
                 var grain = clusterClient.GetGrain(grainType, grainId.Key);
                 if (grain == null)
                 {
-                    httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return;
                 }
 

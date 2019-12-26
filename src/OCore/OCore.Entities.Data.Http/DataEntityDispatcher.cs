@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
+using OCore.Core.Extensions;
 using OCore.Authorization.Abstractions.Request;
 using System;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace OCore.Entities.Data.Http
                 case KeyStrategy.Account:
                     return new GrainKey
                     {
-                        Key = GetOriginalAccount(),
+                        Key = GetOriginalAccount().ToString(),
                         IsFanable = false
                     };
                 case KeyStrategy.AccountPrefix:
@@ -101,9 +102,28 @@ namespace OCore.Entities.Data.Http
                         Key = $"{GetTenantIdFromApiKey()}",
                         IsFanable = false
                     };
+                case KeyStrategy.ApiKeyTenantPrefix:
+                    return new GrainKey
+                    {
+                        Key = $"{GetTenantIdFromApiKey()}:{GetIdentityFromRoute(context)}",
+                        IsFanable = false
+                    };
+                case KeyStrategy.AccountCombined:
+                    return new GrainKey
+                    {
+                        Key = GetAccountCombinedKey(context),
+                        IsFanable = true
+                    };
             }
             return null;
 
+        }
+
+        private string GetAccountCombinedKey(HttpContext context)
+        {
+            var account = GetOriginalAccount();
+            var otherId = Guid.Parse(GetIdentityFromRoute(context));
+            return account.Combine(otherId).ToString();
         }
 
         private string GetTenantIdFromApiKey()
@@ -130,12 +150,12 @@ namespace OCore.Entities.Data.Http
             return context.Request.RouteValues["identity"].ToString();
         }
 
-        private string GetOriginalAccount()
+        private Guid GetOriginalAccount()
         {
             var payload = Payload.Get();
             if (payload.AccountIdHasBeenProjected == true)
             {
-                return payload.OriginalAccountId.ToString();
+                return payload.OriginalAccountId.Value;
             }
             else
             {
@@ -145,7 +165,7 @@ namespace OCore.Entities.Data.Http
                 }
                 else
                 {
-                    return payload.AccountId.ToString();
+                    return payload.AccountId.Value;
                 }
             }
 
