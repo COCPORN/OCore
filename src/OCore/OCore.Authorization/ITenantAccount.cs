@@ -13,6 +13,8 @@ namespace OCore.Authorization
     {
         Task Create(Guid accountId);
 
+        Task<Guid> Get();
+
         Task Delete();
     }
 }

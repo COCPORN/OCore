@@ -5,42 +5,42 @@ Opinionated and experimental application stack built on Microsoft Orleans and fr
 Features (partially to come, look at this as a TODO list in no particular order):
 
 - Service publishing (cluster boundaries defined over HTTP) _Partially working_
-    - Service Client
+  - Service Client
 - Event aggregation (based on Orleans streams)
 - Authentication
-    - User accounts with optional tenancy
-    - API keys
-        - Resource bound
-        - Rate limiting
+  - User accounts with optional tenancy
+  - API keys
+    - Resource bound
+    - Rate limiting
 - Authorization
 - Multi tenancy
 - Rich entities (Grain subclassing to add more information in backing store)
-    - Collection querying (for select backends)
+  - Collection querying (for select backends)
 - Data entities
-    - Key strategies
-        - Identity
-        - Tenant
-        - Prefixed
-        - Combined (as in Guid combine)
-        - Sorted
-    - HTTP exposure
-    - Auto CRUD
-    - Subscription over SignalR
-    - Identity access control (automap authentication token to account id)
-    - Sandboxing ("sandbox on account ID", etc)
-    - Projected data entities (customer profile should become "contact", for instance)
+  - Key strategies
+    - Identity
+    - Tenant
+      - Prefixed
+      - Combined (as in Guid combine)
+      - Sorted
+  - HTTP exposure
+  - Auto CRUD
+  - Subscription over SignalR
+  - Identity access control (automap authentication ken to account id)
+  - Sandboxing ("sandbox on account ID", etc)
+  - Projected data entities (customer profile should become "contact", for instance)
 - Audited entities
 - Data polling
 - Idempotent actions
 - OpenAPI support with autoculling of resources
 
-# Motivation
+## Motivation
 
 Programming is fun. Plumbing is not.
 
-# Setup
+## Setup
 
-## Development
+### Development
 
 Look at the sample for an example to setup OCore quickly using default configuration which means:
 
@@ -63,11 +63,11 @@ Install the NuGet package `OCore.Setup`, then:
     }
 ```
 
-## Service setup
+### Service setup
 
 Documentation TODO, functionality currently lives in `OCore.Authorization`.
 
-# Service 
+## Service 
 
 An OCore Service is a stateless, reentrant integer keyed grain. It can _optionally_ be automatically published to an HTTP endpoint. An exposed Service will always be hit with identity `0`, so there will be no explosion of grains on the server. An exposed Service is an opinionated alternative to an ASPNET Core `Controller`, with these benefits:
 
@@ -110,7 +110,7 @@ POST http://localhost:9000/service/MyService/Hello
 
 The service will then respond with a 200-message with a string HTTP body of `"Hello, COCPORN"`.
 
-## Parameter passing
+### Parameter passing
 
 Parameters can be passed in these ways:
 
@@ -122,7 +122,7 @@ Passing a single request object is short hand for passing a list with a single e
 
 Parameter lists support complex types and default parameters.
 
-## Internal services
+### Internal services
 
 If you do not want to publish any services, do not call `MapServices` (this is called automatically from `UseDefaultOCore()`). If you want to stop specific services from being published, you can decorate them with the `[Internal]`-attribute. If you want specific methods on a service to not be published, you can similarly decorate them with the `[Internal]`-interface.
 
@@ -144,7 +144,7 @@ public interface IShyService: IService
 }
 ```
 
-## HTTP calls
+### HTTP calls
 
 You can decorate methods with attributes that implement `IAuthorizationFilter`:
 
@@ -161,7 +161,7 @@ public class AuthorizedService : IAuthorizedService, Service
 
 There will be support for `ActionFilter`s. The 
 
-## Service client
+### Service client
 
 There is currently a loosely typed Service client that works in Blazor and other dotnet projects (the interface for this _will change_):
 
@@ -171,11 +171,11 @@ var (response, status) = await Client.Invoke<IMyService, string>("Hello", "COCPO
 
 I am toying with the idea of making a strongly typed client using Roslyn code generation.
 
-# Data Entities
+## Data Entities
 
 An OCore Data Entity is promiscuous, providing full access to its internal state. Data Entities can _optionally_ serve their innards over HTTP. They can also be extended with commands. Also, the authorization framework can decide which Data Entities an API key has access to, more about this later.
 
-## Implicit access
+### Implicit access
 
 A Data Entity implicitly provides these methods:
 
@@ -187,7 +187,7 @@ A Data Entity implicitly provides these methods:
 
 If an entity is not created, all calls except `Create`/`POST` and `Upsert`/`PUT` will fail.
 
-## Example
+### Example
 
 ```csharp
 public class ShortenedUrlState 
@@ -198,14 +198,13 @@ public class ShortenedUrlState
 }
 
 [DataEntity("ShortenedUrl")]
-public interface IShortenedUrl : IDataEntity<ShortenedUrlState> 
+public interface IShortenedUrl : IDataEntity<ShortenedUrlState>
 {
     Task<string> Visit();
 }
 ```
 
 ...with the implementation:
-
 
 ```csharp
 public class ShortenedUrlDataEntity : DataEntity<ShortenedUrlState>, IShortenedUrl
@@ -221,7 +220,7 @@ public class ShortenedUrlDataEntity : DataEntity<ShortenedUrlState>, IShortenedU
 
 If `MapDataEntities` is called (as is default by `UseDefaultOCore`), you can now do:
 
-```
+```http
 ### Create shortened URL
 POST http://localhost:9000/data/ShortenedUrl/SomeId
 
@@ -232,12 +231,14 @@ POST http://localhost:9000/data/ShortenedUrl/SomeId
 
 This will create the entity.
 
-```
+```http
 ### Get shortened URL data object
 GET http://localhost:9000/data/ShortenedUrl/SomeId
 ```
+
 ...will return:
-```
+
+```json
 {
     "RedirectTo": "http://www.cocporn.com",
     "TimesVisited": 0
@@ -246,7 +247,7 @@ GET http://localhost:9000/data/ShortenedUrl/SomeId
 
 Call `Visit`-method:
 
-```
+```http
 ### "Visit" the Data Entity
 POST http://localhost:9000/data/ShortenedUrl/SomeId/Visit
 ```
@@ -257,14 +258,14 @@ This will call the `Visit`-method updating the counter, and return the `Redirect
 
 Using `GET`, you can do multifetch using HTTP:
 
-```
+```http
 ### Multi fetch
 GET http://localhost:9000/data/SomeDataEntity/Id1,Id2,Id5
 ```
 
 This will return:
 
-```
+```json
 [
     {
         "data": "id1-data"
@@ -278,11 +279,17 @@ This will return:
 
 This indicates that the system was able to fetch data for Id1 and Id5, but not for Id2.
 
-## Authorization
+### Key strategies
 
-TODO: Data Entities will play nice with the authorization and tenancy system, so they are not _that_ promiscuous. :)
+`DataEntity` implements different key strategies. These include:
 
-# `Entity<T>`
+- Global
+- Identity
+- Account
+- AccountPrefix
+- fds
+
+## `Entity<T>`
 
 `Entity<T>` is what Data Entities and others are based on. They provide a helpful layer in addition to `Grain<T>` by:
 
@@ -290,7 +297,7 @@ TODO: Data Entities will play nice with the authorization and tenancy system, so
 - `Entity<T>` adds tenant information so that it is easy to get to, using `TenantId`
 - API is very similar to that of `Grain<T>`, so in most cases it will be a drop-in replace. **NOTE**: The shape of the stored data is _different_, so you cannot change this after you have started storing data. If in doubt, just use `Entity<T>` for everything
 
-# Events [WIP]
+## Events [WIP]
 
 OCore has a system for event handling based on Orleans Streams that provides:
 
@@ -298,4 +305,3 @@ OCore has a system for event handling based on Orleans Streams that provides:
 - Workload management (configurable number of workers handling events)
 - Controlled event handling
 - Handling of poison events
-

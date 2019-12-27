@@ -12,7 +12,8 @@ namespace OCore.Authorization
     {
         IClusterClient clusterClient;
 
-        public PayloadCompleter(IClusterClient clusterClient) {
+        public PayloadCompleter(IClusterClient clusterClient)
+        {
             this.clusterClient = clusterClient;
         }
 
@@ -23,7 +24,7 @@ namespace OCore.Authorization
         /// <param name="payload"></param>
         /// <param name="clusterClient"></param>
         /// <returns></returns>
-        public async Task Complete(Payload payload, 
+        public async Task Complete(Payload payload,
             IClusterClient clusterClient)
         {
             // If the payload is completed, this has run to completion previously
@@ -36,7 +37,8 @@ namespace OCore.Authorization
             {
                 await GetIdentity(payload);
 
-                if (string.IsNullOrEmpty(payload.TenantId) == false)
+                if (string.IsNullOrEmpty(payload.TenantId) == false 
+                    && payload.AccountIdHasBeenProjected == false)
                 {
                     await GetProjectedIdentity(payload);
                 }
@@ -45,9 +47,13 @@ namespace OCore.Authorization
             payload.IsCompleted = true;
         }
 
-        private Task GetProjectedIdentity(Payload payload)
+        private async Task GetProjectedIdentity(Payload payload)
         {
-            throw new NotImplementedException();
+            var tenantAccountGrain = clusterClient.GetGrain<ITenantAccount>(payload.Token, payload.TenantId);
+            var projectedAccountId = await tenantAccountGrain.Get();
+            payload.AccountIdHasBeenProjected = true;
+            payload.OriginalAccountId = payload.AccountId;
+            payload.AccountId = projectedAccountId;
         }
 
         private async Task GetIdentity(Payload payload)
@@ -66,37 +72,19 @@ namespace OCore.Authorization
             var accountInfo = await tokenService.GetAccount(payload.Token);
 
             payload.AccountId = accountInfo.AccountId;
-            payload.TenantId = accountInfo.TenantId;
+            
+            if (string.IsNullOrEmpty(accountInfo.TenantId) == false)
+            {
+                payload.TenantId = accountInfo.TenantId;
+                payload.AccountIdHasBeenProjected = true;
+            }
 
-            if (payload.AccountId.HasValue == false 
+            if (payload.AccountId.HasValue == false
                 || payload.AccountId == Guid.Empty)
             {
                 throw new UnauthorizedAccessException("Invalid token");
             }
         }
-
-        public async Task CheckInitialState(Payload payload, IClusterClient clusterClient)
-        {
-            if (payload.IsInitialStateSatisfied == false)
-            {
-                switch (payload.InitialRequirements)
-                {
-                    case Requirements.Token:
-                        await GetIdentity(payload);
-                        break;
-                    case Requirements.TokenAndTenant:
-                        await GetProjectedIdentity(payload);
-                        break;
-                }
-                payload.IsInitialStateSatisfied = true;
-            }
-
-            payload.IsInitialStateSatisfied = true;
-        }
-
-        public Task CheckFor(Payload payload, IClusterClient clusterClient, Permissions permissions, Requirements requirements, bool allowElevatedRequests = true)
-        {
-            throw new NotImplementedException();
-        }
+   
     }
 }

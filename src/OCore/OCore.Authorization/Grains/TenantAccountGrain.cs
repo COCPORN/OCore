@@ -19,6 +19,11 @@ namespace OCore.Authorization.Grains
             return WriteStateAsync();
         }
 
+        public Task<Guid> Get()
+        {
+            return Task.FromResult(State.TenantAccountId);
+        }
+
         Task ITenantAccount.Delete()
         {
             return base.Delete();

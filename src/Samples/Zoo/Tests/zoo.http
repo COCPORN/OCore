@@ -8,7 +8,7 @@ POST http://localhost:9000/services/Zoo/AcceptNewAnimal
 }
 
 
-### Accept new animal
+### Say hello to said animal
 POST http://localhost:9000/services/Zoo/SayHelloToAnimal
 
 "Julius"

@@ -29,10 +29,8 @@ namespace OCore.Authorization.Abstractions.Request
 
         public Guid? AccountId { get; set; }
 
-        public bool AccountIdHasBeenProjected => 
-            OriginalAccountId.HasValue == true
-            && OriginalAccountId.Value != Guid.Empty;
-
+        public bool AccountIdHasBeenProjected { get; set; } 
+            
         public string TenantId { get; set; }
 
         public bool IsRequestElevated { get; set; }

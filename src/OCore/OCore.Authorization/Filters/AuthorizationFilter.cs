@@ -40,12 +40,7 @@ namespace OCore.Authorization.Filters
                 return;
             }
 
-            var payload = Payload.GetOrDefault();
-
-            if (payload == null)
-            {
-                return;
-            }
+            var payload = Payload.Get();
 
             await payloadCompleter.Complete(payload, clusterClient);
 

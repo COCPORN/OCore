@@ -12,14 +12,5 @@ namespace OCore.Authorization.Abstractions
         Task Complete(Payload payload, 
             IClusterClient clusterClient
             );
-
-        Task CheckInitialState(Payload payload,
-            IClusterClient clusterClient);
-
-        Task CheckFor(Payload payload,
-            IClusterClient clusterClient,
-            Permissions permissions,
-            Requirements requirements,
-            bool allowElevatedRequests = true);
     }
 }
