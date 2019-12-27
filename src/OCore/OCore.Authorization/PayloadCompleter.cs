@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization
 {
+    /// <summary>
+    /// This is an implementation of the IPayloadCompleter interface
+    /// that works with the internal authorization platform for OCore
+    /// </summary>
     public class PayloadCompleter : IPayloadCompleter
     {
         IClusterClient clusterClient;
@@ -33,6 +37,7 @@ namespace OCore.Authorization
                 return;
             }
 
+            // Given a token in the payload, get account id and roles, etc
             if (payload.Token != Guid.Empty)
             {
                 await GetIdentity(payload);
@@ -42,12 +47,25 @@ namespace OCore.Authorization
                 {
                     await GetProjectedIdentity(payload);
                 }
-            }
+
+                await GetRolesForAccount(payload);
+            } 
 
             payload.IsCompleted = true;
         }
 
-        private async Task GetProjectedIdentity(Payload payload)
+        async Task GetRolesForAccount(Payload payload)
+        {
+            if (payload.Roles != null)
+            {
+                return;
+            }
+
+            var roleService = clusterClient.GetGrain<IRoleService>(0);
+            payload.Roles = await roleService.GetRoles(payload.AccountId.Value);
+        }
+
+        async Task GetProjectedIdentity(Payload payload)
         {
             var tenantAccountGrain = clusterClient.GetGrain<ITenantAccount>(payload.Token, payload.TenantId);
             var projectedAccountId = await tenantAccountGrain.Get();
