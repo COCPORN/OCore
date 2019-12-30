@@ -44,20 +44,14 @@ namespace OCore.Entities.Data.Http
 
             switch (keyStrategy)
             {
-                case KeyStrategy.Identity:
-                    return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{identity}}{methodPostfix}");
                 case KeyStrategy.Global:
                 case KeyStrategy.Account:
-                case KeyStrategy.ApiKeyTenant:
-                case KeyStrategy.ProjectedAccount:
-                case KeyStrategy.ProjectedAccountTenant:
+                case KeyStrategy.Tenant:
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}{methodPostfix}");
+                case KeyStrategy.Identity:
                 case KeyStrategy.AccountPrefix:
                 case KeyStrategy.AccountCombined:
-                case KeyStrategy.ApiKeyTenantPrefix:
-                case KeyStrategy.ProjectedAccountPrefix:
-                case KeyStrategy.ProjectedAccountTenantPrefix:
-                case KeyStrategy.ProjectedAccountCombined:
+                case KeyStrategy.TenantPrefix:
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{identity}}{methodPostfix}");
                 default:
                     throw new InvalidOperationException("Unknown key strategy");
@@ -87,25 +81,25 @@ namespace OCore.Entities.Data.Http
                 case KeyStrategy.Account:
                     return new GrainKey
                     {
-                        Key = GetOriginalAccount().ToString(),
+                        Key = GetAccountId().ToString(),
                         IsFanable = false
                     };
                 case KeyStrategy.AccountPrefix:
                     return new GrainKey
                     {
-                        Key = $"{GetOriginalAccount()}:{GetIdentityFromRoute(context)}",
+                        Key = $"{GetAccountId()}:{GetIdentityFromRoute(context)}",
                         IsFanable = true
                     };
-                case KeyStrategy.ApiKeyTenant:
+                case KeyStrategy.Tenant:
                     return new GrainKey
                     {
-                        Key = $"{GetTenantIdFromApiKey()}",
+                        Key = $"{GetTenantId()}",
                         IsFanable = false
                     };
-                case KeyStrategy.ApiKeyTenantPrefix:
+                case KeyStrategy.TenantPrefix:
                     return new GrainKey
                     {
-                        Key = $"{GetTenantIdFromApiKey()}:{GetIdentityFromRoute(context)}",
+                        Key = $"{GetTenantId()}:{GetIdentityFromRoute(context)}",
                         IsFanable = false
                     };
                 case KeyStrategy.AccountCombined:
@@ -121,27 +115,22 @@ namespace OCore.Entities.Data.Http
 
         private string GetAccountCombinedKey(HttpContext context)
         {
-            var account = GetOriginalAccount();
+            var account = GetAccountId();
             var otherId = Guid.Parse(GetIdentityFromRoute(context));
             return account.Combine(otherId).ToString();
         }
 
-        private string GetTenantIdFromApiKey()
+        private string GetTenantId()
         {
             var payload = Payload.Get();
-            if (payload.ApiKey != Guid.Empty)
+
+            if (string.IsNullOrEmpty(payload.TenantId) == false)
             {
-                if (string.IsNullOrEmpty(payload.TenantId) == false)
-                {
-                    return payload.TenantId;
-                } else
-                {
-                    throw new UnauthorizedAccessException("Tenant ID is not set");
-                }
+                return payload.TenantId;
             }
             else
             {
-                throw new UnauthorizedAccessException("Payload is missing API key");
+                throw new UnauthorizedAccessException("Tenant ID is not set");
             }
         }
 
@@ -150,23 +139,17 @@ namespace OCore.Entities.Data.Http
             return context.Request.RouteValues["identity"].ToString();
         }
 
-        private Guid GetOriginalAccount()
+        private Guid GetAccountId()
         {
             var payload = Payload.Get();
-            if (payload.AccountIdHasBeenProjected == true)
+
+            if (payload.AccountId == null)
             {
-                return payload.OriginalAccountId.Value;
+                throw new UnauthorizedAccessException("There is no account id in the payload");
             }
             else
             {
-                if (payload.AccountId == null)
-                {
-                    throw new UnauthorizedAccessException("There is no account id in the payload");
-                }
-                else
-                {
-                    return payload.AccountId.Value;
-                }
+                return payload.AccountId.Value;
             }
 
         }

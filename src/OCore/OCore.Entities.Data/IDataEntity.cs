@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 namespace OCore.Entities.Data
 {
 
-    public interface IDataEntity
-    {
-
-    }
+    public interface IDataEntity { }
 
     public interface IDataEntity<T> : IDataEntity, IGrainWithStringKey
     {

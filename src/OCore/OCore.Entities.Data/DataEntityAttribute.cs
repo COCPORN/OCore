@@ -29,33 +29,37 @@ namespace OCore.Entities.Data
 
         /// <summary>
         /// The DataEntity Id will be bound to the projected (tenant) account id
-        /// </summary>
-        ProjectedAccount,
+        ///// </summary>
+        //ProjectedAccount,
 
-        /// <summary>
-        /// The DataEntity Id will be prefixed with the projected account id and accept an additional key
-        /// </summary>
-        ProjectedAccountPrefix,
+        ///// <summary>
+        ///// The DataEntity Id will be prefixed with the projected account id and accept an additional key
+        ///// </summary>
+        //ProjectedAccountPrefix,
 
-        /// <summary>
-        /// The DataEntity Id will be bound to the tenant of the projected account id
-        /// </summary>
-        ProjectedAccountTenant,
+        ///// <summary>
+        ///// The DataEntity Id will be bound to the tenant of the projected account id
+        ///// </summary>
+        //ProjectedAccountTenant,
 
-        /// <summary>
-        /// The DataEntity Id will be prefixed with the tenant for the projected account id and accept an additional key
-        /// </summary>
-        ProjectedAccountTenantPrefix,
+        ///// <summary>
+        ///// The DataEntity Id will be prefixed with the tenant for the projected account id and accept an additional key
+        ///// </summary>
+        //ProjectedAccountTenantPrefix,
 
-        /// <summary>
-        /// The DataEntity id will be bound to the tenant from the api key
-        /// </summary>
-        ApiKeyTenant,
+        Tenant,
 
-        /// <summary>
-        /// The DataEntity will be prefixed with the tenant from the api key and then accept an additional key
-        /// </summary>
-        ApiKeyTenantPrefix,
+        TenantPrefix,
+
+        ///// <summary>
+        ///// The DataEntity id will be bound to the tenant from the api key
+        ///// </summary>
+        //ApiKeyTenant,
+
+        ///// <summary>
+        ///// The DataEntity will be prefixed with the tenant from the api key and then accept an additional key
+        ///// </summary>
+        //ApiKeyTenantPrefix,
 
         /// <summary>
         /// The DataEntity will be a GUID combined from the account ID and a number of additional ids
@@ -65,7 +69,7 @@ namespace OCore.Entities.Data
         /// <summary>
         /// The DataEntity id will be a GUID combined from the projected account ID and a number of additional ids
         /// </summary>
-        ProjectedAccountCombined,
+        //ProjectedAccountCombined,
     }
 
 

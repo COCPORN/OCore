@@ -42,16 +42,40 @@ namespace OCore.Authorization
             {
                 await GetIdentity(payload);
 
-                if (string.IsNullOrEmpty(payload.TenantId) == false 
+                if (string.IsNullOrEmpty(payload.TenantId) == false
                     && payload.AccountIdHasBeenProjected == false)
                 {
                     await GetProjectedIdentity(payload);
                 }
 
                 await GetRolesForAccount(payload);
-            } 
+            }
+            else
+            {
+                await GetApiKeyApplications(payload);
+            }
 
             payload.IsCompleted = true;
+        }
+
+
+        async Task GetApiKeyApplications(Payload payload)
+        {
+            if (payload.ApiKey == Guid.Empty)
+            {
+                throw new UnauthorizedAccessException("API key required");
+            }
+            if (payload.ApiKeyApplications == null)
+            {
+                var apiKeyCache = clusterClient.GetGrain<IApiKeyCache>(payload.ApiKey);
+                var apiKey = await apiKeyCache.GetApiKey();
+                if (apiKey == null || apiKey.IsValid == false)
+                {
+                    throw new UnauthorizedAccessException("Invalid API key");
+                }
+                payload.ApiKeyApplications = apiKey.Applications;
+                payload.TenantId = apiKey.TenantId;
+            }
         }
 
         async Task GetRolesForAccount(Payload payload)
@@ -71,7 +95,7 @@ namespace OCore.Authorization
             var projectedAccountId = await tenantAccountGrain.Get();
             payload.AccountIdHasBeenProjected = true;
             payload.OriginalAccountId = payload.AccountId;
-            payload.AccountId = projectedAccountId;
+            payload.ProjectedAccountId = projectedAccountId;
         }
 
         private async Task GetIdentity(Payload payload)
@@ -89,12 +113,15 @@ namespace OCore.Authorization
             var tokenService = clusterClient.GetGrain<ITokenService>(0);
             var accountInfo = await tokenService.GetAccount(payload.Token);
 
-            payload.AccountId = accountInfo.AccountId;
-            
+
             if (string.IsNullOrEmpty(accountInfo.TenantId) == false)
             {
+                payload.ProjectedAccountId = accountInfo.AccountId;
                 payload.TenantId = accountInfo.TenantId;
                 payload.AccountIdHasBeenProjected = true;
+            } else
+            {
+                payload.OriginalAccountId = accountInfo.AccountId;
             }
 
             if (payload.AccountId.HasValue == false
@@ -103,6 +130,6 @@ namespace OCore.Authorization
                 throw new UnauthorizedAccessException("Invalid token");
             }
         }
-   
+
     }
 }

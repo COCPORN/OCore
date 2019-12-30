@@ -27,7 +27,9 @@ namespace OCore.Authorization.Abstractions.Request
 
         public Guid? OriginalAccountId { get; set; }
 
-        public Guid? AccountId { get; set; }
+        public Guid? ProjectedAccountId { get; set; }
+
+        public Guid? AccountId => ProjectedAccountId.HasValue ? ProjectedAccountId : OriginalAccountId;
 
         public bool AccountIdHasBeenProjected { get; set; } 
             

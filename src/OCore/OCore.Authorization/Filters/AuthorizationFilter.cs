@@ -44,51 +44,45 @@ namespace OCore.Authorization.Filters
 
             await payloadCompleter.Complete(payload, clusterClient);
 
-            // TODO: Cache this
-            //var attributes = context.ImplementationMethod.GetCustomAttributes(true);
-            //var attribute = attributes.FirstOrDefault(x => x is AuthorizeAttribute) as AuthorizeAttribute;
 
-            //if (attribute != null && attribute.Requirements != Requirements.None)
-            //{
+            if (attribute != null && attribute.Requirements != Requirements.None)
+            {
+                // Check to see if request is elevated and elevation is allowed
+                if (attribute.AllowElevatedRequests == false
+                    || payload.IsRequestElevated == false)
+                {
+                    if (CheckApiKeyRequirement(attribute) || CheckApiKeyAndTokenAndTenantRequirement(attribute))
+                    {
+                        if (payload.ApiKey != Guid.Empty)
+                        {
+                            await CheckApiKey(attribute.ResourceName, payload);
+                        }
+                        else
+                        {
+                            await CheckTokenAndTenant(context, attribute, payload);
+                        }
+                    }
+                    else
+                    {
+                        await CheckTokenAndTenant(context, attribute, payload);
+                    }
+                }
 
-            //    // Check to see if request is elevated and elevation is allowed
-            //    if (attribute.AllowElevatedRequests == false
-            //        || payload.IsRequestElevated == false)
-            //    {
-            //        if (CheckApiKeyRequirement(attribute) || CheckApiKeyAndTokenAndTenantRequirement(attribute))
-            //        {
-            //            if (payload.ApiKey != Guid.Empty)
-            //            {
-            //                await CheckApiKey(attribute.ResourceName, payload);
-            //            }
-            //            else
-            //            {
-            //                await CheckTokenAndTenant(context, attribute, payload);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            await CheckTokenAndTenant(context, attribute, payload);
-            //        }
-            //    }
-
-            //    if (attribute.ElevateRequest == true)
-            //    {
-            //        payload.IsRequestElevated = true;
-            //    }
-            //}
-            //else
-            //{
-            //    throw new UnauthorizedAccessException("Resource requires authorization but context was not supplied with an authorization payload");
-            //}
-
+                if (attribute.ElevateRequest == true)
+                {
+                    payload.IsRequestElevated = true;
+                }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Resource requires authorization but context was not supplied with an authorization payload");
+            }
 
             await context.Invoke();
         }
 
         private async Task CheckTokenAndTenant(IIncomingGrainCallContext context, AuthorizeAttribute attribute, Payload payload)
-        {
-            //await GetIdentity(payload);
+        {            
             await CheckTenancy(attribute, payload);
             await GetRolesForAccount(payload);
             await CheckRoles(attribute, context, payload);
@@ -118,7 +112,7 @@ namespace OCore.Authorization.Filters
             {
                 if (payload.TenantId == null)
                 {
-                    throw new UnauthorizedAccessException("Expected tenant in header");
+                    throw new UnauthorizedAccessException("Expected tenant in header or in login payload");
                 }
                 var tenantService = grainFactory.GetGrain<ITenantService>(0);
 
@@ -131,22 +125,22 @@ namespace OCore.Authorization.Filters
                 else
                 {
                     payload.OriginalAccountId = payload.AccountId;
-                    payload.AccountId = tenantAccountId;
+                    payload.ProjectedAccountId = tenantAccountId;
                     payload.Roles = null;
                 }
             }
         }
 
-        private Task CheckRoles(AuthorizeAttribute attribute, IIncomingGrainCallContext context, Payload payload)
+        Task CheckRoles(AuthorizeAttribute attribute, IIncomingGrainCallContext context, Payload payload)
         {
+            return null;
             //if (attribute != null)
-            //{
-            //    //var resourceRole = grainFactory.GetGrain<IResourceAccessDescriptions>(0);
+            //{                
             //    var resourceService = grainFactory.GetGrain<IResourceService>(0);
             //    var resources = await resourceService.GetResources();
             //    var resourceName = attribute.ResourceName;
             //    var requiredPermissions = attribute.Permissions;
-            //    var accessDescriptions = await resourceRole.GetAccessDescriptions(resourceName);
+            //    var accessDescriptions = await resourceService.GetAccessDescriptions(resourceName);
 
             //    if (accessDescriptions.Count == 0)
             //    {
@@ -162,7 +156,7 @@ namespace OCore.Authorization.Filters
             //    }
             //    throw new UnauthorizedAccessException();
             //}
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         async Task CheckApiKey(string resourceName, Payload payload)

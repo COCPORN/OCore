@@ -9,7 +9,7 @@ using Zoo.Interfaces;
 namespace Zoo.Grains
 {
     [Authorize]
-    public class AnimalGrain : DataEntity<Animal>, IAnimal
+    public class AnimalEntity : DataEntity<Animal>, IAnimal
     {
         public Task<string> MakeNoise(int times)
         {

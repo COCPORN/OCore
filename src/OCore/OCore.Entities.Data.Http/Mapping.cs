@@ -90,6 +90,7 @@ namespace OCore.Entities.Data.Http
                     prefix, 
                     dataEntityName, 
                     keyStrategy,
+                    payloadCompleter,
                     method.DeclaringType,
                     method);
 

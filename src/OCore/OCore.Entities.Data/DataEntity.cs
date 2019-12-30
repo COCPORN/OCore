@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Orleans;
+using System;
 using System.Threading.Tasks;
 
 namespace OCore.Entities.Data
@@ -6,6 +7,8 @@ namespace OCore.Entities.Data
 
     public class DataEntity<T> : Entity<T>, IDataEntity<T> where T : new()
     {
+     
+
         public virtual Task Create(T data)
         {
             if (Created == false)

@@ -254,7 +254,7 @@ POST http://localhost:9000/data/ShortenedUrl/SomeId/Visit
 
 This will call the `Visit`-method updating the counter, and return the `RedirectTo`-string.
 
-## Multi fetch
+## Multi fetch (currently not working)
 
 Using `GET`, you can do multifetch using HTTP:
 

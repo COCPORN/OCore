@@ -11,6 +11,10 @@ namespace OCore.Authorization
     {
         [Authorize]
         Task<List<Resource>> GetResources();
+        
+        Task<List<AccessDescription>> GetAccessDescriptions(string resource);
+
+        Task<IEnumerable<AccountAccessDescription>> GetAccountResources(IEnumerable<string> roles);
 
     }
 }
