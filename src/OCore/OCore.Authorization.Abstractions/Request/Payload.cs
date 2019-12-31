@@ -21,7 +21,7 @@ namespace OCore.Authorization.Abstractions.Request
 
         public Guid Token { get; set; }
 
-        public Guid ApiKey { get; set; }
+        public string ApiKey { get; set; }
 
         public List<string> ApiKeyApplications { get; set; }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OCore.Entities.Data
+namespace OCore.Entities.Data.Http
 {
     public enum KeyStrategy
     {
@@ -28,38 +28,14 @@ namespace OCore.Entities.Data
         AccountPrefix,
 
         /// <summary>
-        /// The DataEntity Id will be bound to the projected (tenant) account id
-        ///// </summary>
-        //ProjectedAccount,
-
-        ///// <summary>
-        ///// The DataEntity Id will be prefixed with the projected account id and accept an additional key
-        ///// </summary>
-        //ProjectedAccountPrefix,
-
-        ///// <summary>
-        ///// The DataEntity Id will be bound to the tenant of the projected account id
-        ///// </summary>
-        //ProjectedAccountTenant,
-
-        ///// <summary>
-        ///// The DataEntity Id will be prefixed with the tenant for the projected account id and accept an additional key
-        ///// </summary>
-        //ProjectedAccountTenantPrefix,
-
+        /// The entity will be bound to the tenant ID, either from the API key or the account
+        /// </summary>
         Tenant,
 
-        TenantPrefix,
-
-        ///// <summary>
-        ///// The DataEntity id will be bound to the tenant from the api key
-        ///// </summary>
-        //ApiKeyTenant,
-
-        ///// <summary>
-        ///// The DataEntity will be prefixed with the tenant from the api key and then accept an additional key
-        ///// </summary>
-        //ApiKeyTenantPrefix,
+        /// <summary>
+        /// The DataEntity Id will be prefixed with the tenant id, then accept an identity id
+        /// </summary>
+        TenantPrefix,  
 
         /// <summary>
         /// The DataEntity will be a GUID combined from the account ID and a number of additional ids
@@ -72,6 +48,17 @@ namespace OCore.Entities.Data
         //ProjectedAccountCombined,
     }
 
+    [Flags]
+    public enum DataEntityMethods
+    {
+        Create = 1,
+        Read = 2,
+        Update = 4,
+        Delete = 8,
+        Commands = 16,
+        All = Create | Read | Update | Delete | Commands
+    }
+
 
     [AttributeUsage(AttributeTargets.Interface)]
     public class DataEntityAttribute : Attribute
@@ -80,10 +67,15 @@ namespace OCore.Entities.Data
 
         public KeyStrategy KeyStrategy { get; private set; }
 
-        public DataEntityAttribute(string entityName, KeyStrategy keyStrategy = KeyStrategy.Identity)
+        public DataEntityMethods DataEntityMethods { get; private set; }
+
+        public DataEntityAttribute(string entityName, 
+            KeyStrategy keyStrategy = KeyStrategy.Identity,
+            DataEntityMethods dataEntityMethods = DataEntityMethods.All)
         {
             Name = entityName;
             KeyStrategy = keyStrategy;
+            DataEntityMethods = dataEntityMethods;
         }
     }
 }

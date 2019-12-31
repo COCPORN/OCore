@@ -25,6 +25,7 @@ namespace Zoo.Grains
 
         public async Task<AnimalContact> Read()
         {
+            var dataKeyExtension = this.GetEntityKeyExtension();
             var animalAccountGrain = GrainFactory.GetGrain<IAnimalAccount>(this.GetEntityKeyExtension());
             var account = await animalAccountGrain.Read();
             return new AnimalContact

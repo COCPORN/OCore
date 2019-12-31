@@ -61,7 +61,7 @@ namespace OCore.Authorization
 
         async Task GetApiKeyApplications(Payload payload)
         {
-            if (payload.ApiKey == Guid.Empty)
+            if (payload.ApiKey == null)
             {
                 throw new UnauthorizedAccessException("API key required");
             }

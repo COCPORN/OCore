@@ -11,8 +11,7 @@ namespace OCore.Authorization
 {
     [Immutable]
     public class ApiKeyState
-    {
-        public Guid Key { get; set; }
+    {        
         public List<string> Applications { get; set; }
         public string Description { get; set; }
         public bool IsValid { get; set; }
@@ -26,8 +25,8 @@ namespace OCore.Authorization
     /// Api keys are keyed on guid
     /// </summary>
     /// 
-    [DataEntity("OCore.ApiKey")]
-    public interface IApiKey : IDataEntity<ApiKeyState>, IGrainWithGuidKey
+    [Authorize(Abstractions.Permissions.All, Abstractions.Requirements.TokenAndTenant)]    
+    public interface IApiKey : IDataEntity<ApiKeyState>
     {
         Task Activate();
         Task Deactivate();

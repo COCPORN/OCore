@@ -17,14 +17,14 @@ namespace OCore.Authorization.Grains
         public async override Task OnActivateAsync()
         {
             await RefreshKey(null);
-            timer = RegisterTimer(RefreshKey, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+            timer = RegisterTimer(RefreshKey, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
             await base.OnActivateAsync();
         }
 
         private async Task RefreshKey(object arg)
         {            
             var apiKey = this.GetPrimaryKey();
-            var apiKeyGrain = GrainFactory.GetGrain<IApiKey>(apiKey);
+            var apiKeyGrain = GrainFactory.GetGrain<IApiKey>(apiKey.ToString());
             key = await apiKeyGrain.Read();
         }
 
@@ -38,7 +38,7 @@ namespace OCore.Authorization.Grains
             {
                 DeactivateOnIdle();
                 await Task.Delay(1000);
-                return key;
+                return null;
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using OCore.Authorization;
 using OCore.Entities.Data;
+using OCore.Entities.Data.Http;
 using Orleans;
 using System;
 using System.Collections.Generic;

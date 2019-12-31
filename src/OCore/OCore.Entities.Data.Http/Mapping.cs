@@ -18,7 +18,7 @@ namespace OCore.Entities.Data.Http
     public static class Mapping
     {
         public static IEndpointRouteBuilder MapDataEntities(this IEndpointRouteBuilder routes, string prefix = "")
-        {                        
+        {
             var appPartsMgr = routes.ServiceProvider.GetRequiredService<IApplicationPartManager>();
             var payloadCompleter = routes.ServiceProvider.GetRequiredService<IPayloadCompleter>();
 
@@ -32,7 +32,7 @@ namespace OCore.Entities.Data.Http
             {
                 routesCreated += MapDataEntityToRoute(routes, serviceType, prefix, payloadCompleter);
             }
-            
+
             return routes;
         }
 
@@ -54,7 +54,7 @@ namespace OCore.Entities.Data.Http
         }
 
         private static int MapDataEntityToRoute(IEndpointRouteBuilder routes, Type grainType, string prefix, IPayloadCompleter payloadCompleter)
-        {            
+        {
             var methods = grainType.GetMethods();
             int routesRegistered = 0;
 
@@ -63,15 +63,20 @@ namespace OCore.Entities.Data.Http
             var dataEntityAttribute = (DataEntityAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(DataEntityAttribute)).SingleOrDefault();
 
             var keyStrategy = KeyStrategy.Identity;
+            var dataEntityMethods = DataEntityMethods.All;
 
             if (dataEntityAttribute != null)
             {
                 dataEntityName = dataEntityAttribute.Name;
                 keyStrategy = dataEntityAttribute.KeyStrategy;
+                dataEntityMethods = dataEntityAttribute.DataEntityMethods;
             }
-            
-            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, payloadCompleter, prefix, methods, routesRegistered);
-            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, routes, payloadCompleter, prefix, routesRegistered);
+
+            if (dataEntityMethods.HasFlag(DataEntityMethods.Commands))
+            {
+                routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, payloadCompleter, prefix, methods, routesRegistered);
+            }
+            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, dataEntityMethods, routes, payloadCompleter, prefix, routesRegistered);
 
             return routesRegistered;
         }
@@ -80,57 +85,78 @@ namespace OCore.Entities.Data.Http
             KeyStrategy keyStrategy,
             IEndpointRouteBuilder routeBuilder,
             IPayloadCompleter payloadCompleter,
-            string prefix,            
+            string prefix,
             MethodInfo[] methods,
             int routesRegistered)
-        {           
+        {
             foreach (var method in methods)
             {
-                DataEntityMethodDispatcher.Register(routeBuilder, 
-                    prefix, 
-                    dataEntityName, 
+                DataEntityMethodDispatcher.Register(routeBuilder,
+                    prefix,
+                    dataEntityName,
                     keyStrategy,
                     payloadCompleter,
                     method.DeclaringType,
                     method);
 
-                routesRegistered++;         
+                routesRegistered++;
             }
 
             return routesRegistered;
         }
 
-        private static int MapCrudMethods(string dataEntityName, 
-            Type declaringType, 
-            KeyStrategy keyStrategy, 
-            IEndpointRouteBuilder routeBuilder, 
+        private static int MapCrudMethods(string dataEntityName,
+            Type declaringType,
+            KeyStrategy keyStrategy,
+            DataEntityMethods dataEntityMethods,
+            IEndpointRouteBuilder routeBuilder,
             IPayloadCompleter payloadCompleter,
-            string prefix,             
+            string prefix,
             int routesRegistered)
-        {            
+        {
             var dataEntityType = (
                 from iType in declaringType.GetInterfaces()
                 where iType.IsGenericType
                         && iType.GetGenericTypeDefinition() == typeof(IDataEntity<>)
-                select iType.GetGenericArguments()[0]).First();            
+                select iType.GetGenericArguments()[0]).First();
 
-            void Register(HttpMethod httpMethod) {
-                DataEntityCrudDispatcher.Register(routeBuilder, 
-                    prefix, 
-                    dataEntityName, 
+            void Register(HttpMethod httpMethod)
+            {
+                DataEntityCrudDispatcher.Register(routeBuilder,
+                    prefix,
+                    dataEntityName,
                     keyStrategy,
-                    declaringType,                    
-                    dataEntityType, 
+                    declaringType,
+                    dataEntityType,
                     payloadCompleter,
                     httpMethod);
             }
 
-            Register(HttpMethod.Post);
-            Register(HttpMethod.Get);
-            Register(HttpMethod.Put);
-            Register(HttpMethod.Delete);
 
-            routesRegistered += 4;
+            if (dataEntityMethods.HasFlag(DataEntityMethods.Create))
+            {
+                Register(HttpMethod.Post);
+                routesRegistered++;
+            }
+
+            if (dataEntityMethods.HasFlag(DataEntityMethods.Read))
+            {
+                Register(HttpMethod.Get);
+                routesRegistered++;
+            }
+
+            if (dataEntityMethods.HasFlag(DataEntityMethods.Update))
+            {
+                Register(HttpMethod.Put);
+                routesRegistered++;
+            }
+
+            if (dataEntityMethods.HasFlag(DataEntityMethods.Delete))
+            {
+                Register(HttpMethod.Delete);
+                routesRegistered++;
+            }
+            
             return routesRegistered;
         }
 

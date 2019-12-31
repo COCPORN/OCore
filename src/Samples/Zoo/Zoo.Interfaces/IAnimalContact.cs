@@ -1,5 +1,6 @@
 ﻿using OCore.Authorization;
 using OCore.Entities.Data;
+using OCore.Entities.Data.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,9 @@ namespace Zoo.Interfaces
     }
 
     [Authorize]
-    [DataEntity("AnimalContact", KeyStrategy.AccountPrefix)]
+    [DataEntity("AnimalContact", 
+        KeyStrategy.AccountPrefix, 
+        DataEntityMethods.Read)]
     public interface IAnimalContact : IDataEntity<AnimalContact>
     {
     }

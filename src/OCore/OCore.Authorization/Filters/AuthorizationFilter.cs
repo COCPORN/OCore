@@ -53,7 +53,7 @@ namespace OCore.Authorization.Filters
                 {
                     if (CheckApiKeyRequirement(attribute) || CheckApiKeyAndTokenAndTenantRequirement(attribute))
                     {
-                        if (payload.ApiKey != Guid.Empty)
+                        if (string.IsNullOrEmpty(payload.ApiKey) == false)
                         {
                             await CheckApiKey(attribute.ResourceName, payload);
                         }
@@ -161,7 +161,7 @@ namespace OCore.Authorization.Filters
 
         async Task CheckApiKey(string resourceName, Payload payload)
         {
-            if (payload.ApiKey == Guid.Empty)
+            if (payload.ApiKey == null)
             {
                 throw new UnauthorizedAccessException("API key required");
             }
