@@ -63,11 +63,11 @@ namespace OCore.Authorization
                                                  .Select(z =>
                                                  {
                                                      var aa = (AuthorizeAttribute)z;
-                                                     return new ServiceResource(CreateResourceName(x, y), aa.Permissions) as Resource;
+                                                     return new ServiceResource(CreateServiceResourceName(x, y), aa.Permissions) as Resource;
                                                  }))).ToList();
         }
 
-        private static string CreateResourceName(Type type, MethodInfo method)
+        private static string CreateServiceResourceName(Type type, MethodInfo method)
         {
             var serviceAttribute = type
                 .GetCustomAttributes(true)
