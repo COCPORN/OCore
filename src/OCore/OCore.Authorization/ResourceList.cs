@@ -11,41 +11,43 @@ using System.Text;
 namespace OCore.Authorization
 {
 
-
     public abstract class Resource
     {
         public string ResourceName { get; private set; }
+        public string BaseResource { get; private set; }
         public Permissions Permissions { get; private set; }
 
-        public Resource(string resourceName, Permissions permission)
+        public Resource(string resourceName, string baseResource, Permissions permission)
         {
             ResourceName = resourceName;
             Permissions = permission;
+            BaseResource = baseResource;
         }
     }
 
-
     public class ServiceResource : Resource
     {
-        public ServiceResource(string resourceName, Permissions permission) : base(resourceName, permission)
+
+
+        public ServiceResource(string resourceName, string baseResource, Permissions permission) 
+            : base(resourceName, baseResource, permission)
         {
         }
     }
 
     public class DataEntityResource : Resource
     {
-        public DataEntityResource(string resourceName, Permissions permission) : base(resourceName, permission)
-        {
+        
+
+        public DataEntityResource(string resourceName, string baseResource, Permissions permission) 
+            : base(resourceName, baseResource, permission)
+        {            
         }
     }
 
     public static class ResourceEnumerator
     {
         static List<Resource> resources;
-
-        //public static string ServicePrefix { get; set; } = "services/";
-
-        //public static string DataEntityPrefix { get; set; } = "data/";
 
         public static List<Resource> Resources
         {
@@ -103,11 +105,11 @@ namespace OCore.Authorization
             var authorizeAttribute = methodInfo.GetCustomAttribute<AuthorizeAttribute>();
             if (authorizeAttribute != null)
             {
-                return new ServiceResource(CreateServiceResourceName(type, methodInfo), authorizeAttribute.Permissions);
+                return new ServiceResource(CreateServiceResourceName(type, methodInfo), ServiceBaseResourceName(type), authorizeAttribute.Permissions);
             }
             else
             {
-                return new ServiceResource(CreateServiceResourceName(type, methodInfo), Permissions.All);
+                return new ServiceResource(CreateServiceResourceName(type, methodInfo), ServiceBaseResourceName(type), Permissions.All);
             }
         }
 
@@ -116,14 +118,13 @@ namespace OCore.Authorization
             var authorizeAttribute = methodInfo.GetCustomAttribute<AuthorizeAttribute>();
             if (authorizeAttribute != null)
             {
-                return new DataEntityResource(CreateDataResourceName(type, methodInfo), authorizeAttribute.Permissions);
+                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), authorizeAttribute.Permissions);
             }
             else
             {
-                return new DataEntityResource(CreateDataResourceName(type, methodInfo), Permissions.All);
+                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), Permissions.All);
             }
         }
-
 
         private static string CreateServiceResourceName(Type type, MethodInfo method)
         {
@@ -152,6 +153,27 @@ namespace OCore.Authorization
             }
         }
 
+        static string DataBaseResourceName(Type type)
+        {
+            var dataEntityAttribute = type
+                .GetCustomAttributes(true)
+                .Where(z => z is DataEntityAttribute)
+                .Select(x => x as DataEntityAttribute)
+                .First();
+
+            return dataEntityAttribute.Name;
+        }
+
+        static string ServiceBaseResourceName(Type type)
+        {
+            var serviceAttribute = type
+             .GetCustomAttributes(true)
+             .Where(z => z is ServiceAttribute)
+             .Select(x => x as ServiceAttribute)
+             .First();
+
+            return serviceAttribute.Name;
+        }
 
         private static List<Resource> GetDataResourceFromCrud(Type type)
         {
@@ -163,34 +185,28 @@ namespace OCore.Authorization
 
             var dataResources = new List<Resource>();
 
-
             if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Create))
             {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Create", Permissions.Write));
+                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Create", DataBaseResourceName(type), Permissions.Write));
             }
 
             if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Read))
             {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Read", Permissions.Read));
+                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Read", DataBaseResourceName(type), Permissions.Read));
             }
 
             if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Update))
             {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Update", Permissions.Write));
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Upsert", Permissions.Write));
+                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Update", DataBaseResourceName(type), Permissions.Write));
+                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Upsert", DataBaseResourceName(type), Permissions.Write));
             }
 
             if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Delete))
             {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Delete", Permissions.Write));
+                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Delete", DataBaseResourceName(type), Permissions.Write));
             }
 
             return dataResources;
-        }
-
-        private static List<string> CreateDataResourceCrudNames(Type type, MethodInfo method)
-        {
-            return null;
         }
 
     }
