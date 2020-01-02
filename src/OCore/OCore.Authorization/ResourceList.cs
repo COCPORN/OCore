@@ -13,8 +13,19 @@ namespace OCore.Authorization
 
     public abstract class Resource
     {
+        /// <summary>
+        /// The specialized name of the resource
+        /// </summary>
         public string ResourceName { get; private set; }
+
+        /// <summary>
+        /// The base resource that holds this specialization
+        /// </summary>
         public string BaseResource { get; private set; }
+
+        /// <summary>
+        /// Permissions needed to reach this concrete resource
+        /// </summary>
         public Permissions Permissions { get; private set; }
 
         public Resource(string resourceName, string baseResource, Permissions permission)
@@ -27,8 +38,6 @@ namespace OCore.Authorization
 
     public class ServiceResource : Resource
     {
-
-
         public ServiceResource(string resourceName, string baseResource, Permissions permission) 
             : base(resourceName, baseResource, permission)
         {
@@ -36,9 +45,7 @@ namespace OCore.Authorization
     }
 
     public class DataEntityResource : Resource
-    {
-        
-
+    {        
         public DataEntityResource(string resourceName, string baseResource, Permissions permission) 
             : base(resourceName, baseResource, permission)
         {            
