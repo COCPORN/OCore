@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OCore.Entities.Data.Http
+namespace OCore.Entities.Data
 {
     public enum KeyStrategy
     {

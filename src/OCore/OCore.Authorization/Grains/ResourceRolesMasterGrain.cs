@@ -114,8 +114,6 @@ namespace OCore.Authorization.Grains
 
         public Task SetResources(List<string> resources)
         {
-            return Task.CompletedTask;
-#if false
             var validResources = resources.Where(r => IsNewResourceValid(r));
             var protectedResources = new HashSet<string>();
 
@@ -156,7 +154,7 @@ namespace OCore.Authorization.Grains
             }
 
             return WriteStateAsync();
-#endif
+
         }
 
         public Task AddResources(List<string> resources)
