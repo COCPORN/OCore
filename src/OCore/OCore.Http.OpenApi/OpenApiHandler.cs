@@ -114,29 +114,7 @@ namespace OCore.Http.OpenApi
 
             return paths;
 
-            return new OpenApiPaths
-            {
-                ["/pets"] = new OpenApiPathItem
-                {
-                    Operations = new Dictionary<OperationType, OpenApiOperation>
-                    {
-                        [OperationType.Get] = new OpenApiOperation
-                        {
-                            Description = "Returns all pets from the system that the user has access to",
-                            Responses = new OpenApiResponses
-                            {
-                                ["200"] = new OpenApiResponse
-                                {
-                                    Description = "OK"
-                                }
-                            }
-                        }
-                    }
-                }
-            };
         }
-
-        HashSet<string> crudCompletedDataEntityResources = new HashSet<string>();
 
         private void AddDataEntityResource(OpenApiPaths paths, DataEntityResource dataEntityResource)
         {

@@ -3,7 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <IsPackable>true</IsPackable>
+    <IsPackable>true</IsPackable>    
+    <PackageId>OCore.Services</PackageId>
+    <Version>0.0.1-preview</Version>
+    <Authors>COCPORN</Authors>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>OCore.Entities.Data</PackageId>
+    <Version>0.0.1-preview</Version>
+    <Authors>COCPORN</Authors>
   </PropertyGroup>
 
   <ItemGroup>

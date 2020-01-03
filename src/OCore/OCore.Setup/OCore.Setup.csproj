@@ -5,6 +5,9 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <IsPackable>true</IsPackable>
+    <PackageId>OCore.Setup</PackageId>
+    <Version>0.0.1-preview</Version>
+    <Authors>COCPORN</Authors>
   </PropertyGroup>
   
   <ItemGroup>

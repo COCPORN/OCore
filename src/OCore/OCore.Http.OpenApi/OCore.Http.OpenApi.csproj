@@ -4,7 +4,10 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <IsPackable>true</IsPackable>
+    <IsPackable>true</IsPackable>        
+    <PackageId>OCore.Http.OpenApi</PackageId>
+    <Version>0.0.1-preview</Version>
+    <Authors>COCPORN</Authors>
   </PropertyGroup>
 
   <ItemGroup>
