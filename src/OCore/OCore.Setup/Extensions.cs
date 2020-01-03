@@ -27,7 +27,10 @@ namespace OCore.DefaultSetup
             {
                 endpoints.MapServices("services");
                 endpoints.MapDataEntities("data");
-                endpoints.MapOpenApi("api-docs", "OCore app development");
+                endpoints.MapOpenApi("api-docs", 
+                    "OCore app development", 
+                    "Development", 
+                    new string[] { "http://localhost:9000" });
             });
         }
 

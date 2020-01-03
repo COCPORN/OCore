@@ -16,7 +16,7 @@ namespace OCore.Authorization
         /// <summary>
         /// The specialized name of the resource
         /// </summary>
-        public string ResourceName { get; private set; }
+        public string ResourcePath { get; private set; }
 
         /// <summary>
         /// The base resource that holds this specialization
@@ -36,7 +36,7 @@ namespace OCore.Authorization
             Permissions permission,
             MethodInfo methodInfo)
         {
-            ResourceName = resourceName;
+            ResourcePath = resourceName;
             Permissions = permission;
             BaseResource = baseResource;
             MethodInfo = methodInfo;
@@ -56,12 +56,16 @@ namespace OCore.Authorization
 
     public class DataEntityResource : Resource
     {        
+        public DataEntityAttribute Attribute { get; private set; }
+
         public DataEntityResource(string resourceName, 
             string baseResource, 
             Permissions permission,
-            MethodInfo methodInfo) 
+            MethodInfo methodInfo,
+            DataEntityAttribute attribute) 
             : base(resourceName, baseResource, permission, methodInfo)
-        {            
+        {
+            Attribute = attribute;
         }
     }
 
@@ -91,7 +95,8 @@ namespace OCore.Authorization
               .SelectMany(x => x.GetTypes())
               .Where(x => typeof(IDataEntity).IsAssignableFrom(x))
               .SelectMany(x => x.GetInterfaces())
-              .Where(x => typeof(IDataEntity).IsAssignableFrom(x));
+              .Where(x => typeof(IDataEntity).IsAssignableFrom(x))
+              .Distinct();
 
             var dataEntityInterfaces = interfaces
               .Where(x => x.GetCustomAttributes(true).Where(z => z is DataEntityAttribute).Any());
@@ -135,14 +140,19 @@ namespace OCore.Authorization
 
         private static Resource GetDataResourceFromMethod(Type type, MethodInfo methodInfo)
         {
+            var dataEntityAttribute = type
+                .GetCustomAttributes(true)
+                .Where(z => z is DataEntityAttribute)
+                .Select(x => x as DataEntityAttribute)
+                .FirstOrDefault();
             var authorizeAttribute = methodInfo.GetCustomAttribute<AuthorizeAttribute>();
             if (authorizeAttribute != null)
             {
-                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), authorizeAttribute.Permissions, methodInfo);
+                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), authorizeAttribute.Permissions, methodInfo, dataEntityAttribute);
             }
             else
             {
-                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), Permissions.All, methodInfo);
+                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), Permissions.All, methodInfo, dataEntityAttribute);
             }
         }
 
@@ -205,26 +215,34 @@ namespace OCore.Authorization
 
             var dataResources = new List<Resource>();
 
-            if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Create))
-            {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Create", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Create")));
+            if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Create)
+                || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Read)
+                || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Update)
+                || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Delete))
+            {                
+                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}", DataBaseResourceName(type), Permissions.All, CreateMethodInfo(type, "Create"), dataEntityAttribute));
             }
 
-            if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Read))
-            {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Read", DataBaseResourceName(type), Permissions.Read, CreateMethodInfo(type, "Read")));
-            }
+            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Create))
+            //{
+            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Create", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Create"), dataEntityAttribute));
+            //}
 
-            if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Update))
-            {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Update", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Update")));
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Upsert", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Upsert")));
-            }
+            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Read))
+            //{
+            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Read", DataBaseResourceName(type), Permissions.Read, CreateMethodInfo(type, "Read"), dataEntityAttribute));
+            //}
 
-            if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Delete))
-            {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Delete", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Delete")));
-            }
+            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Update))
+            //{
+            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Update", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Update"), dataEntityAttribute));
+            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Upsert", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Upsert"), dataEntityAttribute));
+            //}
+
+            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Delete))
+            //{
+            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Delete", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Delete"), dataEntityAttribute));
+            //}
 
             return dataResources;
         }

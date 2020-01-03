@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OCore.Authorization\OCore.Authorization.csproj" />
+  </ItemGroup>
+
 </Project>
