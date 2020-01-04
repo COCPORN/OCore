@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using System.Reflection;
 using Orleans.Runtime;
 using OCore.Authorization.Abstractions;
+using OCore.Core;
 
 namespace OCore.Entities.Data.Http
 {
@@ -72,10 +73,7 @@ namespace OCore.Entities.Data.Http
                 dataEntityMethods = dataEntityAttribute.DataEntityMethods;
             }
 
-            if (dataEntityMethods.HasFlag(DataEntityMethods.Commands))
-            {
-                routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, payloadCompleter, prefix, methods, routesRegistered);
-            }
+            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, payloadCompleter, prefix, methods, routesRegistered);
             routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, dataEntityMethods, routes, payloadCompleter, prefix, routesRegistered);
 
             return routesRegistered;
@@ -91,15 +89,20 @@ namespace OCore.Entities.Data.Http
         {
             foreach (var method in methods)
             {
-                DataEntityMethodDispatcher.Register(routeBuilder,
-                    prefix,
-                    dataEntityName,
-                    keyStrategy,
-                    payloadCompleter,
-                    method.DeclaringType,
-                    method);
+                var internalAttribute = method.GetCustomAttribute<InternalAttribute>(true);
 
-                routesRegistered++;
+                if (internalAttribute == null)
+                {
+                    DataEntityMethodDispatcher.Register(routeBuilder,
+                        prefix,
+                        dataEntityName,
+                        keyStrategy,
+                        payloadCompleter,
+                        method.DeclaringType,
+                        method);
+
+                    routesRegistered++;
+                }
             }
 
             return routesRegistered;
@@ -156,7 +159,7 @@ namespace OCore.Entities.Data.Http
                 Register(HttpMethod.Delete);
                 routesRegistered++;
             }
-            
+
             return routesRegistered;
         }
 

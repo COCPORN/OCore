@@ -31,8 +31,8 @@ namespace OCore.Authorization
 
         public MethodInfo MethodInfo { get; private set; }
 
-        public Resource(string resourceName, 
-            string baseResource, 
+        public Resource(string resourceName,
+            string baseResource,
             Permissions permission,
             MethodInfo methodInfo)
         {
@@ -45,24 +45,24 @@ namespace OCore.Authorization
 
     public class ServiceResource : Resource
     {
-        public ServiceResource(string resourceName, 
-            string baseResource, 
-            Permissions permission, 
-            MethodInfo methodInfo) 
+        public ServiceResource(string resourceName,
+            string baseResource,
+            Permissions permission,
+            MethodInfo methodInfo)
             : base(resourceName, baseResource, permission, methodInfo)
         {
         }
     }
 
     public class DataEntityResource : Resource
-    {        
+    {
         public DataEntityAttribute Attribute { get; private set; }
 
-        public DataEntityResource(string resourceName, 
-            string baseResource, 
+        public DataEntityResource(string resourceName,
+            string baseResource,
             Permissions permission,
             MethodInfo methodInfo,
-            DataEntityAttribute attribute) 
+            DataEntityAttribute attribute)
             : base(resourceName, baseResource, permission, methodInfo)
         {
             Attribute = attribute;
@@ -107,8 +107,8 @@ namespace OCore.Authorization
 
             var dataResourcesFromCrud = dataEntityInterfaces.
                 SelectMany(x => GetDataResourceFromCrud(x)).ToList();
-            
-            return dataResourcesFromMethod.Concat(dataResourcesFromCrud).ToList();            
+
+            return dataResourcesFromMethod.Concat(dataResourcesFromCrud).ToList();
         }
 
 
@@ -146,13 +146,14 @@ namespace OCore.Authorization
                 .Select(x => x as DataEntityAttribute)
                 .FirstOrDefault();
             var authorizeAttribute = methodInfo.GetCustomAttribute<AuthorizeAttribute>();
+            var dataResourceName = CreateDataResourceName(type, methodInfo);            
             if (authorizeAttribute != null)
             {
-                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), authorizeAttribute.Permissions, methodInfo, dataEntityAttribute);
+                return new DataEntityResource(dataResourceName, DataBaseResourceName(type), authorizeAttribute.Permissions, methodInfo, dataEntityAttribute);
             }
             else
             {
-                return new DataEntityResource(CreateDataResourceName(type, methodInfo), DataBaseResourceName(type), Permissions.All, methodInfo, dataEntityAttribute);
+                return new DataEntityResource(dataResourceName, DataBaseResourceName(type), Permissions.All, methodInfo, dataEntityAttribute);
             }
         }
 
@@ -174,13 +175,8 @@ namespace OCore.Authorization
                 .Select(x => x as DataEntityAttribute)
                 .First();
 
-            if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Commands))
-            {
-                return $"{dataEntityAttribute.Name}/{method.Name}";
-            } else
-            {
-                return null;
-            }
+
+            return $"{dataEntityAttribute.Name}/{method.Name}";
         }
 
         static string DataBaseResourceName(Type type)
@@ -219,7 +215,7 @@ namespace OCore.Authorization
                 || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Read)
                 || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Update)
                 || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Delete))
-            {                
+            {
                 dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}", DataBaseResourceName(type), Permissions.All, CreateMethodInfo(type, "Create"), dataEntityAttribute));
             }
 

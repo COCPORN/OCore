@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <IsPackable>true</IsPackable>
+    <IsPackable>false</IsPackable>
     <PackageId>OCore.Events</PackageId>
     <Version>0.0.1-preview</Version>
     <Authors>COCPORN</Authors>

@@ -32,14 +32,22 @@ namespace OCore.Http.OpenApi
 
         internal async Task Dispatch(HttpContext context)
         {
-            OpenApiDocument document = CreateDocument();
 
-            context.Response.ContentType = "application/json";
+            try
+            {
+                OpenApiDocument document = CreateDocument();
 
-            var openApiDocumentation = document.Serialize(OpenApiSpecVersion.OpenApi3_0, OpenApiFormat.Json);
+                context.Response.ContentType = "application/json";
 
-            await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(openApiDocumentation), 0, openApiDocumentation.Length);
-            await context.Response.Body.FlushAsync();
+                var openApiDocumentation = document.Serialize(OpenApiSpecVersion.OpenApi3_0, OpenApiFormat.Json);
+
+                await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(openApiDocumentation), 0, openApiDocumentation.Length);
+                await context.Response.Body.FlushAsync();
+            } catch (Exception ex)
+            {
+                var exc = ex.ToString();
+                await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(exc), 0, exc.Length);
+            }
         }
 
         private OpenApiDocument CreateDocument()
