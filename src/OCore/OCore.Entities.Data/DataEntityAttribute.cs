@@ -14,7 +14,7 @@ namespace OCore.Entities.Data
         /// <summary>
         /// The DataEntity will be universally available to all and have an implied ID of "Global".        
         /// </summary>
-        Global,        
+        Global,
 
         /// <summary>
         /// The DataEntity will be bound to the account Id (blah.com/data/userconfiguration)
@@ -35,17 +35,13 @@ namespace OCore.Entities.Data
         /// <summary>
         /// The DataEntity Id will be prefixed with the tenant id, then accept an identity id
         /// </summary>
-        TenantPrefix,  
+        TenantPrefix,
 
         /// <summary>
         /// The DataEntity will be a GUID combined from the account ID and a number of additional ids
         /// </summary>
         AccountCombined,
 
-        /// <summary>
-        /// The DataEntity id will be a GUID combined from the projected account ID and a number of additional ids
-        /// </summary>
-        //ProjectedAccountCombined,
     }
 
     [Flags]
@@ -55,8 +51,8 @@ namespace OCore.Entities.Data
         Create = 1,
         Read = 2,
         Update = 4,
-        Delete = 8,        
-        All = Create | Read | Update | Delete 
+        Delete = 8,
+        All = Create | Read | Update | Delete
     }
 
 
@@ -69,9 +65,9 @@ namespace OCore.Entities.Data
 
         public DataEntityMethods DataEntityMethods { get; private set; }
 
-        public DataEntityAttribute(string entityName, 
+        public DataEntityAttribute(string entityName,
             KeyStrategy keyStrategy = KeyStrategy.Identity,
-            DataEntityMethods dataEntityMethods = DataEntityMethods.All)
+            DataEntityMethods dataEntityMethods = DataEntityMethods.Read)
         {
             Name = entityName;
             KeyStrategy = keyStrategy;
