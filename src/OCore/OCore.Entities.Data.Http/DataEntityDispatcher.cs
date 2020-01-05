@@ -50,9 +50,12 @@ namespace OCore.Entities.Data.Http
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}{methodPostfix}");
                 case KeyStrategy.Identity:
                 case KeyStrategy.AccountPrefix:
-                case KeyStrategy.AccountCombined:
                 case KeyStrategy.TenantPrefix:
                     return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{identity}}{methodPostfix}");
+                case KeyStrategy.AccountCombined:
+                    return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{combination}}{methodPostfix}");
+                case KeyStrategy.AccountCombinedPrefix:
+                    return RoutePatternFactory.Parse($"{prefix}{dataEntityName}/{{combination}}/{{identity}}{methodPostfix}");
                 default:
                     throw new InvalidOperationException("Unknown key strategy");
             }
@@ -108,6 +111,12 @@ namespace OCore.Entities.Data.Http
                         Key = GetAccountCombinedKey(context),
                         IsFanable = true
                     };
+                case keyStrategy.AccountCombinedPrefix:
+                    return new GrainKey
+                    {
+                        Key = $"{GetAccountCombinedKey(context)}:{GetIdentityFromRoute(context)}",
+                        IsFanable = true
+                    };
             }
             return null;
 
@@ -116,7 +125,7 @@ namespace OCore.Entities.Data.Http
         private string GetAccountCombinedKey(HttpContext context)
         {
             var account = GetAccountId();
-            var otherId = Guid.Parse(GetIdentityFromRoute(context));
+            var otherId = Guid.Parse(GetCombinationFromRoute(context));
             return account.Combine(otherId).ToString();
         }
 
@@ -137,6 +146,11 @@ namespace OCore.Entities.Data.Http
         private static string GetIdentityFromRoute(HttpContext context)
         {
             return context.Request.RouteValues["identity"].ToString();
+        }
+
+        private static string GetCombinationFromRoute(HttpContext context)
+        {
+            return context.Request.RouteValues["combination"].ToString();
         }
 
         private Guid GetAccountId()
