@@ -42,6 +42,12 @@ namespace OCore.Entities.Data
         /// </summary>
         AccountCombined,
 
+        /// <summary>
+        /// The DataEntity will be a GUID combined from the account ID and a number of additional ids 
+        /// and use that as a prefix
+        /// </summary>
+        AccountCombinedPrefix,
+
     }
 
     [Flags]
