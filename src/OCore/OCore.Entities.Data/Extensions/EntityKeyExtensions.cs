@@ -9,7 +9,14 @@ namespace OCore.Entities.Data.Extensions
     {
         public static string GetEntityKey(this IGrain grain)
         {
-            return grain.GetPrimaryKeyString().Split(':')[0];
+            var primaryKeyString = grain.GetPrimaryKeyString();
+            if (primaryKeyString.Contains(":"))
+            {
+                return grain.GetPrimaryKeyString().Split(':')[0];
+            } else
+            {
+                return primaryKeyString;
+            }
         }
 
         public static string GetEntityKeyExtension(this IGrain grain)
