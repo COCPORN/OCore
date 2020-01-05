@@ -111,7 +111,7 @@ namespace OCore.Entities.Data.Http
                         Key = GetAccountCombinedKey(context),
                         IsFanable = true
                     };
-                case keyStrategy.AccountCombinedPrefix:
+                case KeyStrategy.AccountCombinedPrefix:
                     return new GrainKey
                     {
                         Key = $"{GetAccountCombinedKey(context)}:{GetIdentityFromRoute(context)}",
