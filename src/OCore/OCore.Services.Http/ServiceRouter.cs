@@ -53,16 +53,17 @@ namespace OCore.Services.Http
 
             var invoker = routes[pattern.RawText];
             context.RunAuthorizationFilters(invoker);
-            context.RunActionFilters(invoker);
-
-            var grain = clusterClient.GetGrain(invoker.GrainType, 0);
-            if (grain == null)
+            return context.RunAsyncActionFilters(invoker, (context) =>
             {
-                context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
-                return Task.CompletedTask;
-            }
+                var grain = clusterClient.GetGrain(invoker.GrainType, 0);
+                if (grain == null)
+                {
+                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                    return Task.CompletedTask;
+                }
 
-            return invoker.Invoke(grain, context);
+                return invoker.Invoke(grain, context);
+            });            
         }
 
 

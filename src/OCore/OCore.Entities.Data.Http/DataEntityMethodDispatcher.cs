@@ -41,26 +41,28 @@ namespace OCore.Entities.Data.Http
             routeBuilder.MapPost(GetRoutePattern(methodInfo.Name).RawText, Dispatch);
         }
 
-        public async Task Dispatch(HttpContext httpContext)
+        public Task Dispatch(HttpContext httpContext)
         {
             httpContext.RunAuthorizationFilters(invoker);
-            httpContext.RunActionFilters(invoker);
-  
-            var payload = Payload.GetOrDefault();
-            if (payload != null)
+            httpContext.RunAsyncActionFilters(invoker, async (context) =>
             {
-                await payloadCompleter.Complete(payload, clusterClient);
-            }
+                var payload = Payload.GetOrDefault();
+                if (payload != null)
+                {
+                    await payloadCompleter.Complete(payload, clusterClient);
+                }
 
-            var grainId = GetKey(httpContext);
-            var grain = clusterClient.GetGrain(grainType, grainId.Key);
-            if (grain == null)
-            {
-                httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
-                return;
-            }
+                var grainId = GetKey(httpContext);
+                var grain = clusterClient.GetGrain(grainType, grainId.Key);
+                if (grain == null)
+                {
+                    httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                    return;
+                }
 
-            await invoker.Invoke(grain, httpContext);
+                await invoker.Invoke(grain, httpContext);
+            });
+            return Task.CompletedTask;         
         }
 
         public static DataEntityMethodDispatcher Register(IEndpointRouteBuilder routeBuilder, 

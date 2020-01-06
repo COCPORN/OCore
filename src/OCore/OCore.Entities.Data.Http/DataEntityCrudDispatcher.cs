@@ -69,38 +69,41 @@ namespace OCore.Entities.Data.Http
             try
             {             
                 httpContext.RunAuthorizationFilters(invoker);
-                httpContext.RunActionFilters(invoker);
-
-                var payload = Payload.GetOrDefault();
-                if (payload != null)
+                httpContext.RunAsyncActionFilters(invoker, async (context) => 
                 {
-                    await payloadCompleter.Complete(payload, clusterClient);
-                }
-
-                var grainId = GetKey(httpContext);
-                var grain = clusterClient.GetGrain(grainType, grainId.Key);
-                if (grain == null)
-                {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return;
-                }
-
-                try
-                {
-                    await invoker.Invoke(grain, httpContext);
-                }
-                catch (DataCreationException ex)
-                {
-                    switch (httpMethod)
+                    var payload = Payload.GetOrDefault();
+                    if (payload != null)
                     {
-                        case HttpMethod.Get:
-                        case HttpMethod.Delete:
-                        case HttpMethod.Put:
-                            throw new StatusCodeException(HttpStatusCode.NotFound, ex.Message, ex);
-                        default: 
-                            throw;
+                        await payloadCompleter.Complete(payload, clusterClient);
                     }
-                }
+
+                    var grainId = GetKey(httpContext);
+                    var grain = clusterClient.GetGrain(grainType, grainId.Key);
+                    if (grain == null)
+                    {
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        return;
+                    }
+
+                    try
+                    {
+                        await invoker.Invoke(grain, httpContext);
+                    }
+                    catch (DataCreationException ex)
+                    {
+                        switch (httpMethod)
+                        {
+                            case HttpMethod.Get:
+                            case HttpMethod.Delete:
+                            case HttpMethod.Put:
+                                throw new StatusCodeException(HttpStatusCode.NotFound, ex.Message, ex);
+                            default:
+                                throw;
+                        }
+                    }
+                });
+
+           
             }
             catch (StatusCodeException ex)
             {

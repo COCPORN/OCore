@@ -12,28 +12,58 @@ using System.Threading.Tasks;
 
 namespace OCore.Http
 {
-    public static class RouterExtensions
+    public static class Extensions
     {
 
-        public static void RunActionFilters(this HttpContext context, GrainInvoker invoker)
-        {
-            //var actionExecutingContext = new ActionExecutingContext(new ActionContext(context, new RouteData(), new ActionDescriptor(), new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()));
-            //{
+        static ConcurrentDictionary<MethodInfo, Func<HttpContext, Task>> asyncFilters 
+            = new ConcurrentDictionary<MethodInfo, Func<HttpContext, Task>>();
 
-            //};
-            //if (actionFilters.TryGetValue(invoker.MethodInfo, out var filters))
-            //{
-            //    RunActionFilters(authorizationFilterContext, filters);
-            //}
-            //else
-            //{
-            //    filters = invoker.MethodInfo.GetCustomAttributes(true)
-            //        .Where(x => x is ActionFilterAttribute)
-            //        .Select(x => x as ActionFilterAttribute)
-            //        .OrderBy(x => x.Order);
-            //    actionFilters.Add(invoker.MethodInfo, filters);
-            //    RunAuthorizationFilters(authorizationFilterContext, filters);
-            //}
+        public static async Task RunAsyncActionFilters(this HttpContext context, 
+            GrainInvoker invoker,
+            Func<HttpContext, Task> next)
+        {
+
+            if (asyncFilters.TryGetValue(invoker.MethodInfo, out var storedFilters))
+            {
+                await storedFilters(context);
+            }
+            else
+            {
+
+                var filters = invoker.MethodInfo.GetCustomAttributes(true)
+                    .Where(x => x is Filters.IAsyncActionFilter)
+                    .Select(x => x as Filters.IAsyncActionFilter)
+                    .OrderBy(x => x.Order)
+                    .ToArray();
+
+                Func<HttpContext, Task> Wrap(Filters.IAsyncActionFilter filter, Func<HttpContext, Task> n)
+                {
+                    return new Func<HttpContext, Task>((context) => filter.OnActionExecutionAsync(context, n));
+                }
+
+                Func<HttpContext, Task> BuildCallChain(int i, Filters.IAsyncActionFilter filter, Func<HttpContext, Task> n)
+                {
+                    i--;
+                    if (i == 0)
+                    {
+                        return Wrap(filters[i], n);
+                    }
+                    return BuildCallChain(i, filters[i], Wrap(filters[i], n));
+                }
+
+                int filterCount = filters.Length;
+                Func<HttpContext, Task> callChain;
+                if (filterCount == 0)
+                {
+                    callChain = next;
+                }
+                else
+                {
+                    callChain = BuildCallChain(filterCount, filters[filterCount - 1], next);
+                    asyncFilters.AddOrUpdate(invoker.MethodInfo, callChain, (key, oldValue) => callChain);
+                }
+                await callChain(context);
+            }
         }
 
         static ConcurrentDictionary<MethodInfo, IEnumerable<IAuthorizationFilter>> authorizationFilters = new ConcurrentDictionary<MethodInfo, IEnumerable<IAuthorizationFilter>>();

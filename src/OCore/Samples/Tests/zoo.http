@@ -83,7 +83,7 @@ token: {{token}}
 
 
 ### Feedingschedule POST
-POST http://localhost:9000/data/FeedingSchedule/{{account-id}}
+POST http://localhost:9000/data/FeedingSchedule
 
 {
     "Feed": true

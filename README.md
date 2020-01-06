@@ -2,7 +2,9 @@
 
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
 
-Features (partially to come, look at this as a TODO list in no particular order):
+https://trello.com/b/ej90LXvI/ocore
+
+Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
 
 - Service publishing (cluster boundaries defined over HTTP) _Partially working_
   - Service Client
