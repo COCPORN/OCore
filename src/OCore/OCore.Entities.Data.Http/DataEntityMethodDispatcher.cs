@@ -41,10 +41,10 @@ namespace OCore.Entities.Data.Http
             routeBuilder.MapPost(GetRoutePattern(methodInfo.Name).RawText, Dispatch);
         }
 
-        public Task Dispatch(HttpContext httpContext)
+        public async Task Dispatch(HttpContext httpContext)
         {
             httpContext.RunAuthorizationFilters(invoker);
-            httpContext.RunAsyncActionFilters(invoker, async (context) =>
+            await httpContext.RunAsyncActionFilters(invoker, async (context) =>
             {
                 var payload = Payload.GetOrDefault();
                 if (payload != null)
@@ -61,8 +61,7 @@ namespace OCore.Entities.Data.Http
                 }
 
                 await invoker.Invoke(grain, httpContext);
-            });
-            return Task.CompletedTask;         
+            });            
         }
 
         public static DataEntityMethodDispatcher Register(IEndpointRouteBuilder routeBuilder, 

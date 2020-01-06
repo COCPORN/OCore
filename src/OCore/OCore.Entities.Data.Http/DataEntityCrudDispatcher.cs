@@ -69,7 +69,7 @@ namespace OCore.Entities.Data.Http
             try
             {             
                 httpContext.RunAuthorizationFilters(invoker);
-                httpContext.RunAsyncActionFilters(invoker, async (context) => 
+                await httpContext.RunAsyncActionFilters(invoker, async (context) => 
                 {
                     var payload = Payload.GetOrDefault();
                     if (payload != null)

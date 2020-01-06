@@ -12,7 +12,7 @@ namespace OCore.Core.Extensions
         /// <summary>
         /// https://stackoverflow.com/questions/12803012/fire-and-forget-with-async-vs-old-async-delegate
         /// </summary>        
-        public static async void FireAndForget(this Task task, ILogger logger)
+        public static async void FireAndForget(this Task task, ILogger logger = null)
         {
             try
             {                
@@ -20,7 +20,10 @@ namespace OCore.Core.Extensions
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Fire and forget threw");
+                if (logger != null)
+                {
+                    logger.LogError(ex, "Fire and forget threw");
+                }
             }
         }
     }

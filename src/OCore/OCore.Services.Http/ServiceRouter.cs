@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Services.Http
 {
-    public class ServiceRouter 
+    public class ServiceRouter
     {
         IClusterClient clusterClient;
         IServiceProvider serviceProvider;
@@ -46,24 +46,25 @@ namespace OCore.Services.Http
             }
         }
 
-        public Task Dispatch(HttpContext context)
-        {            
+        public async Task Dispatch(HttpContext context)
+        {
             var endpoint = (RouteEndpoint)context.GetEndpoint();
             var pattern = endpoint.RoutePattern;
 
             var invoker = routes[pattern.RawText];
             context.RunAuthorizationFilters(invoker);
-            return context.RunAsyncActionFilters(invoker, (context) =>
+            await context.RunAsyncActionFilters(invoker, async (context) =>
             {
                 var grain = clusterClient.GetGrain(invoker.GrainType, 0);
                 if (grain == null)
                 {
-                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
-                    return Task.CompletedTask;
+                    await context.SetStatusCode(System.Net.HttpStatusCode.BadRequest);
+                    return;
                 }
 
-                return invoker.Invoke(grain, context);
-            });            
+
+                await invoker.Invoke(grain, context);
+            });
         }
 
 

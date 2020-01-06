@@ -7,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -95,6 +96,15 @@ namespace OCore.Http
             foreach (var filter in filters)
             {
                 filter.OnAuthorization(authorizationFilterContext);
+            }
+        }
+
+        public static async Task SetStatusCode(this HttpContext context, HttpStatusCode statusCode, string message = null)
+        {
+            context.Response.StatusCode = (int)statusCode;
+            if (message != null)
+            {
+                await context.Response.WriteAsync(message);
             }
         }
     }
