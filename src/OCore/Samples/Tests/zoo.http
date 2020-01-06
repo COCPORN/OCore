@@ -12,7 +12,7 @@ POST http://localhost:9000/services/Zoo/AcceptNewAnimal
 }
 
 
-### Accept new animal
+### Say hello to new animal
 POST http://localhost:9000/services/Zoo/SayHelloToAnimal
 
 "Julius"

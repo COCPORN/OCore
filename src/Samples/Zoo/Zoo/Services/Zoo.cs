@@ -10,7 +10,7 @@ using Zoo.Interfaces;
 namespace Zoo.Services
 {
     public class Zoo : Service, IZoo
-    {
+    {        
         public async Task AcceptNewAnimal(Animal animal)
         {
             var animalEntity = GrainFactory.GetGrain<IAnimal>(animal.Name);

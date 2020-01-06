@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.OpenApi", "..\..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http", "..\..\..\OCore\OCore.Http\OCore.Http.csproj", "{644488D5-56A1-4F05-89C3-815D30F7911B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Services.Http", "..\..\..\OCore\OCore.Services.Http\OCore.Services.Http.csproj", "{2BB561DD-A190-419A-9463-250677C99C91}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.Abstractions", "..\..\..\OCore\OCore.Http.Abstractions\OCore.Http.Abstractions.csproj", "{103BB482-9943-4DB5-8139-A89D485981CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +87,14 @@ Global
 		{644488D5-56A1-4F05-89C3-815D30F7911B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{644488D5-56A1-4F05-89C3-815D30F7911B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{644488D5-56A1-4F05-89C3-815D30F7911B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB561DD-A190-419A-9463-250677C99C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB561DD-A190-419A-9463-250677C99C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB561DD-A190-419A-9463-250677C99C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB561DD-A190-419A-9463-250677C99C91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{103BB482-9943-4DB5-8139-A89D485981CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{103BB482-9943-4DB5-8139-A89D485981CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{103BB482-9943-4DB5-8139-A89D485981CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{103BB482-9943-4DB5-8139-A89D485981CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +109,8 @@ Global
 		{6D097372-3412-4470-AEDA-4C52A76DC03D} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
 		{98591C96-C92A-47D0-B7DA-90B81EE8CC84} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
 		{644488D5-56A1-4F05-89C3-815D30F7911B} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
+		{2BB561DD-A190-419A-9463-250677C99C91} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
+		{103BB482-9943-4DB5-8139-A89D485981CA} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3AF72687-8262-4172-9409-2F9A09BA9C3E}

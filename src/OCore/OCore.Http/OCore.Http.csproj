@@ -14,4 +14,8 @@
     <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OCore.Http.Abstractions\OCore.Http.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

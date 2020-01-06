@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Zoo.Interfaces.Filters;
 
 namespace Zoo.Interfaces
 {
@@ -79,7 +80,9 @@ namespace Zoo.Interfaces
         /// Accept a new animal to the gang
         /// </summary>
         /// <param name="animal"></param>
-        /// <returns></returns>
+        /// <returns></returns>        
+        [AnimalActionFilter]
+        [ZooActionFilter]
         Task AcceptNewAnimal(Animal animal);
 
         /// <summary>
