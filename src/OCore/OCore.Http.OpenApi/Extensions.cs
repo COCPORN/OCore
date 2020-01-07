@@ -13,11 +13,10 @@ namespace OCore.Http.OpenApi
             return services;
         }
 
-        public static IEndpointRouteBuilder MapOpenApi(this IEndpointRouteBuilder routes,
+        public static IEndpointRouteBuilder MapDeveloperOpenApi(this IEndpointRouteBuilder routes,
             string prefix,
             string appTitle,
-            string version,
-            string[] urls)
+            string version)
         {
             var routePattern = RoutePatternFactory.Parse($"{prefix}");
 

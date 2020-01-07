@@ -113,6 +113,7 @@ namespace OCore.Entities.Data.Http
                     }
                     else
                     {
+                        // Do the fan-out
                         if (httpMethod == HttpMethod.Get)
                         {
                             var grains = grainKeys.Select(x => clusterClient.GetGrain(grainType, x)).ToArray();

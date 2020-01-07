@@ -44,6 +44,7 @@ Features (partially to come, look at this as a TODO list in no particular order,
 
 - Idempotent actions
 - Mermaid export of call graph
+- Diagnostics collection
 
 ## Motivation
 
