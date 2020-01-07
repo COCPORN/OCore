@@ -15,12 +15,12 @@ namespace OCore.Http.OpenApi
 
         public static IEndpointRouteBuilder MapDeveloperOpenApi(this IEndpointRouteBuilder routes,
             string prefix,
-            string appTitle,
+            string appTitle,            
             string version)
         {
             var routePattern = RoutePatternFactory.Parse($"{prefix}");
 
-            var handler = new OpenApiHandler(appTitle, version);
+            var handler = new OpenApiHandler(appTitle, version, true);
 
             routes.MapGet(routePattern.RawText, handler.Dispatch);
             return routes;

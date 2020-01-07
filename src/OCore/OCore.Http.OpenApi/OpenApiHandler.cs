@@ -23,10 +23,13 @@ namespace OCore.Http.OpenApi
 
         bool LoadDocumentationXml { get; set; }
 
-        public OpenApiHandler(string title, string version, bool loadDocumentationXml = true)
+        bool StripInternal { get; set; }
+
+        public OpenApiHandler(string title, string version, bool stripInternal, bool loadDocumentationXml = true)
         {
             Title = title;
             Version = version;
+            StripInternal = stripInternal;
             LoadDocumentationXml = loadDocumentationXml;
         }
 
@@ -91,25 +94,10 @@ namespace OCore.Http.OpenApi
                 }
             }
 
-            //foreach (var baseResource in baseResources)
-            //{
-            //    var operations = new Dictionary<OperationType, OpenApiOperation>();
-
-            //    foreach (var resource in baseResource.Value)
-            //    {
-            //        operations.Add(GetOperationType(resource), GetOperationDescription(resource));
-            //    }
-
-            //    OpenApiPathItem item = new OpenApiPathItem
-            //    {
-            //        Operations = operations
-            //    };
-
-            //    paths.Add(baseResource.Key, item);
-            //}
-
             foreach (var resource in resourceList)
             {
+                if (StripInternal == true 
+                    && resource.BaseResource.StartsWith("OCore")) continue;
                 if (resource is ServiceResource)
                 {
                     AddServiceResource(paths, resource);
