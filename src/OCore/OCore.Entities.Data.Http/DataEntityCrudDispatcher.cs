@@ -53,7 +53,7 @@ namespace OCore.Entities.Data.Http
                     break;
                 case HttpMethod.Put:
                     routeBuilder.MapPut(GetRoutePattern().RawText, Dispatch);
-                    methodInfo = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Upsert");
+                    methodInfo = typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod("Update");
                     break;
             }
             invoker = new DataEntityGrainInvoker(routeBuilder.ServiceProvider, grainType, methodInfo, dataEntityType)

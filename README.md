@@ -6,8 +6,21 @@ https://trello.com/b/ej90LXvI/ocore
 
 Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
 
-- Service publishing (cluster boundaries defined over HTTP) _Partially working_
+## (Partially) implemented
+
+- Service publishing (cluster boundaries defined over HTTP)
+  - Run Authorization and Action filters
   - Service Client
+- Data entities
+  - Key strategies for sandboxing
+  - Automatic fan-out    
+  - HTTP exposure
+  - Auto CRUD
+  - Subscription over SignalR
+  - Projected data entities (customer profile should become "contact", for instance)
+
+## Committed
+
 - Event aggregation (based on Orleans streams)
 - Authentication
   - User accounts with optional tenancy
@@ -17,28 +30,24 @@ Features (partially to come, look at this as a TODO list in no particular order,
 - Authorization
 - Multi tenancy
 - Rich entities (Grain subclassing to add more information in backing store)
-  - Collection querying (for select backends)
-- Data entities
-  - Key strategies
-    - Identity
-    - Tenant
-      - Prefixed
-      - Combined (as in Guid combine)
-      - Sorted
-  - HTTP exposure
-  - Auto CRUD
-  - Subscription over SignalR
-  - Identity access control (automap authentication ken to account id)
-  - Sandboxing ("sandbox on account ID", etc)
-  - Projected data entities (customer profile should become "contact", for instance)
+- OpenAPI support with autoculling of resources
+
+## Planned
+
+- Collection querying (for select backends)
 - Audited entities
 - Data polling
 - Idempotent actions
-- OpenAPI support with autoculling of resources
 
 ## Motivation
 
 Programming is fun. Plumbing is not.
+
+If Microsoft Orleans is the best thing since sliced bread, why doesn't everyone use it always and forever and for everything?
+
+OCore is an attempt to provide that delicious _F5_ experience. Start a new project, slap two nugets on it and press F5 to run. Orleans isn't hard to setup, but it can seem like it is  at first glance. Also, while the programming model is relatively immediately accessible to anyone with even a cursory grasp of OO modelling, things are different enough to potentially be daunting to newcomers. There are a lot of new concepts and quite a few pitfalls. Is hiding the intricacies a good idea? We'll see. It is not a given that it is.
+
+Make no mistake, OCore is just a thin wrapper on Orleans-concepts. Some common patterns are made into first class citizens (services, entities). Some repetitive tasks are implemented once and for all, and you can use it while developing and then replacing it before going into production, although the ultimate goal is that OCore code should be production ready at some point.
 
 ## Setup
 
@@ -52,7 +61,7 @@ Look at the sample for an example to setup OCore quickly using default configura
 
 Get started (silly developer wrapper on the hostbuilder setup). We all know what you want to do! You want to GO! So LET'S GO!
 
-Install the NuGet package `OCore.Setup`, then:
+Install the NuGet package `OCore.Setup` and `Microsoft.Orleans.CodeGenerator.MSBuild`, then:
 
 ```csharp
     class Program
@@ -64,10 +73,18 @@ Install the NuGet package `OCore.Setup`, then:
         }
     }
 ```
+F5 is waiting for you.
 
-### Service setup
+`LetsGo` automatically gives you this:
 
-Documentation TODO, functionality currently lives in `OCore.Authorization`.
+- Setup Orleans for localhost clustering with in-memory transient storage (the cluster will start up clean every time you start it)
+- System setup functionality that allows it to be initialized with a root account
+- Expose endpoints for 
+- Start listening for incoming requests at `http://localhost:9000`
+- Automatically register any `Service` with exposed HTTP endpoints at `http://localhost:9000/services/`
+- Automatically register any `DataEntity` with exposed HTTP endpoints at `http://localhost:9000/data`
+- Start serving OpenApi documentation for services and data entities at `http://localhost:9000/api-docs`
+- Setup authorization system with user tokens and
 
 ## Service 
 
@@ -148,7 +165,7 @@ public interface IShyService: IService
 
 ### HTTP calls
 
-You can decorate methods with attributes that implement `IAuthorizationFilter`:
+You can decorate methods with attributes that implement `IAuthorizationFilter` (the ASPNET Core interface):
 
 ```csharp
 public class AuthorizedService : IAuthorizedService, Service 
@@ -161,7 +178,7 @@ public class AuthorizedService : IAuthorizedService, Service
 }
 ```
 
-There will be support for `ActionFilter`s. The 
+There is support for running asynchronous action filters, although these are not currently compatible with the ASPNET Core interface. Look in `OCore.Http.Abstractions` for `IAsyncActionFilter.cs`.
 
 ### Service client
 
@@ -175,7 +192,11 @@ I am toying with the idea of making a strongly typed client using Roslyn code ge
 
 ## Data Entities
 
-An OCore Data Entity is promiscuous, providing full access to its internal state. Data Entities can _optionally_ serve their innards over HTTP. They can also be extended with commands. Also, the authorization framework can decide which Data Entities an API key has access to, more about this later.
+OCore Data Entities are a quick way to model data so that it is accessible inside and optionally outside the cluster.
+
+Data Entities can serve their innards over HTTP. They can also be extended with commands. Also, the authorization framework can decide which Data Entities an API key has access to, more about this later.
+
+Data Entities are implemented as `Grain` with `IGrainWithStringKey`.
 
 ### Implicit access
 
@@ -183,24 +204,24 @@ A Data Entity implicitly provides these methods:
 
 - `Create` (mapped to `POST`)
 - `Read` (mapped to `GET`)
-- `Update` (not mapped)
-- `Upsert` (mapped to `PUT`)
+- `Update` (mapped to `PUT`)
+- `Upsert` (not mapped)
 - `Delete` (mapped to `DELETE`)
 
-If an entity is not created, all calls except `Create`/`POST` and `Upsert`/`PUT` will fail.
+If an entity is not created, all calls except `Create`/`POST` will fail.
 
 ### Example
 
 ```csharp
-public class ShortenedUrlState 
+public class ShortenedUrl 
 {
     public string RedirectTo { get; set; }
 
     public int TimesVisited { get; set; }
 }
 
-[DataEntity("ShortenedUrl")]
-public interface IShortenedUrl : IDataEntity<ShortenedUrlState>
+[DataEntity("ShortenedUrl", dataEntityMethods: DataEntityMethods.All)]
+public interface IShortenedUrl : IDataEntity<ShortenedUrl>
 {
     Task<string> Visit();
 }
@@ -209,7 +230,7 @@ public interface IShortenedUrl : IDataEntity<ShortenedUrlState>
 ...with the implementation:
 
 ```csharp
-public class ShortenedUrlDataEntity : DataEntity<ShortenedUrlState>, IShortenedUrl
+public class ShortenedUrlEntity : DataEntity<ShortenedUrl>, IShortenedUrl
 {
     public async Task<string> Visit() 
     {
