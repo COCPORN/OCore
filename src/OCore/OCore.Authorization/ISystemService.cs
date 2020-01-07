@@ -16,6 +16,6 @@ namespace OCore.Authorization
         /// <param name="token"></param>
         /// <returns></returns>
         [Authorize(requirements: Requirements.None)]
-        Task Initialize(Guid token, Guid accountId);
+        Task Initialize(Guid token, string accountId);
     }
 }

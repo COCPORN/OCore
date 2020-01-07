@@ -11,9 +11,9 @@ namespace OCore.Authorization
     /// </summary>
     public interface ITenantAccount : IGrainWithGuidCompoundKey
     {
-        Task Create(Guid accountId);
+        Task Create(string accountId);
 
-        Task<Guid> Get();
+        Task<string> Get();
 
         Task Delete();
     }

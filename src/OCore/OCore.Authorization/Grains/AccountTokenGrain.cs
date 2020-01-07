@@ -9,7 +9,7 @@ namespace OCore.Authorization.Grains
 {
     public class AccountTokenState
     {
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
 
         public string TenantId { get; set; }
 
@@ -27,13 +27,13 @@ namespace OCore.Authorization.Grains
             });
         }
 
-        public Task LinkToAccountId(Guid accountId)
+        public Task LinkToAccountId(string accountId)
         {
             State.AccountId = accountId;
             return WriteStateAsync();
         }
 
-        public Task LinkToAccountIdAndTenantId(Guid accountId, string tenantId)
+        public Task LinkToAccountIdAndTenantId(string accountId, string tenantId)
         {
             State.AccountId = accountId;
             State.TenantId = tenantId;

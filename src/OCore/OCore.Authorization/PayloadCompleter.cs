@@ -86,7 +86,7 @@ namespace OCore.Authorization
             }
 
             var roleService = clusterClient.GetGrain<IRoleService>(0);
-            payload.Roles = await roleService.GetRoles(payload.AccountId.Value);
+            payload.Roles = await roleService.GetRoles(payload.AccountId);
         }
 
         async Task GetProjectedIdentity(Payload payload)
@@ -124,8 +124,7 @@ namespace OCore.Authorization
                 payload.OriginalAccountId = accountInfo.AccountId;
             }
 
-            if (payload.AccountId.HasValue == false
-                || payload.AccountId == Guid.Empty)
+            if (payload.AccountId != null)
             {
                 throw new UnauthorizedAccessException("Invalid token");
             }

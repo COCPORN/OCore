@@ -8,18 +8,18 @@ namespace OCore.Authorization.Grains
 {
     public class TenantAccountState
     {
-        public Guid TenantAccountId { get; set; }
+        public string TenantAccountId { get; set; }
     }
 
     public class TenantAccountGrain : Entity<TenantAccountState>, ITenantAccount
     {
-        public Task Create(Guid accountId)
+        public Task Create(string accountId)
         {
             State.TenantAccountId = accountId;
             return WriteStateAsync();
         }
 
-        public Task<Guid> Get()
+        public Task<string> Get()
         {
             return Task.FromResult(State.TenantAccountId);
         }

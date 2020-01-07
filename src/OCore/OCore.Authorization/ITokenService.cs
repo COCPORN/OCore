@@ -10,7 +10,7 @@ namespace OCore.Authorization
 
     public class AccountInfo
     {
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
 
         public string TenantId { get; set; }
     }
@@ -19,10 +19,10 @@ namespace OCore.Authorization
     public interface ITokenService : IService
     {
         [Authorize]
-        Task AddToken(Guid token, Guid account);
+        Task AddToken(Guid token, string account);
 
         [Authorize]
-        Task AddTokenWithTenant(Guid token, Guid account, string tenantId);
+        Task AddTokenWithTenant(Guid token, string accountId, string tenantId);
 
         [Authorize(permissions: Permissions.None)]
         Task<AccountInfo> GetAccount(Guid token);

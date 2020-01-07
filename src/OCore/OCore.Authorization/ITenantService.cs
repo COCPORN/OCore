@@ -9,8 +9,8 @@ namespace OCore.Authorization
     [Service("OCore.TenantService")]
     public interface ITenantService : IService
     {
-        Task<Guid> AddAcount(Guid accountId);
+        Task<Guid> AddAcount(string accountId);
 
-        Task<Guid> GetTenantAccount(Guid accountId);
+        Task<string> GetTenantAccount(string accountId);
     }
 }

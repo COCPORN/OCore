@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization
 {
-    public interface IAccountRoles : IGrainWithGuidKey
+    public interface IAccountRoles : IGrainWithStringKey
     {
         Task AddRole(string role);
 

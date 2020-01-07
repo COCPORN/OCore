@@ -116,7 +116,7 @@ namespace OCore.Entities.Data.Http
 
         private string GetAccountCombinedKey(HttpContext context)
         {
-            var account = GetAccountId();
+            var account = Guid.Parse(GetAccountId());
             var otherId = Guid.Parse(GetCombinationFromRoute(context));
             return account.Combine(otherId).ToString();
         }
@@ -145,7 +145,7 @@ namespace OCore.Entities.Data.Http
             return context.Request.RouteValues["combination"].ToString();
         }
 
-        private Guid GetAccountId()
+        private string GetAccountId()
         {
             var payload = Payload.Get();
 
@@ -155,7 +155,7 @@ namespace OCore.Entities.Data.Http
             }
             else
             {
-                return payload.AccountId.Value;
+                return payload.AccountId;
             }
         }
 

@@ -25,11 +25,11 @@ namespace OCore.Authorization.Abstractions.Request
 
         public List<string> ApiKeyApplications { get; set; }
 
-        public Guid? OriginalAccountId { get; set; }
+        public string OriginalAccountId { get; set; }
 
-        public Guid? ProjectedAccountId { get; set; }
+        public string ProjectedAccountId { get; set; }
 
-        public Guid? AccountId => ProjectedAccountId.HasValue ? ProjectedAccountId : OriginalAccountId;
+        public string AccountId => ProjectedAccountId != null ? ProjectedAccountId : OriginalAccountId;
 
         public bool AccountIdHasBeenProjected { get; set; } 
             

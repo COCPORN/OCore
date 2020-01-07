@@ -10,12 +10,12 @@ namespace OCore.Authorization
     public interface IRoleService : IService
     {
         [Authorize]
-        Task AddRole(Guid accountId, string role);
+        Task AddRole(string accountId, string role);
 
         [Authorize]
-        Task RemoveRole(Guid accountId, string role);
+        Task RemoveRole(string accountId, string role);
 
         [Authorize]
-        Task<List<string>> GetRoles(Guid accountId);
+        Task<List<string>> GetRoles(string accountId);
     }
 }

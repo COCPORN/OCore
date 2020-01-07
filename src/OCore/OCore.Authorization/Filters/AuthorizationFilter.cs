@@ -116,9 +116,9 @@ namespace OCore.Authorization.Filters
                 }
                 var tenantService = grainFactory.GetGrain<ITenantService>(0);
 
-                var tenantAccountId = await tenantService.GetTenantAccount(payload.AccountId.Value);
+                var tenantAccountId = await tenantService.GetTenantAccount(payload.AccountId);
 
-                if (tenantAccountId == Guid.Empty)
+                if (tenantAccountId == null)
                 {
                     throw new UnauthorizedAccessException("Invalid tenancy");
                 }
@@ -199,7 +199,7 @@ namespace OCore.Authorization.Filters
             }
 
             var roleService = grainFactory.GetGrain<IRoleService>(0);
-            payload.Roles = await roleService.GetRoles(payload.AccountId.Value);
+            payload.Roles = await roleService.GetRoles(payload.AccountId);
         }
 
 

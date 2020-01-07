@@ -8,9 +8,9 @@ namespace OCore.Authorization
 {    
     public interface IAccountToken : IGrainWithGuidKey
     {
-        Task LinkToAccountId(Guid accountId);
+        Task LinkToAccountId(string accountId);
 
-        Task LinkToAccountIdAndTenantId(Guid accountId, string tenantId);
+        Task LinkToAccountIdAndTenantId(string accountId, string tenantId);
         Task<AccountInfo> GetAccountId();
     }
 }
