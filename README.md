@@ -16,7 +16,7 @@ Features (partially to come, look at this as a TODO list in no particular order,
   - Projected data entities (customer profile should become "contact", for instance)
   - Auto CRUD
   - HTTP exposure
-  - [WIP] Automatic fan-out
+  - Automatic fan-out
 
 ## Committed
 
@@ -323,13 +323,18 @@ Support for more methods of fan-out is coming.
 
 ### Key strategies
 
-`DataEntity` implements different key strategies. These include:
+`DataEntity` implements different key strategies. Deciding on the key strategy will optionally make Data Entities interplay with the authorization system.
+ The Data Entity key strategies are:
 
-- Global
-- Identity
-- Account
-- AccountPrefix
-- fds
+- Account - The Data Entity will be tied to the account of the request. This means that a GET path will be something like `http://localhost:9000/data/me`. It will not accept an ID
+- AccountPrefix - The Data Entity will be prefixed with the account and accept a separate ID, ex.: `http://localhost:9000/data/contact/Jonas` will be keyed as `03A9765C-2A7E-4780-A368-CCA645C4B278:Jonas`. Failing to provide an ID will result in a 404
+- AccountCombined - The Data Entity will use `Guid.Combine` to create a key. Example: `03A9765C-2A7E-4780-A368-CCA645C4B278:70A3DA00-8D21-4BA8-B833-971E616079C8`. This will fail if the identity is not a Guid.
+- AccountCombinedPrefix - The Data Entity will use `Guid.Combine` to create a key. Example: `03A9765C-2A7E-4780-A368-CCA645C4B278:70A3DA00-8D21-4BA8-B833-971E616079C8:chat`. This will fail if the identity is not a Guid.
+- Global - All entities of this Data Entity will have the key `Global`, meaning all requests will hit the same activation. 
+- Identity - The Data Entity will take the identity from the route, example: `http://localhost:9000/data/blogpost/first` will create the key `first`. Everyone who know the identity of the entity can access it
+- Tenant - The Data Entity will be keyed on Tenant. This will be fetched from the request payload. `http://localhost:9000/data/tenantconfiguration` will be keyed on `tenant1`
+- TenantPrefix - The Data Entity will be keyed on Tenant ID with identity picked from route. `http://localhost:9000/data/tenantuser/Peter` will be keyed on `tenant1:Peter`
+
 
 ## `Entity<T>`
 
