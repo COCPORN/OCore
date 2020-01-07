@@ -13,15 +13,16 @@ Features (partially to come, look at this as a TODO list in no particular order,
   - Service Client
 - Data entities
   - Key strategies for sandboxing
-  - Automatic fan-out    
-  - HTTP exposure
-  - Auto CRUD
-  - Subscription over SignalR
   - Projected data entities (customer profile should become "contact", for instance)
+  - Auto CRUD
+  - HTTP exposure
+  - [WIP] Automatic fan-out
 
 ## Committed
 
 - Event aggregation (based on Orleans streams)
+- Data entities
+  - [Not started] Subscription over SignalR 
 - Authentication
   - User accounts with optional tenancy
   - API keys
@@ -30,14 +31,19 @@ Features (partially to come, look at this as a TODO list in no particular order,
 - Authorization
 - Multi tenancy
 - Rich entities (Grain subclassing to add more information in backing store)
-- OpenAPI support with autoculling of resources
+- OpenAPI support with autoculling of resources based on API-key/token
 
 ## Planned
 
 - Collection querying (for select backends)
 - Audited entities
-- Data polling
+- Event sources entities
+- Data polling on entities
+
+## Brainstorming
+
 - Idempotent actions
+- Mermaid export of call graph
 
 ## Motivation
 
@@ -47,7 +53,7 @@ If Microsoft Orleans is the best thing since sliced bread, why doesn't everyone 
 
 OCore is an attempt to provide that delicious _F5_ experience. Start a new project, slap two nugets on it and press F5 to run. Orleans isn't hard to setup, but it can seem like it is  at first glance. Also, while the programming model is relatively immediately accessible to anyone with even a cursory grasp of OO modelling, things are different enough to potentially be daunting to newcomers. There are a lot of new concepts and quite a few pitfalls. Is hiding the intricacies a good idea? We'll see. It is not a given that it is.
 
-Make no mistake, OCore is just a thin wrapper on Orleans-concepts. Some common patterns are made into first class citizens (services, entities). Some repetitive tasks are implemented once and for all, and you can use it while developing and then replacing it before going into production, although the ultimate goal is that OCore code should be production ready at some point.
+Make no mistake, OCore is often just a thin wrapper on Orleans-concepts. Some common patterns are made into first class citizens (services, entities). Some repetitive tasks are implemented once and for all, and you can use it while developing and then replacing it before going into production, although the ultimate goal is that OCore code should be production ready at some point.
 
 ## Setup
 
@@ -88,13 +94,18 @@ F5 is waiting for you.
 
 ## Service 
 
-An OCore Service is a stateless, reentrant integer keyed grain. It can _optionally_ be automatically published to an HTTP endpoint. An exposed Service will always be hit with identity `0`, so there will be no explosion of grains on the server. An exposed Service is an opinionated alternative to an ASPNET Core `Controller`, with these benefits:
+**When to use**: Use services when you have a problem that is _task based_, as in "I have a task I need to get done". This is opposed to _data based_, as in "I have some data I need to get grokked". Services provide an RPC (remote procedure call)-like interface to the cluster. This is often practical if you need to orchestrate multiple data entities, or do compute based work.
+
+Services are activated in the cluster multiple times, and have no identity.
+
+An OCore Service is implemented as a stateless, reentrant integer keyed grain. It can _optionally_ be automatically published to an HTTP endpoint. An exposed Service will always be hit with identity `0`, so there will be no explosion of grains on the server. An exposed Service is an opinionated alternative to an ASPNET Core `Controller`, with these benefits:
 
 - No plumbing to get to the cluster
 - No chance of accidentally putting business logic in the controllers
 - Easy to maintain
 - Easy to learn
-- Plays (relatively) nice with the rest of ASPNET Core
+- Plays (relatively) nice with some relevant parts of ASPNET Core
+- Plays nice with the authorization system
 
 Define an interface to the service. Decide mentally if you want this to be an external or internally available interface. 
 
@@ -192,7 +203,11 @@ I am toying with the idea of making a strongly typed client using Roslyn code ge
 
 ## Data Entities
 
+**When to use**: Use data entities when you have a problem that is data based_, as in "I have discrete data that I need to grok". This is opposed to _task based_, as in "I have some tasks I need to get done". Services optionally provide a CRUD(Create/Read/Update/Delete) interface to the cluster.
+
 OCore Data Entities are a quick way to model data so that it is accessible inside and optionally outside the cluster.
+
+Data Entities are _single activation_ based on their identity.
 
 Data Entities can serve their innards over HTTP. They can also be extended with commands. Also, the authorization framework can decide which Data Entities an API key has access to, more about this later.
 
@@ -208,7 +223,7 @@ A Data Entity implicitly provides these methods:
 - `Upsert` (not mapped)
 - `Delete` (mapped to `DELETE`)
 
-If an entity is not created, all calls except `Create`/`POST` will fail.
+If an entity is not created, all calls except `POST` will fail over HTTP.
 
 ### Example
 
@@ -277,7 +292,7 @@ POST http://localhost:9000/data/ShortenedUrl/SomeId/Visit
 
 This will call the `Visit`-method updating the counter, and return the `RedirectTo`-string.
 
-## Multi fetch (currently not working)
+## Multi fetch
 
 Using `GET`, you can do multifetch using HTTP:
 
@@ -301,6 +316,10 @@ This will return:
 ```
 
 This indicates that the system was able to fetch data for Id1 and Id5, but not for Id2.
+
+This works regardless of key strategy, meaning that if a data entity is account prefixed, fetching `id1`, `id2` will translate to `accountId:id1` and `accountId:id2`, maintaining the integrity of the sandbox.
+
+Support for more methods of fan-out is coming.
 
 ### Key strategies
 

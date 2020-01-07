@@ -67,9 +67,9 @@ namespace OCore.Entities.Data.Http
         public async Task Dispatch(HttpContext httpContext)
         {
             try
-            {             
+            {
                 httpContext.RunAuthorizationFilters(invoker);
-                await httpContext.RunAsyncActionFilters(invoker, async (context) => 
+                await httpContext.RunAsyncActionFilters(invoker, async (context) =>
                 {
                     var payload = Payload.GetOrDefault();
                     if (payload != null)
@@ -77,37 +77,57 @@ namespace OCore.Entities.Data.Http
                         await payloadCompleter.Complete(payload, clusterClient);
                     }
 
-                    var grainId = GetKey(httpContext);
-                    var grain = clusterClient.GetGrain(grainType, grainId.Key);
-                    if (grain == null)
+                    var grainKeys = GetKeys(httpContext);
+                    if (grainKeys == null || grainKeys.Length == 0)
                     {
-                        httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        await httpContext.SetStatusCode(HttpStatusCode.BadRequest, "Unreachable destination");
                         return;
                     }
 
-                    try
+                    // Go get that single grain
+                    if (grainKeys.Length == 1)
                     {
-                        await invoker.Invoke(grain, httpContext);
-                    }
-                    catch (DataCreationException ex)
-                    {
-                        switch (httpMethod)
+                        var grain = clusterClient.GetGrain(grainType, grainKeys[0]);
+                        if (grain == null)
                         {
-                            case HttpMethod.Get:
-                            case HttpMethod.Delete:
-                            case HttpMethod.Put:
-                                throw new StatusCodeException(HttpStatusCode.NotFound, ex.Message, ex);
-                            default:
-                                throw;
+                            await httpContext.SetStatusCode(HttpStatusCode.BadRequest, "Unreachable destination");
+                            return;
+                        }
+
+                        try
+                        {
+                            await invoker.Invoke(grain, httpContext);
+                        }
+                        catch (DataCreationException ex)
+                        {
+                            switch (httpMethod)
+                            {
+                                case HttpMethod.Get:
+                                case HttpMethod.Delete:
+                                case HttpMethod.Put:
+                                    throw new StatusCodeException(HttpStatusCode.NotFound, ex.Message, ex);
+                                default:
+                                    throw;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (httpMethod == HttpMethod.Get)
+                        {
+                            var grains = grainKeys.Select(x => clusterClient.GetGrain(grainType, x)).ToArray();
+                            await invoker.Invoke(grains, context);
+                        }
+                        else
+                        {
+                            throw new NotImplementedException("Fan-out is not (yet) implemented for this operation");
                         }
                     }
                 });
-
-           
             }
             catch (StatusCodeException ex)
             {
-                httpContext.Response.StatusCode = (int)ex.StatusCode;
+                await httpContext.SetStatusCode(ex.StatusCode, ex.Message);
                 httpContext.Response.Headers.Clear();
             }
         }

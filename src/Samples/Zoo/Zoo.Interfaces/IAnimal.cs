@@ -32,7 +32,7 @@ namespace Zoo.Interfaces
     /// <summary>
     /// The data entity Animel
     /// </summary>
-    [DataEntity("Animal")]
+    [DataEntity("Animal", dataEntityMethods: DataEntityMethods.All)]
     public interface IAnimal : IDataEntity<Animal>
     {
         /// <summary>

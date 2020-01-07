@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Authorization.RateLim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.OpenApi", "OCore.Http.OpenApi\OCore.Http.OpenApi.csproj", "{6AC82AB5-CF17-413F-B1A3-B4B87B8E56E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Http.Abstractions", "OCore.Http.Abstractions\OCore.Http.Abstractions.csproj", "{C4BCC4AC-F9AD-4120-B028-71848A5774F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.Abstractions", "OCore.Http.Abstractions\OCore.Http.Abstractions.csproj", "{C4BCC4AC-F9AD-4120-B028-71848A5774F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{7C319875-448C-44AE-B1BF-863F6FE88DA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

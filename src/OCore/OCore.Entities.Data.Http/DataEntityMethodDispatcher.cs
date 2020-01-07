@@ -28,8 +28,8 @@ namespace OCore.Entities.Data.Http
             string dataEntityName,
             KeyStrategy keyStrategy,
             IPayloadCompleter payloadCompleter,
-            Type grainType,           
-            MethodInfo methodInfo) : 
+            Type grainType,
+            MethodInfo methodInfo) :
             base(prefix, dataEntityName, keyStrategy)
         {
             this.grainType = grainType;
@@ -52,29 +52,43 @@ namespace OCore.Entities.Data.Http
                     await payloadCompleter.Complete(payload, clusterClient);
                 }
 
-                var grainId = GetKey(httpContext);
-                var grain = clusterClient.GetGrain(grainType, grainId.Key);
-                if (grain == null)
+                var grainKeys = GetKeys(httpContext);
+                if (grainKeys.Length == 0)
                 {
-                    httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                    await httpContext.SetStatusCode(System.Net.HttpStatusCode.BadRequest, "Unreachable destination");
                     return;
+
                 }
 
-                await invoker.Invoke(grain, httpContext);
-            });            
+                if (grainKeys.Length == 1)
+                {
+                    var grain = clusterClient.GetGrain(grainType, grainKeys[0]);
+                    if (grain == null)
+                    {
+                        await httpContext.SetStatusCode(System.Net.HttpStatusCode.BadRequest, "Unreachable destination");
+                        return;
+                    }
+
+                    await invoker.Invoke(grain, httpContext);
+                }
+                else
+                {
+
+                }
+            });
         }
 
-        public static DataEntityMethodDispatcher Register(IEndpointRouteBuilder routeBuilder, 
-            string prefix, 
-            string dataEntityName, 
+        public static DataEntityMethodDispatcher Register(IEndpointRouteBuilder routeBuilder,
+            string prefix,
+            string dataEntityName,
             KeyStrategy keyStrategy,
             IPayloadCompleter payloadCompleter,
             Type grainType,
             MethodInfo methodInfo)
         {
-            return new DataEntityMethodDispatcher(routeBuilder, 
-                prefix, 
-                dataEntityName, 
+            return new DataEntityMethodDispatcher(routeBuilder,
+                prefix,
+                dataEntityName,
                 keyStrategy,
                 payloadCompleter,
                 grainType,

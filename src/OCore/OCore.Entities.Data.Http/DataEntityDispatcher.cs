@@ -10,13 +10,6 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities.Data.Http
 {
-    public class GrainKey
-    {
-        public string Key { get; set; }
-
-        public bool IsFanable { get; set; }
-    }
-
     public abstract class DataEntityDispatcher
     {
         string prefix;
@@ -62,64 +55,63 @@ namespace OCore.Entities.Data.Http
         }
 
         /// <summary>
-        /// Get the relevant key based on key strategy
+        /// Get the relevant keys based on key strategy. The order of the keys will match the order
+        /// of the input
         /// </summary>
         /// <returns></returns>
-        protected GrainKey GetKey(HttpContext context)
+        protected string[] GetKeys(HttpContext context)
         {
             switch (keyStrategy)
             {
                 case KeyStrategy.Identity:
-                    return new GrainKey
-                    {
-                        Key = GetIdentityFromRoute(context),
-                        IsFanable = true
-                    };
+                    return GetIdentityKeys(context);
                 case KeyStrategy.Global:
-                    return new GrainKey
-                    {
-                        Key = "Global",
-                        IsFanable = false
-                    };
+                    return new string[] { "Global" };
                 case KeyStrategy.Account:
-                    return new GrainKey
-                    {
-                        Key = GetAccountId().ToString(),
-                        IsFanable = false
-                    };
+                    return new string[] { GetAccountId().ToString() };
                 case KeyStrategy.AccountPrefix:
-                    return new GrainKey
-                    {
-                        Key = $"{GetAccountId()}:{GetIdentityFromRoute(context)}",
-                        IsFanable = true
-                    };
+                    return GetAccountPrefixedKeys(context);
                 case KeyStrategy.Tenant:
-                    return new GrainKey
-                    {
-                        Key = $"{GetTenantId()}",
-                        IsFanable = false
-                    };
+                    return new string[] { GetTenantId() };
                 case KeyStrategy.TenantPrefix:
-                    return new GrainKey
-                    {
-                        Key = $"{GetTenantId()}:{GetIdentityFromRoute(context)}",
-                        IsFanable = false
-                    };
+                    return GetTenantPrefixedKeys(context);
                 case KeyStrategy.AccountCombined:
-                    return new GrainKey
-                    {
-                        Key = GetAccountCombinedKey(context),
-                        IsFanable = true
-                    };
+                    return new string[] { GetAccountCombinedKey(context) };
                 case KeyStrategy.AccountCombinedPrefix:
-                    return new GrainKey
-                    {
-                        Key = $"{GetAccountCombinedKey(context)}:{GetIdentityFromRoute(context)}",
-                        IsFanable = true
-                    };
+                    return AccountCombinedPrefixedKeys(context);
             }
             return null;
+        }
 
+        string[] GetIdentities(string identity)
+        {
+            return identity.Split(',');
+        }
+
+        private string[] AccountCombinedPrefixedKeys(HttpContext context)
+        {
+            return GetIdentities(GetIdentityFromRoute(context))
+                .Select(x => $"{GetAccountCombinedKey(context)}:{x}")
+                .ToArray();
+        }
+
+        private string[] GetTenantPrefixedKeys(HttpContext context)
+        {
+            return GetIdentities(GetIdentityFromRoute(context))
+                .Select(x => $"{GetTenantId()}:{x}")
+                .ToArray();
+        }
+
+        private string[] GetAccountPrefixedKeys(HttpContext context)
+        {
+            return GetIdentities(GetIdentityFromRoute(context))
+                .Select(x => $"{GetAccountId()}:{x}")
+                .ToArray();
+        }
+
+        private string[] GetIdentityKeys(HttpContext context)
+        {
+            return GetIdentities(GetIdentityFromRoute(context)).ToArray();
         }
 
         private string GetAccountCombinedKey(HttpContext context)
@@ -165,7 +157,6 @@ namespace OCore.Entities.Data.Http
             {
                 return payload.AccountId.Value;
             }
-
         }
 
     }
