@@ -16,29 +16,18 @@ namespace OCore.Setup
 {
     public static class DeveloperExtensions
     {
-        public static Task LetsGo(Type assemblyCarrier = null)
-        {
-            var hostBuilder = new HostBuilder();
-            return hostBuilder.LetsGo(assemblyCarrier);
-        }
 
-        public static Task LetsGo(Action<HostBuilder> configure, Type assemblyCarrier = null)
+        public static Task LetsGo(Action<HostBuilder> hostConfigurationDelegate = null,
+            Action<ISiloBuilder> siloConfigurationDelegate = null)
         {
             var hostBuilder = new HostBuilder();
-            hostBuilder.DeveloperSetup(assemblyCarrier);
-            configure(hostBuilder);
+            hostBuilder.DeveloperSetup(siloConfigurationDelegate);
+            hostConfigurationDelegate?.Invoke(hostBuilder);
             var host = hostBuilder.Build();
             return host.StartAsync();
         }
 
-        public static Task LetsGo(this HostBuilder hostBuilder, Type grainType = null)
-        {
-            hostBuilder.DeveloperSetup(grainType);
-            var host = hostBuilder.Build();
-            return host.StartAsync();
-        }
-
-        public static void DeveloperSetup(this HostBuilder hostBuilder, Type grainType = null)
+        public static void DeveloperSetup(this HostBuilder hostBuilder, Action<ISiloBuilder> configureDelegate = null)
         {
             hostBuilder.UseConsoleLifetime();
             hostBuilder.ConfigureLogging(logging => logging.AddConsole());
@@ -55,16 +44,9 @@ namespace OCore.Setup
                 b.AddSimpleMessageStreamProvider("BaseStreamProvider");
                 b.AddMemoryGrainStorageAsDefault();
                 b.AddOCoreAuthorization();
-                if (grainType != null)
-                {
-                    b.ConfigureApplicationParts(parts => parts
-                        .AddApplicationPart(grainType.Assembly)
-                        .WithReferences());
-                }
-                else
-                {
-                    b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
-                }
+                b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
+
+                configureDelegate?.Invoke(b);
             });
         }
 
