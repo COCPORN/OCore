@@ -58,7 +58,7 @@ namespace OCore.Authorization
             requestPayload.InitialPermissions = Permissions;
             requestPayload.InitialRequirements = Requirements;
 
-            if (Guid.TryParse(context.HttpContext.Request.Headers[options.TokenHeader], out var token))
+            if (context.HttpContext.Request.Headers.TryGetValue(options.TokenHeader, out var token))
             {
                 requestPayload.Token = token;
             }
@@ -68,7 +68,7 @@ namespace OCore.Authorization
                 requestPayload.ApiKey = apiKey;
             }
 
-            if (string.IsNullOrEmpty(requestPayload.ApiKey) == false && requestPayload.Token != Guid.Empty)
+            if (string.IsNullOrEmpty(requestPayload.ApiKey) == false && requestPayload.Token != null)
             {
                 throw new InvalidOperationException("Both authtoken and apikey provided, please provide one or the other");
             }
@@ -85,7 +85,7 @@ namespace OCore.Authorization
 
             if (Requirements != Requirements.None
                 && requestPayload.ApiKey == null
-                && requestPayload.Token == Guid.Empty)
+                && requestPayload.Token == null)
             {
                 throw new UnauthorizedAccessException("Provide either API key or token");
             }

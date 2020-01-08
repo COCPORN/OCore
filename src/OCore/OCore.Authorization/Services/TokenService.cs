@@ -8,19 +8,19 @@ namespace OCore.Authorization.Services
 {
     public class TokenService : Service, ITokenService
     {
-        public async Task AddToken(Guid token, string account)
+        public async Task AddToken(string token, string account)
         {
             var accountToken = GrainFactory.GetGrain<IAccountToken>(token);
             await accountToken.LinkToAccountId(account);            
         }
 
-        public async Task AddTokenWithTenant(Guid token, string account, string tenantId)
+        public async Task AddTokenWithTenant(string token, string account, string tenantId)
         {
             var accountToken = GrainFactory.GetGrain<IAccountToken>(token);
             await accountToken.LinkToAccountIdAndTenantId(account, tenantId);
         }
 
-        public Task<AccountInfo> GetAccount(Guid token)
+        public Task<AccountInfo> GetAccount(string token)
         {
             var accountToken = GrainFactory.GetGrain<IAccountToken>(token);
 

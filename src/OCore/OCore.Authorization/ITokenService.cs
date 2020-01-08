@@ -19,12 +19,12 @@ namespace OCore.Authorization
     public interface ITokenService : IService
     {
         [Authorize]
-        Task AddToken(Guid token, string account);
+        Task AddToken(string token, string account);
 
         [Authorize]
-        Task AddTokenWithTenant(Guid token, string accountId, string tenantId);
+        Task AddTokenWithTenant(string token, string accountId, string tenantId);
 
         [Authorize(permissions: Permissions.None)]
-        Task<AccountInfo> GetAccount(Guid token);
+        Task<AccountInfo> GetAccount(string token);
     }
 }

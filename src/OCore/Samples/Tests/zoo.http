@@ -29,12 +29,12 @@ POST http://localhost:9000/data/Animal/Pulio/MakeNoise
 [4]
 
 ### DataEntity CREATE
-POST http://localhost:9000/data/Animal/Pulio
+POST http://localhost:9000/data/Animal/Julio
 
 {
     "Name": "Julian",
     "Species": "Monkey",
-    "Noise": "Hump"
+    "Noise": "MONG"
 }
 
 ### DataEntity GET

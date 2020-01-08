@@ -17,6 +17,7 @@ Features (partially to come, look at this as a TODO list in no particular order,
   - Auto CRUD
   - HTTP exposure
   - Automatic fan-out
+  + Authorization-, Action- and Exception-filters
 
 ## Committed
 

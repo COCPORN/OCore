@@ -19,7 +19,7 @@ namespace OCore.Authorization.Abstractions.Request
 
         public bool IsCompleted { get; set; }        
 
-        public Guid Token { get; set; }
+        public string Token { get; set; }
 
         public string ApiKey { get; set; }
 

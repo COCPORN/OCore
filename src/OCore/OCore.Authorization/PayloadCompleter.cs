@@ -38,7 +38,7 @@ namespace OCore.Authorization
             }
 
             // Given a token in the payload, get account id and roles, etc
-            if (payload.Token != Guid.Empty)
+            if (payload.Token != null)
             {
                 await GetIdentity(payload);
 
@@ -91,7 +91,7 @@ namespace OCore.Authorization
 
         async Task GetProjectedIdentity(Payload payload)
         {
-            var tenantAccountGrain = clusterClient.GetGrain<ITenantAccount>(payload.Token, payload.TenantId);
+            var tenantAccountGrain = clusterClient.GetGrain<ITenantAccount>($"{payload.Token}:{payload.TenantId}");
             var projectedAccountId = await tenantAccountGrain.Get();
             payload.AccountIdHasBeenProjected = true;
             payload.OriginalAccountId = payload.AccountId;
@@ -105,7 +105,7 @@ namespace OCore.Authorization
                 return;
             }
 
-            if (payload.Token == Guid.Empty)
+            if (payload.Token == null)
             {
                 throw new UnauthorizedAccessException("Invalid token");
             }

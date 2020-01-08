@@ -8,7 +8,7 @@ namespace OCore.Authorization.Services
 {
     public class SystemService : Service, ISystemService
     {
-        public async Task Initialize(Guid token, string accountId)
+        public async Task Initialize(string token, string accountId)
         {
             var systemSetup = GrainFactory.GetGrain<ISystemSetup>(0);
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization
 {    
-    public interface IAccountToken : IGrainWithGuidKey
+    public interface IAccountToken : IGrainWithStringKey
     {
         Task LinkToAccountId(string accountId);
 
