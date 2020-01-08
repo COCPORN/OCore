@@ -65,22 +65,25 @@ namespace OCore.Entities.Data.Http
 
             var keyStrategy = KeyStrategy.Identity;
             var dataEntityMethods = DataEntityMethods.All;
+            var maxFanoutLimit = 0;
 
             if (dataEntityAttribute != null)
             {
                 dataEntityName = dataEntityAttribute.Name;
                 keyStrategy = dataEntityAttribute.KeyStrategy;
                 dataEntityMethods = dataEntityAttribute.DataEntityMethods;
+                maxFanoutLimit = dataEntityAttribute.MaxFanoutLimit;
             }
 
-            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, routes, payloadCompleter, prefix, methods, routesRegistered);
-            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, dataEntityMethods, routes, payloadCompleter, prefix, routesRegistered);
+            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, maxFanoutLimit, routes, payloadCompleter, prefix, methods, routesRegistered);
+            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, maxFanoutLimit, dataEntityMethods, routes, payloadCompleter, prefix, routesRegistered);
 
             return routesRegistered;
         }
 
         private static int MapCustomMethods(string dataEntityName,
             KeyStrategy keyStrategy,
+            int maxFanoutLimit,
             IEndpointRouteBuilder routeBuilder,
             IPayloadCompleter payloadCompleter,
             string prefix,
@@ -97,6 +100,7 @@ namespace OCore.Entities.Data.Http
                         prefix,
                         dataEntityName,
                         keyStrategy,
+                        maxFanoutLimit,
                         payloadCompleter,
                         method.DeclaringType,
                         method);
@@ -111,6 +115,7 @@ namespace OCore.Entities.Data.Http
         private static int MapCrudMethods(string dataEntityName,
             Type declaringType,
             KeyStrategy keyStrategy,
+            int maxFanoutLimit,
             DataEntityMethods dataEntityMethods,
             IEndpointRouteBuilder routeBuilder,
             IPayloadCompleter payloadCompleter,
@@ -129,6 +134,7 @@ namespace OCore.Entities.Data.Http
                     prefix,
                     dataEntityName,
                     keyStrategy,
+                    maxFanoutLimit,
                     declaringType,
                     dataEntityType,
                     payloadCompleter,

@@ -27,10 +27,11 @@ namespace OCore.Entities.Data.Http
             string prefix,
             string dataEntityName,
             KeyStrategy keyStrategy,
+            int maxFanoutLimit,
             IPayloadCompleter payloadCompleter,
             Type grainType,
             MethodInfo methodInfo) :
-            base(prefix, dataEntityName, keyStrategy)
+            base(prefix, dataEntityName, keyStrategy, maxFanoutLimit)
         {
             this.grainType = grainType;
             this.methodInfo = methodInfo;
@@ -82,6 +83,7 @@ namespace OCore.Entities.Data.Http
             string prefix,
             string dataEntityName,
             KeyStrategy keyStrategy,
+            int maxFanoutLimit,
             IPayloadCompleter payloadCompleter,
             Type grainType,
             MethodInfo methodInfo)
@@ -90,6 +92,7 @@ namespace OCore.Entities.Data.Http
                 prefix,
                 dataEntityName,
                 keyStrategy,
+                maxFanoutLimit,
                 payloadCompleter,
                 grainType,
                 methodInfo);

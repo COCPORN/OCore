@@ -71,13 +71,17 @@ namespace OCore.Entities.Data
 
         public DataEntityMethods DataEntityMethods { get; private set; }
 
+        public int MaxFanoutLimit { get; private set; }
+
         public DataEntityAttribute(string entityName,
             KeyStrategy keyStrategy = KeyStrategy.Identity,
-            DataEntityMethods dataEntityMethods = DataEntityMethods.Read)
+            DataEntityMethods dataEntityMethods = DataEntityMethods.Read,
+            int maxFanoutLimit = 0)
         {
             Name = entityName;
             KeyStrategy = keyStrategy;
             DataEntityMethods = dataEntityMethods;
+            MaxFanoutLimit = maxFanoutLimit;
         }
     }
 }

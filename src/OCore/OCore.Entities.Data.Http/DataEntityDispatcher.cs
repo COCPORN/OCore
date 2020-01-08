@@ -15,8 +15,12 @@ namespace OCore.Entities.Data.Http
         string prefix;
         string dataEntityName;
         KeyStrategy keyStrategy;
+        int maxFanoutLimit;
 
-        public DataEntityDispatcher(string prefix, string dataEntityName, KeyStrategy keyStrategy)
+        public DataEntityDispatcher(string prefix, 
+            string dataEntityName, 
+            KeyStrategy keyStrategy,
+            int maxFanoutLimit)
         {
             this.prefix = prefix ?? string.Empty;
             if (this.prefix.EndsWith("/") == false)
@@ -25,6 +29,7 @@ namespace OCore.Entities.Data.Http
             }
             this.dataEntityName = dataEntityName;
             this.keyStrategy = keyStrategy;
+            this.maxFanoutLimit = maxFanoutLimit;
         }
 
         /// <summary>
@@ -61,26 +66,43 @@ namespace OCore.Entities.Data.Http
         /// <returns></returns>
         protected string[] GetKeys(HttpContext context)
         {
+            string[] keys;
             switch (keyStrategy)
             {
                 case KeyStrategy.Identity:
-                    return GetIdentityKeys(context);
+                    keys = GetIdentityKeys(context);
+                    break;
                 case KeyStrategy.Global:
-                    return new string[] { "Global" };
+                    keys = new string[] { "Global" };
+                    break;
                 case KeyStrategy.Account:
-                    return new string[] { GetAccountId().ToString() };
+                    keys = new string[] { GetAccountId().ToString() };
+                    break;
                 case KeyStrategy.AccountPrefix:
-                    return GetAccountPrefixedKeys(context);
+                    keys = GetAccountPrefixedKeys(context);
+                    break;
                 case KeyStrategy.Tenant:
-                    return new string[] { GetTenantId() };
+                    keys = new string[] { GetTenantId() };
+                    break;
                 case KeyStrategy.TenantPrefix:
-                    return GetTenantPrefixedKeys(context);
+                    keys = GetTenantPrefixedKeys(context);
+                    break;
                 case KeyStrategy.AccountCombined:
-                    return new string[] { GetAccountCombinedKey(context) };
+                    keys = new string[] { GetAccountCombinedKey(context) };
+                    break;
                 case KeyStrategy.AccountCombinedPrefix:
-                    return AccountCombinedPrefixedKeys(context);
+                    keys = AccountCombinedPrefixedKeys(context);
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown key strategy");
             }
-            return null;
+            if (maxFanoutLimit != 0 && keys.Length > maxFanoutLimit)
+            {
+                throw new InvalidOperationException("Keys exceed max fanout limit");
+            } else
+            {
+                return keys;
+            }
         }
 
         string[] GetIdentities(string identity)
