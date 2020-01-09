@@ -17,11 +17,8 @@ namespace OCore.Setup
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            app.UseDeveloperExceptionPage();
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseRouting();
             app.UseDefaultOCore();
         }
