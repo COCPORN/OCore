@@ -1,5 +1,7 @@
 ﻿using OCore.Authorization.Abstractions;
 using OCore.Authorization.Abstractions.Request;
+using OCore.Entities.Data;
+using OCore.Entities.Data.Extensions;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -110,23 +112,30 @@ namespace OCore.Authorization
                 throw new UnauthorizedAccessException("Invalid token");
             }
 
-            var tokenService = clusterClient.GetGrain<ITokenService>(0);
-            var accountInfo = await tokenService.GetAccount(payload.Token);
-
-
-            if (string.IsNullOrEmpty(accountInfo.TenantId) == false)
+            var tokenGrain = clusterClient.GetDataEntity<IAccountToken>(payload.Token);
+            try
             {
-                payload.ProjectedAccountId = accountInfo.AccountId;
-                payload.TenantId = accountInfo.TenantId;
-                payload.AccountIdHasBeenProjected = true;
-            } else
-            {
-                payload.OriginalAccountId = accountInfo.AccountId;
+                var accountInfo = await tokenGrain.Read();
+
+                if (string.IsNullOrEmpty(accountInfo.TenantId) == false)
+                {
+                    payload.ProjectedAccountId = accountInfo.AccountId;
+                    payload.TenantId = accountInfo.TenantId;
+                    payload.AccountIdHasBeenProjected = true;
+                }
+                else
+                {
+                    payload.OriginalAccountId = accountInfo.AccountId;
+                }
+
+                if (payload.AccountId == null)
+                {
+                    throw new UnauthorizedAccessException("Invalid token");
+                }
             }
-
-            if (payload.AccountId != null)
+            catch (DataCreationException ex)
             {
-                throw new UnauthorizedAccessException("Invalid token");
+                throw new UnauthorizedAccessException("Invalid token", ex);
             }
         }
 

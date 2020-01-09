@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace OCore.Entities.Data
 {
 
-    public interface IDataEntity { }
+    public interface IDataEntity : IGrainWithStringKey { } 
 
-    public interface IDataEntity<T> : IDataEntity, IGrainWithStringKey
+    public interface IDataEntity<T> : IDataEntity
     {
         /// <summary>
         /// Create new data entity. This call will fail if the entity already exists.

@@ -15,7 +15,7 @@ namespace OCore.Authorization
 
         public DateTimeOffset ExpiresAt { get; set; } = DateTimeOffset.MaxValue;
     }
-
+    
     public interface IAccountToken : IDataEntity<AccountToken>
     {
         Task LinkToAccountId(string accountId);
