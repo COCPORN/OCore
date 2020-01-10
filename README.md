@@ -18,6 +18,7 @@ Features (partially to come, look at this as a TODO list in no particular order,
   - HTTP exposure
   - Automatic fan-out
   + Authorization-, Action- and Exception-filters
+  - Client side caching
 
 ## Committed
 

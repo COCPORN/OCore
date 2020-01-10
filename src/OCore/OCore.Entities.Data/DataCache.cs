@@ -20,9 +20,14 @@ namespace OCore.Entities.Data
 
         IDataEntity<T> dataSource;
 
-        public async Task Refresh()
+        /// <summary>
+        /// Refresh the datasource if time has expired or force = true
+        /// </summary>
+        /// <param name="force"></param>
+        /// <returns></returns>
+        public async Task Refresh(bool force = false)
         {
-            if (DateTimeOffset.UtcNow - RefreshedAt > CacheFor)
+            if (force == true || DateTimeOffset.UtcNow - RefreshedAt > CacheFor)
             {
                 data = await dataSource.Read();
             }
