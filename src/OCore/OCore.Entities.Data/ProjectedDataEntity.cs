@@ -19,7 +19,7 @@ namespace OCore.Entities.Data
         }
 
         public abstract Task<T> Read();
-        
+
         public Task Update(T data)
         {
             throw new NotImplementedException();
