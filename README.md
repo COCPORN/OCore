@@ -46,6 +46,7 @@ Features (partially to come, look at this as a TODO list in no particular order,
 - Idempotent actions
 - Mermaid export of call graph
 - Diagnostics collection
+- GraphQL over Data Entities
 
 ## Motivation
 
@@ -226,6 +227,8 @@ A Data Entity implicitly provides these methods:
 - `Delete` (mapped to `DELETE`)
 
 If an entity is not created, all calls except `POST` will fail over HTTP.
+
+By default, only `GET` and commands are registered. You can decide what methods you want mapped in the `DataEntity`-attribute.
 
 ### Example
 
