@@ -17,7 +17,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new DataCreationException("DataEntity is already created");
+                throw new DataCreationException($"DataEntity already created: {this.GetPrimaryKeyString()}/{typeof(T)}");
             }
         }
 

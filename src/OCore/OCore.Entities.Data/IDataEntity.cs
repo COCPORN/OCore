@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities.Data
 {
-
     public interface IDataEntity : IGrainWithStringKey { } 
 
     public interface IDataEntity<T> : IDataEntity
@@ -43,12 +42,5 @@ namespace OCore.Entities.Data
         /// </summary>
         /// <returns></returns>
         Task Delete();
-
-        /// <summary>
-        /// Non-generic interface to getting stuff done
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        //Task<OperationResponse> PerformOperation(OperationRequest request);
     }
 }
