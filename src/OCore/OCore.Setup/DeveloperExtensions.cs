@@ -18,16 +18,20 @@ namespace OCore.Setup
     public static class DeveloperExtensions
     {
 
-        public static Task LetsGo(Action<HostBuilder> hostConfigurationDelegate = null,
+        public static async Task LetsGo(Action<HostBuilder> hostConfigurationDelegate = null,
             Action<ISiloBuilder> siloConfigurationDelegate = null,
             Action<Microsoft.Extensions.Hosting.HostBuilderContext, IServiceCollection> serviceConfigurationDelegate = null)
         {
             var hostBuilder = new HostBuilder();
             hostBuilder.DeveloperSetup(siloConfigurationDelegate);
-            hostBuilder.ConfigureServices(serviceConfigurationDelegate);
+            if (serviceConfigurationDelegate != null)
+            {
+                hostBuilder.ConfigureServices(serviceConfigurationDelegate);
+            }
             hostConfigurationDelegate?.Invoke(hostBuilder);
             var host = hostBuilder.Build();
-            return host.StartAsync();
+            await host.StartAsync();
+            Console.ReadLine();
         }
 
         public static void DeveloperSetup(this HostBuilder hostBuilder,
