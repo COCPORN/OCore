@@ -16,10 +16,10 @@ namespace OCore.Http
     public static class Extensions
     {
 
-        static ConcurrentDictionary<MethodInfo, Func<HttpContext, Task>> asyncFilters 
+        static ConcurrentDictionary<MethodInfo, Func<HttpContext, Task>> asyncFilters
             = new ConcurrentDictionary<MethodInfo, Func<HttpContext, Task>>();
 
-        public static async Task RunAsyncActionFilters(this HttpContext context, 
+        public static async Task RunAsyncActionFilters(this HttpContext context,
             GrainInvoker invoker,
             Func<HttpContext, Task> next)
         {
@@ -68,7 +68,58 @@ namespace OCore.Http
         }
 
         static ConcurrentDictionary<MethodInfo, IEnumerable<IAuthorizationFilter>> authorizationFilters = new ConcurrentDictionary<MethodInfo, IEnumerable<IAuthorizationFilter>>();
-        static ConcurrentDictionary<MethodInfo, IEnumerable<ActionFilterAttribute>> actionFilters = new ConcurrentDictionary<MethodInfo, IEnumerable<ActionFilterAttribute>>();
+        static ConcurrentDictionary<MethodInfo, IEnumerable<Filters.IActionFilter>> actionFilters = new ConcurrentDictionary<MethodInfo, IEnumerable<Filters.IActionFilter>>();
+
+        public static void RunActionFiltersExecuting(this HttpContext context, GrainInvoker invoker)
+        {
+            if (actionFilters.TryGetValue(invoker.MethodInfo, out var storedFilters))
+            {
+                RunActionFiltersExecuting(context, storedFilters);
+            }
+            else
+            {
+                var filters = invoker.MethodInfo.GetCustomAttributes(true)
+                    .Where(x => x is Filters.IActionFilter)
+                    .Select(x => x as Filters.IActionFilter)
+                    .OrderBy(x => x.Order);
+                actionFilters.AddOrUpdate(invoker.MethodInfo, filters, (key, oldvalue) => filters);
+                RunActionFiltersExecuting(context, filters);
+            }
+        }
+
+        private static void RunActionFiltersExecuting(HttpContext context, IEnumerable<Filters.IActionFilter> filters)
+        {
+            foreach (var filter in filters)
+            {
+                filter.OnActionExecuting(context);
+            }
+        }
+
+        private static void RunActionFiltersExecuted(HttpContext context, IEnumerable<Filters.IActionFilter> filters)
+        {
+            foreach (var filter in filters)
+            {
+                filter.OnActionExecuted(context);
+            }
+        }
+
+        public static void RunActionFiltersExecuted(this HttpContext context, GrainInvoker invoker)
+        {
+            if (actionFilters.TryGetValue(invoker.MethodInfo, out var storedFilters))
+            {
+                RunActionFiltersExecuted(context, storedFilters);
+            }
+            else
+            {
+
+                var filters = invoker.MethodInfo.GetCustomAttributes(true)
+                    .Where(x => x is Filters.IActionFilter)
+                    .Select(x => x as Filters.IActionFilter)
+                    .OrderBy(x => x.Order);
+                actionFilters.AddOrUpdate(invoker.MethodInfo, filters, (key, oldvalue) => filters);
+                RunActionFiltersExecuted(context, filters);
+            }
+        }
 
         public static void RunAuthorizationFilters(this HttpContext context, GrainInvoker invoker)
         {

@@ -82,6 +82,7 @@ namespace Zoo.Interfaces
         /// <param name="animal"></param>
         /// <returns></returns>        
         [AnimalActionFilter]
+        [ZooAsyncActionFilter]
         [ZooActionFilter]
         Task AcceptNewAnimal(Animal animal);
 
@@ -90,6 +91,9 @@ namespace Zoo.Interfaces
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
+        [AnimalActionFilter]
+        [ZooAsyncActionFilter]
+        [ZooActionFilter]
         Task<string> SayHelloToAnimal(string name);
     }
 }

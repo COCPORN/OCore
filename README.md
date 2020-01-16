@@ -2,10 +2,7 @@
 
 **nuget packages** do exist, but they are not yet in sync with the source code as it is too early to do a real release regime. Use the source for now.
 
-
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
-
-https://trello.com/b/ej90LXvI/ocore
 
 Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
 
@@ -66,12 +63,6 @@ Make no mistake, OCore is often just a thin wrapper on Orleans-concepts. Some co
 
 ### Development
 
-Look at the sample for an example to setup OCore quickly using default configuration which means:
-
-- Automatically register and publish all Services with HTTP endpoints
-- Automatically register Data Entities with HTTP endpoints
-- Setup an Orleans local development cluster
-
 Get started (silly developer wrapper on the hostbuilder setup). We all know what you want to do! You want to GO! So LET'S GO!
 
 Install the NuGet package `OCore.Setup` and `Microsoft.Orleans.CodeGenerator.MSBuild`, then:
@@ -79,11 +70,8 @@ Install the NuGet package `OCore.Setup` and `Microsoft.Orleans.CodeGenerator.MSB
 ```csharp
     class Program
     {
-        static async Task Main(string[] args)
-        {            
-            await OCore.Setup.DeveloperExtensions.LetsGo();            
-            Console.ReadLine();
-        }
+        static async Task Main(string[] args) =>
+            await OCore.Setup.DeveloperExtensions.LetsGo();
     }
 ```
 F5 is waiting for you.
@@ -92,11 +80,10 @@ F5 is waiting for you.
 
 - Setup Orleans for localhost clustering with in-memory transient storage (the cluster will start up clean every time you start it)
 - System setup functionality that allows it to be initialized with a root account
-- Expose endpoints for 
 - Start listening for incoming requests at `http://localhost:9000`
 - Automatically register any `Service` with exposed HTTP endpoints at `http://localhost:9000/services/`
-- Automatically register any `DataEntity` with exposed HTTP endpoints at `http://localhost:9000/data`
-- Start serving OpenApi documentation for services and data entities at `http://localhost:9000/api-docs`
+- Automatically register any `DataEntity` with exposed HTTP endpoints at `http://localhost:9000/data/`
+- Start serving OpenApi documentation for services and data entities at `http://localhost:9000/api-docs/`
 - Setup authorization system with user tokens and
 
 ## Service 

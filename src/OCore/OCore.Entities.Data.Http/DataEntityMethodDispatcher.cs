@@ -45,6 +45,7 @@ namespace OCore.Entities.Data.Http
         public async Task Dispatch(HttpContext httpContext)
         {
             httpContext.RunAuthorizationFilters(invoker);
+            httpContext.RunActionFiltersExecuting(invoker);
             await httpContext.RunAsyncActionFilters(invoker, async (context) =>
             {
                 var payload = Payload.GetOrDefault();
@@ -57,6 +58,7 @@ namespace OCore.Entities.Data.Http
                 if (grainKeys.Length == 0)
                 {
                     await httpContext.SetStatusCode(System.Net.HttpStatusCode.BadRequest, "Unreachable destination");
+                    httpContext.RunActionFiltersExecuted(invoker);
                     return;
 
                 }
@@ -71,6 +73,7 @@ namespace OCore.Entities.Data.Http
                     }
 
                     await invoker.Invoke(grain, httpContext);
+                    httpContext.RunActionFiltersExecuted(invoker);
                 }
                 else
                 {

@@ -10,8 +10,7 @@ namespace OCore.Setup
     public class DeveloperStartup
     {
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        {            
             services.AddDefaultOCore();
         }
 

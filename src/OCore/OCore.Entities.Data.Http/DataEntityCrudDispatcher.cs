@@ -70,6 +70,8 @@ namespace OCore.Entities.Data.Http
             try
             {
                 httpContext.RunAuthorizationFilters(invoker);
+                httpContext.RunActionFiltersExecuting(invoker);
+                
                 await httpContext.RunAsyncActionFilters(invoker, async (context) =>
                 {
                     var payload = Payload.GetOrDefault();
@@ -98,6 +100,7 @@ namespace OCore.Entities.Data.Http
                         try
                         {
                             await invoker.Invoke(grain, httpContext);
+                            httpContext.RunActionFiltersExecuted(invoker);
                         }
                         catch (DataCreationException ex)
                         {
@@ -119,6 +122,7 @@ namespace OCore.Entities.Data.Http
                         {
                             var grains = grainKeys.Select(x => clusterClient.GetGrain(grainType, x)).ToArray();
                             await invoker.Invoke(grains, context);
+                            httpContext.RunActionFiltersExecuted(invoker);
                         }
                         else
                         {
