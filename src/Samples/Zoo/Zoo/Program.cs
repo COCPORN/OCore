@@ -6,10 +6,7 @@ namespace Zoo
 {
     class Program
     {
-        static async Task Main(string[] args)
-        {            
-            await DeveloperExtensions.LetsGo();            
-            Console.ReadLine();
-        }
+        static async Task Main(string[] args) =>
+            await DeveloperExtensions.LetsGo();
     }
 }
