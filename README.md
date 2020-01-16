@@ -2,10 +2,7 @@
 
 **nuget packages** do exist, but they are not yet in sync with the source code as it is too early to do a real release regime. Use the source for now.
 
-
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
-
-https://trello.com/b/ej90LXvI/ocore
 
 Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
 
@@ -82,7 +79,6 @@ Install the NuGet package `OCore.Setup` and `Microsoft.Orleans.CodeGenerator.MSB
         static async Task Main(string[] args)
         {            
             await OCore.Setup.DeveloperExtensions.LetsGo();            
-            Console.ReadLine();
         }
     }
 ```
@@ -95,8 +91,8 @@ F5 is waiting for you.
 - Expose endpoints for 
 - Start listening for incoming requests at `http://localhost:9000`
 - Automatically register any `Service` with exposed HTTP endpoints at `http://localhost:9000/services/`
-- Automatically register any `DataEntity` with exposed HTTP endpoints at `http://localhost:9000/data`
-- Start serving OpenApi documentation for services and data entities at `http://localhost:9000/api-docs`
+- Automatically register any `DataEntity` with exposed HTTP endpoints at `http://localhost:9000/data/`
+- Start serving OpenApi documentation for services and data entities at `http://localhost:9000/api-docs/`
 - Setup authorization system with user tokens and
 
 ## Service 

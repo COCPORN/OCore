@@ -53,6 +53,7 @@ namespace OCore.Services.Http
 
             var invoker = routes[pattern.RawText];
             context.RunAuthorizationFilters(invoker);
+            context.RunActionFiltersExecuting(invoker);
             await context.RunAsyncActionFilters(invoker, async (context) =>
             {
                 var grain = clusterClient.GetGrain(invoker.GrainType, 0);
@@ -64,6 +65,7 @@ namespace OCore.Services.Http
 
 
                 await invoker.Invoke(grain, context);
+                context.RunActionFiltersExecuted(invoker);
             });
         }
 

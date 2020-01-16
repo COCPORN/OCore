@@ -3,18 +3,21 @@ using OCore.Http.Filters;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Zoo.Interfaces.Filters
 {
-    public class ZooActionFilter : Attribute, IAsyncActionFilter
+    public class ZooActionFilter : Attribute, IActionFilter
     {
-        public float Order => 0.5f;
+        public float Order => 1.0f;
 
-        public Task OnActionExecutionAsync(HttpContext context, Func<HttpContext, Task> next)
+        public void OnActionExecuted(HttpContext context)
         {
             ;
-            return next(context);            
+        }
+
+        public void OnActionExecuting(HttpContext context)
+        {
+            ;
         }
     }
 }
