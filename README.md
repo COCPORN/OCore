@@ -1,5 +1,8 @@
 # OCore
 
+**nuget packages** do exist, but they are not yet in sync with the source code as it is too early to do a real release regime. Use the source for now.
+
+
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
 
 https://trello.com/b/ej90LXvI/ocore
