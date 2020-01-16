@@ -31,6 +31,8 @@ namespace OCore.Authorization.Filters
 
         public async Task Invoke(IIncomingGrainCallContext context)
         {
+            // I am not 100% sure why this happens. The null check seems to be
+            // necessary on calls that come from a timer.
             if (context?.ImplementationMethod == null)
             {
                 await context.Invoke();
