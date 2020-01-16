@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>    
+    <PackageId>OCore.Entities</PackageId>
+    <Version>0.0.3-preview</Version>
+    <Authors>COCPORN</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

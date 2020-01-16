@@ -1,0 +1,94 @@
+@account-id = 909551a5-5eba-4007-8639-b3bf078575be
+@token = efccdbdf-9c57-416a-ae6e-992a8809971e
+@api-key = 5afe7202-f049-43cc-a657-a1a8cec12988
+
+### Accept new animal
+POST http://localhost:9000/services/Zoo/AcceptNewAnimal
+
+{
+    "Name": "Julius",
+    "Species": "Monkey",
+    "Noise": "Chatter"
+}
+
+
+### Say hello to new animal
+POST http://localhost:9000/services/Zoo/SayHelloToAnimal
+
+"Julius"
+
+### Accept make appointment (test default parameter)
+POST http://localhost:9000/services/Zoo/MakeAppointment
+apikey: 0AA4BBDE-AD54-459B-BEEB-1F6CD30B2198
+
+["2017-01-14"]
+
+### DataEntity method call
+POST http://localhost:9000/data/Animal/Pulio/MakeNoise
+
+[4]
+
+### DataEntity CREATE
+POST http://localhost:9000/data/Animal/Julio
+
+{
+    "Name": "Julian",
+    "Species": "Monkey",
+    "Noise": "MONG"
+}
+
+### DataEntity GET
+GET http://localhost:9000/data/Animal/Pulio
+
+### DataEntity UPDATE
+PUT http://localhost:9000/data/Animal/Pulio
+
+{
+    "Name": "Pulio",
+    "Species": "MonkeyBallz",
+    "Noise": "Hump"
+}
+
+### DataEntity DELETE
+DELETE http://localhost:9000/data/Animal/Pulio
+
+
+### DataEntity multiget
+GET http://localhost:9000/data/Animal/Julius,Pulio
+
+
+### Animal Account
+PUT http://localhost:9000/data/AnimalAccount
+token: {{token}}
+
+{
+    "FavoriteColor": "Blue",
+    "SocialPreference": "Poly"
+}
+
+### Animal Account
+GET http://localhost:9000/data/AnimalAccount
+token: {{token}}
+
+
+### Animal Contact Projected entity GET
+GET http://localhost:9000/data/AnimalContact/{{account-id}}
+token: {{token}}
+
+### Animal Contact Projected entity POST (should fail)
+POST http://localhost:9000/data/AnimalContact/{{account-id}}
+token: {{token}}
+
+{}
+
+
+### Feedingschedule POST
+POST http://localhost:9000/data/FeedingSchedule
+
+{
+    "Feed": true
+}
+
+
+### Feedingschedule GET
+GET http://localhost:9000/data/FeedingSchedule/{{account-id}}

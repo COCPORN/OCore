@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>true</IsPackable>
+    <PackageId>OCore.Entities.Data.Http</PackageId>
+    <Version>0.0.3-preview</Version>
+    <Authors>COCPORN</Authors>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Core" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj" />
+    <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
+    <ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
+    <ProjectReference Include="..\OCore.Http\OCore.Http.csproj" />    
+  </ItemGroup>
+
+</Project>

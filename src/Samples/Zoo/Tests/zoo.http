@@ -1,0 +1,69 @@
+### Accept new animal
+POST http://localhost:9000/services/Zoo/AcceptNewAnimal
+
+{
+    "Name": "Julius",
+    "Species": "Monkey",
+    "Noise": "Chatter"
+}
+
+
+### Say hello to said animal
+POST http://localhost:9000/services/Zoo/SayHelloToAnimal
+
+"Julius"
+
+### Accept make appointment (test default parameter)
+POST http://localhost:9000/services/Zoo/MakeAppointment
+apikey: 0AA4BBDE-AD54-459B-BEEB-1F6CD30B2198
+
+["2017-01-14"]
+
+### DataEntity method call
+POST http://localhost:9000/data/Animal/Pulio/MakeNoise
+
+[44]
+
+### DataEntity CREATE
+POST http://localhost:9000/data/Animal/Pulio
+
+{
+    "Name": "Julian",
+    "Species": "Monkey",
+    "Noise": "Hump"
+}
+
+### DataEntity GET
+GET http://localhost:9000/data/Animal/Pulio
+
+### DataEntity UPDATE
+PUT http://localhost:9000/data/Animal/Pulio
+
+{
+    "Name": "Pulio",
+    "Species": "MonkeyBallz",
+    "Noise": "Hump"
+}
+
+### DataEntity DELETE
+DELETE http://localhost:9000/data/Animal/Pulio
+
+
+### DataEntity multiget
+GET http://localhost:9000/data/Animal/Julius,Pulio
+
+### Let's look at the menu (global entity)
+GET http://localhost:9000/data/Menu
+
+### Perhaps we should create it first
+POST http://localhost:9000/data/Menu
+
+{
+    "FoodItems": [ "Banana", "Cantaloupe" ]
+}
+
+### Test global methods
+POST http://localhost:9000/data/Menu/Totals
+
+### Let's look at my account!
+GET http://localhost:9000/data/AnimalAccount

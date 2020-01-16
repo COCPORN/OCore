@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>OCore.Authorization</PackageId>
+    <Version>0.0.3-preview</Version>
+    <Authors>COCPORN</Authors>    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj" />
+    <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
+    <ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
+    <ProjectReference Include="..\OCore.Entities\OCore.Entities.csproj" />
+    <ProjectReference Include="..\OCore.Services\OCore.Services.csproj" />
+  </ItemGroup>
+
+</Project>
