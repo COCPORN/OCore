@@ -31,6 +31,12 @@ namespace OCore.Authorization.Filters
 
         public async Task Invoke(IIncomingGrainCallContext context)
         {
+            if (context?.ImplementationMethod == null)
+            {
+                await context.Invoke();
+                return;
+            }
+
             var attributes = context.ImplementationMethod.GetCustomAttributes(true);
             var attribute = attributes.FirstOrDefault(x => x is AuthorizeAttribute) as AuthorizeAttribute;
 
