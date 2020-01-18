@@ -15,11 +15,11 @@ using System.Threading.Tasks;
 namespace OCore.Events
 {
     [StatelessWorker]
+    [Reentrant]
     public class EventAggregatorGrain : Grain, IEventAggregator
     {
         readonly ILogger logger;
-        EventOptions options;
-        HashSet<Type> fireAndForget = new HashSet<Type>();
+        EventOptions options;        
 
         public EventAggregatorGrain(ILogger<EventAggregatorGrain> logger,
             IOptions<EventOptions> options)
@@ -137,7 +137,7 @@ namespace OCore.Events
             }
 
             var stream = streamProvider.GetStream<Event<T>>(destination, streamName);
-            if (fireAndForget.Contains(typeof(T)))
+            if (eventTypeOptions.Item2.FireAndForget == true)
             {
                 stream.OnNextAsync(EnvelopeEvent(@event)).FireAndForget(logger);
                 return;
