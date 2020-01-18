@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace OCore.Events
 {
     [StatelessWorker]    
+    [Reentrant]
     public class EventAggregatorGrain : Grain, IEventAggregator
     {
         readonly ILogger logger;
@@ -109,7 +110,8 @@ namespace OCore.Events
                 {
                     throw new InvalidOperationException("Event class is missing [Event(...)] attribute");
                 }
-                if (options != null && options.EventTypes.TryGetValue(eventAttribute.Name, out var eventTypeConfig))
+                if (options?.EventTypes != null 
+                    && options.EventTypes.TryGetValue(eventAttribute.Name, out var eventTypeConfig))
                 {
                     eventTypeOptions = (eventAttribute.Name, eventTypeConfig);
                 }
@@ -134,8 +136,7 @@ namespace OCore.Events
             var stream = streamProvider.GetStream<Event<T>>(destination, streamName);
             if (eventTypeOptions.Item2.FireAndForget == true)
             {
-                stream.OnNextAsync(EnvelopeEvent(@event)).FireAndForget(logger);
-                return;
+                stream.OnNextAsync(EnvelopeEvent(@event)).FireAndForget(logger);             
             }
             else
             {

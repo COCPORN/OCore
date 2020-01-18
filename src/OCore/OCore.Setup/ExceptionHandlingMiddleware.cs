@@ -32,7 +32,7 @@ namespace OCore.Setup
         {
             var code = HttpStatusCode.InternalServerError; // 500 if unexpected
             
-            var result = JsonConvert.SerializeObject(new { error = ex.Message });
+            var result = JsonConvert.SerializeObject(new { error = ex.ToString() });
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);

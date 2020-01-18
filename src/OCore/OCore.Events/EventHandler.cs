@@ -11,17 +11,9 @@ using System.Threading.Tasks;
 namespace OCore.Events
 {
     public class EventHandler<T> : Grain,
+        IGrainWithGuidKey,
         IAsyncObserver<Event<T>>
-    {
-        EventOptions options;
-        ILogger logger;
-
-        public EventHandler(IOptions<EventOptions> options,
-            ILogger<EventHandler<T>> logger)
-        {
-            this.options = options.Value;
-            this.logger = logger;
-        }
+    {       
 
         EventAttribute eventAttribute = null;
         EventAttribute EventAttribute
@@ -63,12 +55,7 @@ namespace OCore.Events
 
         string GetProviderName()
         {
-            var providerName = EventAttribute?.Options?.ProviderName ?? options?.DefaultProviderName;
-            if (providerName == null)
-            {
-                throw new InvalidOperationException("No provider names configured for event handling");
-            }
-            return providerName;
+            return EventAttribute?.Options?.ProviderName ?? "BaseStreamProvider";            
         }
 
         public async override Task OnActivateAsync()
@@ -90,12 +77,12 @@ namespace OCore.Events
             }
         }
 
-        protected virtual Task HandleEvent(T @event, StreamSequenceToken token = null)
+        protected virtual Task HandleEvent(T @event)
         {
             return Task.CompletedTask;
         }
 
-        protected virtual Task HandleEvent(Event<T> @event, StreamSequenceToken token = null)
+        protected virtual Task HandleEvent(Event<T> @event)
         {
             return Task.CompletedTask;
         }
