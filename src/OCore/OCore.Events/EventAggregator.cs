@@ -5,7 +5,10 @@ using Orleans;
 using Orleans.Concurrency;
 using Orleans.Streams;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,28 +26,6 @@ namespace OCore.Events
         {
             this.logger = logger;
             this.options = options.Value;
-
-            if (this.options.StripFromEventStreamName == null)
-            {
-                this.options.StripFromEventStreamName = new string[] { };
-            }
-
-            // TODO: Rewrite this to scan assemblies and map them to configuration
-            // rather than having this the other way around
-            //foreach (var kvp in this.options.EventTypes)
-            //{
-            //    var type = Type.GetType($"{this.options.StripFromEventStreamName}{kvp.Key}, OCore.Application.Events", false);
-            //    if (type != null)
-            //    {
-
-            //        ConfigureFor(type, kvp.Value.WorkerInstances, kvp.Value.Stable, kvp.Value.Destinations);
-
-            //        if (kvp.Value.FireAndForget == true)
-            //        {
-            //            fireAndForget.Add(type);
-            //        }
-            //    }
-            //}
         }
 
         IStreamProvider streamProvider;
@@ -84,103 +65,98 @@ namespace OCore.Events
             return guids[index];
         }
 
-        static bool TryChomp(string str, out string result)
+        void ConfigureFor(Type t, EventTypeOptions options)
         {
-            var index = str.LastIndexOf('.');
-            if (index == -1)
+            if (options.Destinations != null)
             {
-                result = str;
-                return false;
-            }
-            result = str.Substring(0, index);
-            return true;
-        }
-
-        Task ConfigureFor(Type t, int capacity, bool stable, List<Guid> destinations)
-        {
-            if (destinations != null)
-            {
-                workerDimensions[t] = destinations;
+                workerDimensions[t] = options.Destinations;
             }
             else
             {
-                if (stable == true)
+                if (options.Stable == true)
                 {
-                    var guids = CreateNControlledGuidsFor(t, capacity);
+                    var guids = CreateNControlledGuidsFor(t, options.WorkerInstances);
                     workerDimensions[t] = guids;
                 }
                 else
                 {
-                    var guids = CreateNRandomGuids(capacity);
+                    var guids = CreateNRandomGuids(options.WorkerInstances);
                     workerDimensions[t] = guids;
                 }
-            }
-            return Task.CompletedTask;
-        }
-
-        List<Guid> fallbackDestinations = null;
+            }            
+        }        
 
         private Guid GetDestination<T>()
         {
-            Guid destination;
-            if (workerDimensions.TryGetValue(typeof(T), out var list))
+            if (workerDimensions.TryGetValue(typeof(T), out var list) == true)
             {
-                destination = GetRandomDestination(list);
-            }
-            else if (workerDimensions.TryGetValue(typeof(DefaultWorkerConfiguration), out list))
-            {
-                destination = GetRandomDestination(list);
+                return GetRandomDestination(list);
             }
             else
             {
-                if (fallbackDestinations == null)
-                {
-                    fallbackDestinations = CreateNControlledGuidsFor(GetType(), 4);
-                }
-                destination = GetRandomDestination(fallbackDestinations);
+                throw new InvalidOperationException("No destination found");
             }
-
-            return destination;
         }
 
-        public Task Raise<T>(T @event, string streamNameSuffix = null)
+        ConcurrentDictionary<Type, (string, EventTypeOptions)> typeOptions = new ConcurrentDictionary<Type, (string, EventTypeOptions)>();
+
+        public async Task Raise<T>(T @event, string streamNameSuffix = null)
         {
-            Guid destination = GetDestination<T>();
-            var typename = typeof(T).FullName;
-            if (options.StripFromEventStreamName != null)
+
+
+            if (typeOptions.TryGetValue(typeof(T), out var eventTypeOptions) == false)
             {
-                foreach (var stripPattern in options.StripFromEventStreamName)
+                var eventAttribute = typeof(T).GetCustomAttribute<EventAttribute>(true);
+                if (options != null && options.EventTypes.TryGetValue(eventAttribute.Name, out var eventTypeConfig))
                 {
-                    typename = typename.Replace(stripPattern, "");
+                    eventTypeOptions = (eventAttribute.Name, eventTypeConfig);
                 }
+                else
+                {
+                    if (eventAttribute.OptionsCreator != null)
+                    {
+                        eventTypeOptions = (eventAttribute.Name, await eventAttribute.OptionsCreator(eventAttribute.Options));
+                    }
+                    else
+                    {
+                        eventTypeOptions = (eventAttribute.Name, eventAttribute.Options);
+                    }
+                }
+
+                typeOptions.AddOrUpdate(typeof(T), eventTypeOptions, (key, oldvalue) => eventTypeOptions);
+                ConfigureFor(typeof(T), eventTypeOptions.Item2);
             }
 
-            var streamName = $"{options.StreamNamePrefix}{typename}";
+            Guid destination = GetDestination<T>();
+
+            var streamName = eventTypeOptions.Item1;
+
             if (streamNameSuffix != null)
             {
                 streamName += $":{streamNameSuffix}";
             }
 
-            var stream = streamProvider.GetStream<EventEnvelope<T>>(destination, streamName);
+            var stream = streamProvider.GetStream<Event<T>>(destination, streamName);
             if (fireAndForget.Contains(typeof(T)))
             {
-                stream.OnNextAsync(EnvelopeEvent<T>(@event)).FireAndForget(logger);
-                return Task.CompletedTask;
+                stream.OnNextAsync(EnvelopeEvent(@event)).FireAndForget(logger);
+                return;
             }
             else
             {
-                return stream.OnNextAsync(EnvelopeEvent<T>(@event));
+                await stream.OnNextAsync(EnvelopeEvent(@event));
             }
         }
 
-        private static EventEnvelope<T> EnvelopeEvent<T>(T @event)
+        private static Event<T> EnvelopeEvent<T>(T @event)
         {
-            return new EventEnvelope<T>
+            return new Event<T>
             {
                 Payload = @event,
                 CreationTime = DateTimeOffset.UtcNow,
                 MessageId = Guid.NewGuid()
             };
         }
+
     }
 }

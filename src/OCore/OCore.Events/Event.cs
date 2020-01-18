@@ -2,7 +2,7 @@
 
 namespace OCore.Events
 {
-    public class EventEnvelope<T>
+    public class Event<T>
     {
         public Guid MessageId { get; set; }
 

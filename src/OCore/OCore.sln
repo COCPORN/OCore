@@ -37,6 +37,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.Abstractions", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{7C319875-448C-44AE-B1BF-863F6FE88DA4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B4A5ADB4-5D23-42A5-8F97-49C4B1BA4E22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{E759C56E-02C3-41F1-BAA4-9D54320E7ABD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataEntities", "DataEntities", "{E586CCCB-0EE8-40DA-93D0-4292A40B9AFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +116,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B4A5ADB4-5D23-42A5-8F97-49C4B1BA4E22} = {7C319875-448C-44AE-B1BF-863F6FE88DA4}
+		{E759C56E-02C3-41F1-BAA4-9D54320E7ABD} = {7C319875-448C-44AE-B1BF-863F6FE88DA4}
+		{E586CCCB-0EE8-40DA-93D0-4292A40B9AFF} = {7C319875-448C-44AE-B1BF-863F6FE88DA4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1769AFD-BFB2-4F50-9BEA-21BA9779EE98}
