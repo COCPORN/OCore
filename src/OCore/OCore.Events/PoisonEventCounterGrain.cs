@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Events
 {
-    public class EventCounterGrain : IEventCounter
+    public class PoisonEventCounterGrain : IPoisonEventCounter
     {
         int count = 1;
 

@@ -10,10 +10,8 @@ namespace OCore.Events
         public bool Stable { get; set; } = true;
         public bool FireAndForget { get; set; } = true;
         public List<Guid> Destinations { get; set; }        
-        public bool HandlePoisonEvents { get; set; }
-        public bool ContainedHandling { get; set; } = false;
+        public bool TrackAndKillPoisonEvents { get; set; }        
         public int PoisonLimit { get; set; } = 5;
-
         public string ProviderName { get; set; }
     }
 

@@ -45,6 +45,7 @@ Features (partially to come, look at this as a TODO list in no particular order,
 ## Brainstorming
 
 - Idempotent actions
+- https://github.com/microsoft/RulesEngine ? 
 - Mermaid export of call graph
 - Diagnostics collection
 - GraphQL over Data Entities

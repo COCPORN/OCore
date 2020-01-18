@@ -11,15 +11,19 @@ namespace OCore.Events
 
         public string Suffix { get; private set; }
 
-        public EventHandlerAttribute(string eventName) : base(eventName)
+        public bool ContainExceptions { get; private set; }
+
+        public EventHandlerAttribute(string eventName, bool containExceptions = false) : base(eventName)
         {
             EventName = eventName;
+            ContainExceptions = containExceptions;
         }
 
-        public EventHandlerAttribute(string eventName, string suffix) : base($"{eventName}:{suffix}")
+        public EventHandlerAttribute(string eventName, string suffix, bool containExceptions = false) : base($"{eventName}:{suffix}")
         {
             EventName = eventName;
             Suffix = suffix;
+            ContainExceptions = containExceptions;
         }
     }
 }
