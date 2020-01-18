@@ -6,7 +6,7 @@ Opinionated and experimental application stack built on Microsoft Orleans and fr
 
 Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
 
-## (Partially) implemented
+## Implemented
 
 - Service publishing (cluster boundaries defined over HTTP)
   - Run Authorization and Action filters
@@ -17,14 +17,15 @@ Features (partially to come, look at this as a TODO list in no particular order,
   - Auto CRUD
   - HTTP exposure
   - Automatic fan-out
-  + Authorization-, Action- and Exception-filters
+  + Authorization-and Action-filters
   - Client side caching
+- Event aggregation and handling (under test)
 
 ## Committed
 
-- Event aggregation (based on Orleans streams)
 - Data entities
   - [Not started] Subscription over SignalR 
+  - Exception filters
 - Authentication
   - User accounts with optional tenancy
   - API keys
@@ -210,7 +211,7 @@ Data Entities are implemented as `Grain` with `IGrainWithStringKey`.
 
 ### Implicit access
 
-A Data Entity implicitly provides these methods:
+By default, a `DataEntity` only provides `Read`-access. Depending on how you set `DataAccessMethod`, the interface methods will be mapped this way:
 
 - `Create` (mapped to `POST`)
 - `Read` (mapped to `GET`)
@@ -341,11 +342,12 @@ Support for more methods of fan-out is coming.
 - `Entity<T>` adds tenant information so that it is easy to get to, using `TenantId`
 - API is very similar to that of `Grain<T>`, so in most cases it will be a drop-in replace. **NOTE**: The shape of the stored data is _different_, so you cannot change this after you have started storing data. If in doubt, just use `Entity<T>` for everything
 
-## Events [WIP]
+## Events 
 
 OCore has a system for event handling based on Orleans Streams that provides:
 
-- Event aggregation (a uniform way to raise events)
-- Workload management (configurable number of workers handling events)
+- Event aggregation
+    - Workload management
+        - Scale uniformly or to cluster size
 - Controlled event handling
-- Handling of poison events
+    - Poison event handling
