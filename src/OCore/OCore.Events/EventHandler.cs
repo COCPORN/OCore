@@ -12,7 +12,8 @@ namespace OCore.Events
 {
     public class EventHandler<T> : Grain,
         IGrainWithGuidKey,
-        IAsyncObserver<Event<T>>
+        IAsyncObserver<Event<T>>,
+        IEventHandler
     {       
 
         EventAttribute eventAttribute = null;
