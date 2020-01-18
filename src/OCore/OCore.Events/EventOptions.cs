@@ -13,10 +13,14 @@ namespace OCore.Events
         public bool HandlePoisonEvents { get; set; }
         public bool ContainedHandling { get; set; } = false;
         public int PoisonLimit { get; set; } = 5;
+
+        public string ProviderName { get; set; }
     }
 
     public class EventOptions
     {        
+        public string DefaultProviderName { get; set; }
+
         public Dictionary<string, EventTypeOptions> EventTypes { get; set; }     
     }
 }

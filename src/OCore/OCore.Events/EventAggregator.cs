@@ -100,13 +100,15 @@ namespace OCore.Events
 
         ConcurrentDictionary<Type, (string, EventTypeOptions)> typeOptions = new ConcurrentDictionary<Type, (string, EventTypeOptions)>();
 
-        public async Task Raise<T>(T @event, string streamNameSuffix = null)
+        public async Task Raise<T>(T @event, string streamNameSuffix = null) 
         {
-
-
             if (typeOptions.TryGetValue(typeof(T), out var eventTypeOptions) == false)
             {
                 var eventAttribute = typeof(T).GetCustomAttribute<EventAttribute>(true);
+                if (eventAttribute == null)
+                {
+                    throw new InvalidOperationException("Event class is missing [Event(...)] attribute");
+                }
                 if (options != null && options.EventTypes.TryGetValue(eventAttribute.Name, out var eventTypeConfig))
                 {
                     eventTypeOptions = (eventAttribute.Name, eventTypeConfig);
@@ -148,7 +150,7 @@ namespace OCore.Events
             }
         }
 
-        private static Event<T> EnvelopeEvent<T>(T @event)
+        private static Event<T> EnvelopeEvent<T>(T @event) 
         {
             return new Event<T>
             {
