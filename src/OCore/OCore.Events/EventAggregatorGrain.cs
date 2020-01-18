@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace OCore.Events
 {
-    [StatelessWorker]
-    [Reentrant]
+    [StatelessWorker]    
     public class EventAggregatorGrain : Grain, IEventAggregator
     {
         readonly ILogger logger;
         EventOptions options;
+        
 
         public EventAggregatorGrain(ILogger<EventAggregatorGrain> logger,
             IOptions<EventOptions> options)

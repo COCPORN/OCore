@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Services.Http", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.Abstractions", "..\..\..\OCore\OCore.Http.Abstractions\OCore.Http.Abstractions.csproj", "{103BB482-9943-4DB5-8139-A89D485981CA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Events", "..\..\..\OCore\OCore.Events\OCore.Events.csproj", "{A967CC46-79B9-4688-A2C9-0FAA8E99B3D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{103BB482-9943-4DB5-8139-A89D485981CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{103BB482-9943-4DB5-8139-A89D485981CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{103BB482-9943-4DB5-8139-A89D485981CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A967CC46-79B9-4688-A2C9-0FAA8E99B3D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A967CC46-79B9-4688-A2C9-0FAA8E99B3D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A967CC46-79B9-4688-A2C9-0FAA8E99B3D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A967CC46-79B9-4688-A2C9-0FAA8E99B3D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +117,7 @@ Global
 		{644488D5-56A1-4F05-89C3-815D30F7911B} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
 		{2BB561DD-A190-419A-9463-250677C99C91} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
 		{103BB482-9943-4DB5-8139-A89D485981CA} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
+		{A967CC46-79B9-4688-A2C9-0FAA8E99B3D6} = {54EAAA31-E254-4CEC-98F8-64E90ECD1087}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3AF72687-8262-4172-9409-2F9A09BA9C3E}

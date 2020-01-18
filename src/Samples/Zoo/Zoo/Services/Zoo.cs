@@ -1,4 +1,5 @@
 ﻿using OCore.Authorization;
+using OCore.Events;
 using OCore.Services;
 using Orleans;
 using System;
@@ -24,7 +25,11 @@ namespace Zoo.Services
 
             var data = await animalEntity.Read();
 
+            var eventAggregator = GrainFactory.GetGrain<IEventAggregator>(0);
+
+            await eventAggregator.Raise(new { Woot = "woot!" });
             return $"Hello! I am a dumb fucking {data.Species} and I {await animalEntity.MakeNoise()}!";
+
         }
 
         public Task<UserRegistrationResponse> AddUser(User user)

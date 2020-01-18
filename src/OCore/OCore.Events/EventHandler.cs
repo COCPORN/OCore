@@ -107,17 +107,15 @@ namespace OCore.Events
                 await CallHandlers(item);
             }
             catch
-            {
-                var eventTypeOptions = EventTypeOptions;
-
-
+            {                
                 bool poisonLimitReached = false;
 
-                if (eventTypeOptions.TrackAndKillPoisonEvents == true)
+                if (EventTypeOptions.TrackAndKillPoisonEvents == true)
                 {
                     var failureTracker = GrainFactory.GetGrain<IPoisonEventCounter>(item.MessageId);
                     var failures = await failureTracker.Handle();
-                    if (failures == eventTypeOptions.PoisonLimit)
+                    item.Retries = failures - 1;
+                    if (failures == EventTypeOptions.PoisonLimit)
                     {
                         var eventAggregator = GrainFactory.GetGrain<IEventAggregator>(0);
                         await eventAggregator.Raise(new PoisonEvent<T>(item), "poison");
