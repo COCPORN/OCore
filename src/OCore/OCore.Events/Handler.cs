@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Events
 {
-    public class EventHandler<T> : Grain,
+    public class Handler<T> : Grain,
         IGrainWithGuidKey,
         IAsyncObserver<Event<T>>,
         IEventHandler
