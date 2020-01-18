@@ -11,13 +11,24 @@ namespace OCore.Events
 
         public EventTypeOptions Options { get; private set; }
 
-        public Func<EventTypeOptions, Task<EventTypeOptions>> OptionsCreator { get; private set; }
-
-        public EventAttribute(string name, EventTypeOptions options = null, Func<EventTypeOptions, Task<EventTypeOptions>> optionsCreaor = null)
+        public EventAttribute(string name, 
+            bool fireAndForget = true,             
+            int poisonLimit = 0,
+            string providerName = null,
+            bool stable = true,
+            bool trackAndKillPoisonEvents = false,
+            int workerInstances = 4)
         {
             Name = name;
-            Options = options;
-            OptionsCreator = optionsCreaor;
+            Options = new EventTypeOptions
+            {
+                FireAndForget = fireAndForget,                
+                PoisonLimit = poisonLimit,
+                ProviderName = providerName,
+                Stable = stable,
+                TrackAndKillPoisonEvents = trackAndKillPoisonEvents,
+                WorkerInstances = workerInstances
+            };
         }
     }
 }

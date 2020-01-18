@@ -19,7 +19,7 @@ namespace OCore.Events
     public class EventAggregatorGrain : Grain, IEventAggregator
     {
         readonly ILogger logger;
-        EventOptions options;        
+        EventOptions options;
 
         public EventAggregatorGrain(ILogger<EventAggregatorGrain> logger,
             IOptions<EventOptions> options)
@@ -83,8 +83,8 @@ namespace OCore.Events
                     var guids = CreateNRandomGuids(options.WorkerInstances);
                     workerDimensions[t] = guids;
                 }
-            }            
-        }        
+            }
+        }
 
         private Guid GetDestination<T>()
         {
@@ -100,7 +100,7 @@ namespace OCore.Events
 
         ConcurrentDictionary<Type, (string, EventTypeOptions)> typeOptions = new ConcurrentDictionary<Type, (string, EventTypeOptions)>();
 
-        public async Task Raise<T>(T @event, string streamNameSuffix = null) 
+        public async Task Raise<T>(T @event, string streamNameSuffix = null)
         {
             if (typeOptions.TryGetValue(typeof(T), out var eventTypeOptions) == false)
             {
@@ -115,14 +115,7 @@ namespace OCore.Events
                 }
                 else
                 {
-                    if (eventAttribute.OptionsCreator != null)
-                    {
-                        eventTypeOptions = (eventAttribute.Name, await eventAttribute.OptionsCreator(eventAttribute.Options));
-                    }
-                    else
-                    {
-                        eventTypeOptions = (eventAttribute.Name, eventAttribute.Options);
-                    }
+                    eventTypeOptions = (eventAttribute.Name, eventAttribute.Options);
                 }
 
                 typeOptions.AddOrUpdate(typeof(T), eventTypeOptions, (key, oldvalue) => eventTypeOptions);
@@ -150,7 +143,7 @@ namespace OCore.Events
             }
         }
 
-        private static Event<T> EnvelopeEvent<T>(T @event) 
+        private static Event<T> EnvelopeEvent<T>(T @event)
         {
             return new Event<T>
             {

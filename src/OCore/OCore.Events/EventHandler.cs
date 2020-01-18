@@ -41,21 +41,16 @@ namespace OCore.Events
         }
 
         EventTypeOptions eventTypeOptions = null;
-        async Task<EventTypeOptions> GetEventTypeOptions()
+        EventTypeOptions EventTypeOptions
         {
-            if (eventTypeOptions == null)
+            get
             {
-                if (EventAttribute.OptionsCreator != null)
+                if (eventTypeOptions == null)
                 {
-                    return await EventAttribute.OptionsCreator(EventAttribute.Options);
+                    eventTypeOptions = EventAttribute.Options;
                 }
-                else
-                {
-                    return eventTypeOptions = EventAttribute.Options;
-
-                }
+                return eventTypeOptions;
             }
-            return eventTypeOptions;
         }
 
         EventHandlerAttribute EventHandlerAttribute
@@ -106,14 +101,14 @@ namespace OCore.Events
         }
 
         public async Task OnNextAsync(Event<T> item, StreamSequenceToken token = null)
-        {            
+        {
             try
             {
                 await CallHandlers(item);
             }
             catch
             {
-                var eventTypeOptions = await GetEventTypeOptions();
+                var eventTypeOptions = EventTypeOptions;
 
 
                 bool poisonLimitReached = false;
@@ -129,7 +124,7 @@ namespace OCore.Events
                     }
                 }
 
-                bool @throw = poisonLimitReached == true 
+                bool @throw = poisonLimitReached == true
                               || EventHandlerAttribute.ContainExceptions == false;
 
                 if (@throw == true)
