@@ -1,8 +1,55 @@
 # OCore
 
-**nuget packages** do exist, but they are not yet in sync with the source code as it is too early to do a real release regime. Use the source for now.
-
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
+
+## Hello World
+
+New dotnet core console appliaction. Add from nuget:
+
+- `OCore.Setup`
+- `Microsoft.Orleans.CodeGenerator.MSBuild`
+
+Type:
+
+```csharp
+using OCore.Services;
+using System.Threading.Tasks;
+
+namespace HelloWorld
+{
+    [Service("HelloWorld")]
+    public interface IHelloWorldService : IService
+    {
+        Task<string> SayHelloTo(string name);
+    }
+    
+    public class HelloWorldService : Service, IHelloWorldService
+    {
+        public Task<string> SayHelloTo(string name)
+        {
+            return Task.FromResult($"Hello, {name}! It is a beautiful world! And you are my favorite part of it!");
+        }
+    }
+
+    class Program
+    {
+        static async Task Main(string[] args) =>
+           await OCore.Setup.DeveloperExtensions.LetsGo();
+    }
+}
+```
+
+Press F5 and POST (using Postman/VS Code REST client):
+
+```http
+### Say hello to the world
+POST http://localhost:9000/services/HelloWorld/SayHelloTo
+
+"COCPORN"
+```
+
+
+**nuget packages** do exist, but they are not yet in sync with the source code as it is too early to do a real release regime. Use the source for now.
 
 Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
 
@@ -350,4 +397,40 @@ OCore has a system for event handling based on Orleans Streams that provides:
     - Workload management
         - Scale uniformly or to cluster size
 - Controlled event handling
-    - Poison event handling
+    - Poison event handling (dependent on the stream backend retrying failed events, like Azure Storage Queues)
+
+Create an event:
+
+```csharp
+[Event("EventName")]
+public class MyEvent 
+{
+    public string Greeting { get; set; }
+}
+```
+
+Raise the event using the event aggregator:
+
+```csharp
+GrainFactory
+    .GetEventAggregator()
+    .Raise(new MyEvent 
+        { 
+            Greeting = "Hello world!" 
+        });
+```
+
+Handle events:
+
+```csharp
+[EventHandler("EventName")]
+public class HandleMyEvents : EventHandler<MyEvent> {
+    protected override Task HandleEvent(MyEvent @event)
+    {
+        Console.WriteLine(@event.Greeting);
+        return base.HandleEvent(@event);
+    }
+}
+```
+
+The eventing system is many-to-many, as in: Events can be raised anywhere in the code where you can get a hold of the event aggregator and each event can be handled by multiple handlers.
