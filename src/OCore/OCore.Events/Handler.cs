@@ -46,11 +46,11 @@ namespace OCore.Events
             }
         }
 
-        EventHandlerAttribute EventHandlerAttribute
+        HandlerAttribute EventHandlerAttribute
         {
             get
             {
-                return GetType().GetCustomAttribute<EventHandlerAttribute>();
+                return GetType().GetCustomAttribute<HandlerAttribute>();
             }
         }
 
@@ -66,7 +66,7 @@ namespace OCore.Events
             await stream.SubscribeAsync(this);
         }
 
-        private string FormatStreamNamespace(EventHandlerAttribute eventHandlerAttribute)
+        private string FormatStreamNamespace(HandlerAttribute eventHandlerAttribute)
         {
             if (eventHandlerAttribute.Suffix == null)
             {
