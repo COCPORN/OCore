@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
     <IsPackable>true</IsPackable>        
     <PackageId>OCore.Http</PackageId>
-    <Version>0.0.6-preview</Version>
+    <Version>0.0.7-preview</Version>
     <Authors>COCPORN</Authors>
   </PropertyGroup>
 
