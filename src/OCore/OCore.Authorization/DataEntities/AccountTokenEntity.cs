@@ -13,11 +13,18 @@ namespace OCore.Authorization.Grains
     {
         public Task<AccountInfo> GetAccountId()
         {
-            return Task.FromResult(new AccountInfo
+            if (Created == true)
             {
-                AccountId = State.AccountId,
-                TenantId = State.TenantId
-            });
+                return Task.FromResult(new AccountInfo
+                {
+                    AccountId = State.AccountId,
+                    TenantId = State.TenantId
+                });
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Trying to reach uncreated token");
+            }
         }
 
         public Task LinkToAccountId(string accountId)
