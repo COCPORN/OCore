@@ -29,7 +29,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new DataCreationException("DataEntity not created");
+                throw new DataCreationException($"DataEntity not created: {this.GetPrimaryKeyString()}/{typeof(T)}");
             }
         }
 
@@ -42,7 +42,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new DataCreationException("DataEntity not created");
+                throw new DataCreationException($"DataEntity not created: {this.GetPrimaryKeyString()}/{typeof(T)}");
             }
         }
 
@@ -60,7 +60,7 @@ namespace OCore.Entities.Data
             }
             else
             {
-                throw new DataCreationException("DataEntity not created");
+                throw new DataCreationException($"DataEntity not created: {this.GetPrimaryKeyString()}/{typeof(T)}");
             }
         }
     }
