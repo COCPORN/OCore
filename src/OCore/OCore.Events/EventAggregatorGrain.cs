@@ -14,8 +14,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Events
 {
-    [StatelessWorker]    
-    [Reentrant]
+    [StatelessWorker]        
     public class EventAggregatorGrain : Grain, IEventAggregator
     {
         readonly ILogger logger;
@@ -28,11 +27,9 @@ namespace OCore.Events
             this.logger = logger;
             this.options = options.Value;
         }
-
-        IStreamProvider streamProvider;
+        
         public override Task OnActivateAsync()
         {
-            streamProvider = GetStreamProvider("BaseStreamProvider");
             return base.OnActivateAsync();
         }
 
@@ -132,6 +129,8 @@ namespace OCore.Events
             {
                 streamName += $":{streamNameSuffix}";
             }
+
+            var streamProvider = GetStreamProvider(eventTypeOptions.Item2.ProviderName ?? "BaseStreamProvider");
 
             var stream = streamProvider.GetStream<Event<T>>(destination, streamName);
             if (eventTypeOptions.Item2.FireAndForget == true)
