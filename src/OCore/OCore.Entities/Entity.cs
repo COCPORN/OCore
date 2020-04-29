@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Orleans.Runtime;
 using OCore.Authorization.Abstractions.Request;
+using OCore.Core.Extensions;
 
 namespace OCore.Entities
 {
@@ -35,39 +36,7 @@ namespace OCore.Entities
                         base.State.TenantId = requestPayload.TenantId;
                     }
 
-                    if (this is IGrainWithStringKey)
-                    {
-                        var primaryKeyString = this.GetPrimaryKeyString();
-
-                        if (base.State.TenantId != null)
-                        {
-                            var suffix = $"::{base.State.TenantId}";
-                            if (primaryKeyString.EndsWith(suffix))
-                            {
-                                primaryKeyString = primaryKeyString.Substring(0, primaryKeyString.Length - suffix.Length);
-                            }
-                        }
-
-                        base.State.KeyString = primaryKeyString;
-                    }
-                    else if (this is IGrainWithGuidCompoundKey)
-                    {
-                        base.State.KeyGuid = this.GetPrimaryKey(out var keyExtension);
-                        base.State.KeyExtension = keyExtension;
-                    }
-                    else if (this is IGrainWithGuidKey)
-                    {
-                        base.State.KeyGuid = this.GetPrimaryKey();
-                    }
-                    else if (this is IGrainWithIntegerKey)
-                    {
-                        base.State.KeyLong = this.GetPrimaryKeyLong();
-                    }
-                    else if (this is IGrainWithIntegerCompoundKey)
-                    {
-                        base.State.KeyLong = this.GetPrimaryKeyLong(out var keyExtension);
-                        base.State.KeyExtension = keyExtension;
-                    }
+                    base.State.Key = this.Key();
                 }
             }
 
@@ -99,7 +68,7 @@ namespace OCore.Entities
             get
             {
                 EnsureEntityActivated();
-                return base.State.KeyString;
+                return base.State.Key.String;
             }
         }
 
@@ -108,7 +77,7 @@ namespace OCore.Entities
             get
             {
                 EnsureEntityActivated();
-                return base.State.KeyGuid.Value;
+                return base.State.Key.Guid.Value;
             }
         }
         public long PrimaryKeyLong
@@ -116,7 +85,7 @@ namespace OCore.Entities
             get
             {
                 EnsureEntityActivated();
-                return base.State.KeyLong.Value;
+                return base.State.Key.Long.Value;
             }
         }
         public string KeyExtension
@@ -124,7 +93,7 @@ namespace OCore.Entities
             get
             {
                 EnsureEntityActivated();
-                return base.State.KeyExtension;
+                return base.State.Key.Extension;
             }
         }
 

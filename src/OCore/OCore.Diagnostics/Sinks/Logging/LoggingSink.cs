@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using OCore.Core.Extensions;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -32,10 +33,10 @@ namespace OCore.Diagnostics.Sinks.Logging
             this.options = options.Value;
         }
 
-        public Task AddRequest(DiagnosticsPayload request, IGrainCallContext grainCallContext)
+        public Task Request(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
             if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
-            logger.LogInformation(request.ToString());
+            logger.LogInformation($"[{grainCallContext.Grain.Key()}] {request}");
 
             return Task.CompletedTask;
         }

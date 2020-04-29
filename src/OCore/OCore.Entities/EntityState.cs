@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OCore.Core;
+using Orleans.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,14 +16,8 @@ namespace OCore.Entities
 
         public int Version { get; set; }
 
-        public long? KeyLong { get; set; }
-
-        public string KeyString { get; set; }
-
-        public Guid? KeyGuid { get; set; }
-
-        public string KeyExtension { get; set; }
-
+        public Key Key { get; set; }
+        
         public string TenantId { get; set; }
 
         public T Data;

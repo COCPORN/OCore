@@ -21,7 +21,7 @@ namespace OCore.Diagnostics
             if (payload == null)
             {
                 payload = DiagnosticsPayload.Register(c => c.RequestSource = RequestSource.Filter);
-            }
+            }            
 
             // Update payload
             payload.HopCount++;
@@ -30,7 +30,7 @@ namespace OCore.Diagnostics
             payload.GrainName = $"{context?.Grain}";
             payload.MethodName = $"{context?.InterfaceMethod?.Name}";
 
-            await Task.WhenAll(sinks.Select(s => s.AddRequest(payload, context)));
+            await Task.WhenAll(sinks.Select(s => s.Request(payload, context)));
             try
             {
                 await Task.WhenAll(context.Invoke());

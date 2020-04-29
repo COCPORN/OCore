@@ -14,7 +14,7 @@ namespace OCore.Diagnostics
 
         bool EnableOCoreInternal { get; set;  }
 
-        Task AddRequest(DiagnosticsPayload request, IGrainCallContext grainCallContext);
+        Task Request(DiagnosticsPayload request, IGrainCallContext grainCallContext);
 
         Task Complete(DiagnosticsPayload request, IGrainCallContext grainCallContext);
 
