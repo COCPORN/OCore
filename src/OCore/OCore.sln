@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{E759C5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataEntities", "DataEntities", "{E586CCCB-0EE8-40DA-93D0-4292A40B9AFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Diagnostics", "OCore.Diagnostics\OCore.Diagnostics.csproj", "{B566D41D-D48C-4F3B-896C-E2EBF0F035A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{C4BCC4AC-F9AD-4120-B028-71848A5774F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4BCC4AC-F9AD-4120-B028-71848A5774F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4BCC4AC-F9AD-4120-B028-71848A5774F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B566D41D-D48C-4F3B-896C-E2EBF0F035A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B566D41D-D48C-4F3B-896C-E2EBF0F035A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B566D41D-D48C-4F3B-896C-E2EBF0F035A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B566D41D-D48C-4F3B-896C-E2EBF0F035A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

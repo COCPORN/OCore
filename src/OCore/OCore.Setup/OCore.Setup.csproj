@@ -11,18 +11,19 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.0.2">
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.1.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>    
-    <PackageReference Include="Microsoft.Orleans.Server" Version="3.0.2" />    
+    <PackageReference Include="Microsoft.Orleans.Server" Version="3.1.6" />    
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OCore.Authorization\OCore.Authorization.csproj" />
+    <ProjectReference Include="..\OCore.Diagnostics\OCore.Diagnostics.csproj" />
     <ProjectReference Include="..\OCore.Entities.Data.Http\OCore.Entities.Data.Http.csproj" />
     <ProjectReference Include="..\OCore.Events\OCore.Events.csproj" />
     <ProjectReference Include="..\OCore.Http.OpenApi\OCore.Http.OpenApi.csproj" />

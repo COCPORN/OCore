@@ -12,6 +12,7 @@ using OCore.Authorization;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using OCore.Diagnostics;
 
 namespace OCore.Setup
 {
@@ -61,6 +62,7 @@ namespace OCore.Setup
                 b.AddSimpleMessageStreamProvider("BaseStreamProvider");
                 b.AddMemoryGrainStorageAsDefault();
                 b.AddOCoreAuthorization();
+                b.AddOCoreDeveloperDiagnostics();
                 b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
 
                 siloConfigurationDelegate?.Invoke(b);

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Events
 {
-    [StatelessWorker]        
+    [StatelessWorker(1)]        
     public class EventAggregatorGrain : Grain, IEventAggregator
     {
         readonly ILogger logger;
