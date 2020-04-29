@@ -1,37 +1,76 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Orleans;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Diagnostics.Sinks.Logging
 {
-    public class LoggingSink : IDiagnosticsSink
+    public class LoggingSinkOptions
     {
         public bool Enabled { get; set; } = true;
 
+        public bool LogArguments { get; set; } = true;
+    }
+
+    public class LoggingSink : IDiagnosticsSink
+    {
+        public bool IsPaused { get; set; } = true;
+
+        public bool EnableOCoreInternal { get; set; } = false;
+
         ILogger logger;
-        public LoggingSink(ILogger<LoggingSink> logger)
+        LoggingSinkOptions options;
+        public LoggingSink(ILogger<LoggingSink> logger,
+            IOptions<LoggingSinkOptions> options)
         {
             this.logger = logger;
+            this.options = options.Value;
         }
 
         public Task AddRequest(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
-            if (Enabled == false) return Task.CompletedTask;
-
-            // Do not log internal Orleans calls
-            
-            if (grainCallContext.Grain.GetType().FullName.StartsWith("Orleans.")) return Task.CompletedTask;
+            if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
             logger.LogInformation(request.ToString());
 
             return Task.CompletedTask;
         }
 
+        private bool CheckWhetherToLog(IGrainCallContext grainCallContext)
+        {
+            if (IsPaused == true || options.Enabled == false) return false;
+
+            var fullName = grainCallContext.Grain.GetType().FullName; ;
+
+            // Do not log internal calls
+            if (fullName.StartsWith("Orleans.")) return false;
+            if (EnableOCoreInternal == false && fullName.StartsWith("OCore.")) return false;
+            return true;
+        }
+
         public Task Complete(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
+            if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
+            if (options.LogArguments == true)
+            {
+                logger.LogInformation($"> {JsonConvert.SerializeObject(grainCallContext.Arguments)}\n" + 
+                    $"< {JsonConvert.SerializeObject(grainCallContext.Result)}");                
+            }
             return Task.CompletedTask;
+        }
+
+        public Task Fail(DiagnosticsPayload request, IGrainCallContext grainCallContext, Exception ex)
+        {
+            if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
+            if (options.LogArguments == true)
+            {
+                logger.LogError(ex, $"> {JsonConvert.SerializeObject(grainCallContext.Arguments)}");
+            }
+            return Task.CompletedTask;            
         }
     }
 }

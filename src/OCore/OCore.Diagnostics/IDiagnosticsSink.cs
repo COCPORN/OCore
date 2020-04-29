@@ -1,4 +1,5 @@
 ﻿using Orleans;
+using System;
 using System.Threading.Tasks;
 
 namespace OCore.Diagnostics
@@ -9,10 +10,14 @@ namespace OCore.Diagnostics
     /// </summary>
     public interface IDiagnosticsSink
     {
-        bool Enabled { get; set; }
+        bool IsPaused { get; set; }
+
+        bool EnableOCoreInternal { get; set;  }
 
         Task AddRequest(DiagnosticsPayload request, IGrainCallContext grainCallContext);
 
         Task Complete(DiagnosticsPayload request, IGrainCallContext grainCallContext);
+
+        Task Fail(DiagnosticsPayload request, IGrainCallContext grainCallContext, Exception ex);
     }
 }

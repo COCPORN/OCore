@@ -45,9 +45,15 @@ namespace OCore.Diagnostics
 
         public DateTimeOffset CreatedAt { get; set; }
 
-        //public IGrainCallContext GrainCallContext { get; set; }
-
         public int HopCount { get; set; }
+
+        public string PreviousGrainName { get; set; }
+
+        public string PreviousMethodName { get; set; }
+
+        public string GrainName { get; set; }
+
+        public string MethodName { get; set; }
 
         public RequestSource RequestSource { get; set; }
 
@@ -68,6 +74,16 @@ namespace OCore.Diagnostics
             return RequestContext.Get("D") as DiagnosticsPayload;
         }
 
-        public override string ToString() => $"{CreatedAt}/{CorrelationId}: {RequestSource}:{HopCount}";
+        public override string ToString()
+        {
+            if (PreviousMethodName != null)
+            {
+                return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName}.{MethodName} [{HopCount}] {CreatedAt}/{CorrelationId} {RequestSource}";
+            } else
+            {
+                return $"{GrainName}.{MethodName} [{HopCount}] {CreatedAt}/{CorrelationId} {RequestSource}";
+            }
+            
+        }
     }
 }

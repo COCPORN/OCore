@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OCore.Diagnostics
 {
-    public class DiagnosticIncomingGrainCallFilter : IIncomingGrainCallFilter        
+    public class DiagnosticIncomingGrainCallFilter : IIncomingGrainCallFilter
     {
         IEnumerable<IDiagnosticsSink> sinks;
 
@@ -23,9 +23,25 @@ namespace OCore.Diagnostics
                 payload = DiagnosticsPayload.Register(c => c.RequestSource = RequestSource.Filter);
             }
 
+            // Update payload
+            payload.HopCount++;
+            payload.PreviousGrainName = payload.GrainName;
+            payload.PreviousMethodName = payload.MethodName;
+            payload.GrainName = $"{context?.Grain}";
+            payload.MethodName = $"{context?.InterfaceMethod?.Name}";
+
             await Task.WhenAll(sinks.Select(s => s.AddRequest(payload, context)));
-            await Task.WhenAll(context.Invoke());
-            await Task.WhenAll(sinks.Select(s => s.Complete(payload, context)));
+            try
+            {
+                await Task.WhenAll(context.Invoke());
+                await Task.WhenAll(sinks.Select(s => s.Complete(payload, context)));
+            }
+            catch (Exception ex)
+            {
+                await Task.WhenAll(sinks.Select(s => s.Fail(payload, context, ex)));
+                throw;
+            }
+
         }
     }
 }
