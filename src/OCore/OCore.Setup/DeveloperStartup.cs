@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OCore.Dashboard;
 using OCore.DefaultSetup;
 
 namespace OCore.Setup
@@ -20,6 +21,7 @@ namespace OCore.Setup
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseRouting();
             app.UseDefaultOCore();
+            app.UseOCoreDashboard(env);
         }
     }
 }

@@ -11,8 +11,8 @@ namespace OCore.Core
         String,
         GuidCompound,
         Guid,
-        Integer,
-        IntegerCompound
+        Long,
+        LongCompound
     }
 
     public class Key
@@ -49,7 +49,7 @@ namespace OCore.Core
             }
             else if (grain is IGrainWithIntegerKey)
             {
-                return new Key { Long = grain.GetPrimaryKeyLong(), Type = KeyType.Integer };
+                return new Key { Long = grain.GetPrimaryKeyLong(), Type = KeyType.Long };
             }
             else if (grain is IGrainWithIntegerCompoundKey)
             {
@@ -58,27 +58,47 @@ namespace OCore.Core
                 {
                     Long = @long,
                     Extension = keyExtension,
-                    Type = KeyType.IntegerCompound
+                    Type = KeyType.LongCompound
                 };             
             }
             throw new InvalidOperationException("Unable to create key from grain");
         }
 
-        string stringRepresentation;
+        public override bool Equals(object obj)
+        {
+            return obj is Key key &&
+                   Long == key.Long &&
+                   String == key.String &&
+                   EqualityComparer<Guid?>.Default.Equals(Guid, key.Guid) &&
+                   Extension == key.Extension &&
+                   Type == key.Type;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1093556722;
+            hashCode = hashCode * -1521134295 + Long.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(String);
+            hashCode = hashCode * -1521134295 + Guid.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Extension);
+            hashCode = hashCode * -1521134295 + Type.GetHashCode();
+            return hashCode;
+        }
+
         public override string ToString()
         {
             switch (Type) 
             {
                 case KeyType.String:
-                    return String;
+                    return $"String: {String}";
                 case KeyType.Guid:
-                    return Guid.ToString();
+                    return $"Guid: {Guid}";
                 case KeyType.GuidCompound:
-                    return $"{Guid}:{Extension}";
-                case KeyType.Integer:
-                    return $"{Long}";
-                case KeyType.IntegerCompound:
-                    return $"{Long}:{Extension}";
+                    return $"Guid: {Guid} Extension: {Extension}";
+                case KeyType.Long:
+                    return $"Long: {Long}";
+                case KeyType.LongCompound:
+                    return $"Long: {Long} Extension: {Extension}";
             }
             return "Unknown key type";
         }

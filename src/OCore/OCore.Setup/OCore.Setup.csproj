@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OCore.Authorization\OCore.Authorization.csproj" />
     <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
+    <ProjectReference Include="..\OCore.Dashboard\OCore.Dashboard.csproj" />
     <ProjectReference Include="..\OCore.Diagnostics\OCore.Diagnostics.csproj" />
     <ProjectReference Include="..\OCore.Entities.Data.Http\OCore.Entities.Data.Http.csproj" />
     <ProjectReference Include="..\OCore.Events\OCore.Events.csproj" />

@@ -13,6 +13,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using OCore.Diagnostics;
+using OCore.Dashboard;
 
 namespace OCore.Setup
 {
@@ -44,11 +45,14 @@ namespace OCore.Setup
                  .Build();
 
             hostBuilder.UseConsoleLifetime();
+
             hostBuilder.ConfigureLogging(logging => logging.AddConsole());
+
             hostBuilder.ConfigureAppConfiguration(builder =>
             {
                 builder.AddConfiguration(configuration);
             });
+
             hostBuilder.ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseUrls("http://*:9000");
@@ -63,6 +67,7 @@ namespace OCore.Setup
                 b.AddMemoryGrainStorageAsDefault();
                 b.AddOCoreAuthorization();
                 b.AddOCoreDeveloperDiagnostics();
+                b.AddOCoreDashboard();
                 b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
 
                 siloConfigurationDelegate?.Invoke(b);
