@@ -19,6 +19,7 @@ namespace OCore.Dashboard
 
         public static void UseOCoreDashboard(this IApplicationBuilder app, IHostEnvironment env, string requestPath = "/admin")
         {
+            // TODO: Make sure these numbers make sense, these certainly seem not to
             var cachePeriod = env.IsDevelopment() ? "1" : "604800";
             app.UseDefaultFiles("/admin");
             app.UseStaticFiles(new StaticFileOptions

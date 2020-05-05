@@ -35,6 +35,10 @@ Generated\ Files/
 # Mac stuff
 .DS_Store
 
+# Cake tools
+tools/
+artifacts/
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
