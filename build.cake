@@ -37,20 +37,17 @@ Task("Pack")
     });
 
 Task("Push")
-    .IsDependentOn("Pack")
-    .Does(() => {
-        Information($"Pushing for API key: {apiKey}");
-        NuGetPush(packageOutputDir + "*.nupkg", new NuGetPushSettings {
-            ApiKey = apiKey,
-            Source = "https://api.nuget.org/v3/index.json",
-            SkipDuplicate = true
-        });
-    });
-
-
-Task("Publish")
     .IsDependentOn("Test")
     .IsDependentOn("Pack")
-    .IsDependentOn("Push");
+    .Does(() => {
+        var packageFiles = GetFiles(packageOutputDir + "*.nupkg");
+        foreach (var packageFile in packageFiles) {
+            NuGetPush(packageFile, new NuGetPushSettings {
+                ApiKey = apiKey,
+                Source = "https://api.nuget.org/v3/index.json",
+                SkipDuplicate = true
+            });
+        }
+    });
 
 RunTarget(target);
