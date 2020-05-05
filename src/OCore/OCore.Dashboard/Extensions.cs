@@ -20,17 +20,22 @@ namespace OCore.Dashboard
         public static void UseOCoreDashboard(this IApplicationBuilder app, IHostEnvironment env, string requestPath = "/admin")
         {
             // TODO: Make sure these numbers make sense, these certainly seem not to
-            var cachePeriod = env.IsDevelopment() ? "1" : "604800";
-            app.UseDefaultFiles("/admin");
-            app.UseStaticFiles(new StaticFileOptions
-            {                
-                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")),
-                RequestPath = requestPath,
-                OnPrepareResponse = ctx =>
-                {                    
-                    ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cachePeriod}");
-                }
-            });
+            try
+            {
+                var cachePeriod = env.IsDevelopment() ? "1" : "604800";
+                app.UseDefaultFiles("/admin");
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")),
+                    RequestPath = requestPath,
+                    OnPrepareResponse = ctx =>
+                    {
+                        ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cachePeriod}");
+                    }
+                });
+            } catch (Exception ex) {
+                System.Console.WriteLine($"Unable to setup Dashboard: {ex.ToString()}");
+            }
         }
     }
 }
