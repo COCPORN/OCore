@@ -1,12 +1,12 @@
 # OCore
 
-![CI](https://github.com/COCPORN/OCore/workflows/CI/badge.svg)
+![CI](https://github.com/COCPORN/OCore/workflows/Packages/badge.svg)
 
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
 
 ## Hello World
 
-New dotnet core console appliaction. Add from nuget:
+New dotnet core console application. Add from nuget:
 
 - `OCore.Setup`
 - `Microsoft.Orleans.CodeGenerator.MSBuild`
