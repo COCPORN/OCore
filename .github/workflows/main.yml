@@ -28,5 +28,6 @@ jobs:
         OCORE_NUGET_API_KEY: ${{ secrets.OCORE_NUGET_API_KEY }}
       uses: ecampidoglio/cake-action@v1.1.1
       with:
+        cake-bootstrap: true
         target: Push
  
