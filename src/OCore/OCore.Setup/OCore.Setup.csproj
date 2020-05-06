@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
     <IsPackable>true</IsPackable>
     <PackageId>OCore.Setup</PackageId>
-    <Version>0.0.11-preview</Version>
+    <Version>0.0.14-preview</Version>
     <Authors>COCPORN</Authors>
   </PropertyGroup>
   
@@ -24,7 +24,9 @@
   <ItemGroup>
     <ProjectReference Include="..\OCore.Authorization\OCore.Authorization.csproj" />
     <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
-    <ProjectReference Include="..\OCore.Dashboard\OCore.Dashboard.csproj" />
+    <ProjectReference Include="..\OCore.Dashboard\OCore.Dashboard.csproj">
+      <PrivateAssets>analyzers;build</PrivateAssets>
+    </ProjectReference>
     <ProjectReference Include="..\OCore.Diagnostics\OCore.Diagnostics.csproj" />
     <ProjectReference Include="..\OCore.Entities.Data.Http\OCore.Entities.Data.Http.csproj" />
     <ProjectReference Include="..\OCore.Events\OCore.Events.csproj" />

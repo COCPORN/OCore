@@ -25,10 +25,12 @@ Task("Test")
 Task("Pack")
     .IsDependentOn("Test")
     .Does(() => {
-        DeleteDirectory(packageOutputDir, new DeleteDirectorySettings {
-            Recursive = true,
-            Force = true,
-        });
+        if (DirectoryExists(packageOutputDir)) { 
+            DeleteDirectory(packageOutputDir, new DeleteDirectorySettings {
+                Recursive = true,
+                Force = true,
+            });
+        }
         DotNetCorePack(solution, new DotNetCorePackSettings 
         { 
             Configuration = buildConfiguration,

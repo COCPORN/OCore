@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>true</IsPackable>
     <PackageId>OCore.Dashboard</PackageId>
-    <Version>0.0.3-preview</Version>
+    <Version>0.0.6-preview</Version>
     <Authors>COCPORN</Authors>
   </PropertyGroup>
 
@@ -14,10 +14,9 @@
   <ItemGroup>
     <Content Include="wwwroot\**">
       <Pack>true</Pack>
-      <PackagePath>contentFiles\any\any\adminroot\</PackagePath>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-      <ContentTargetFolders>wwwroot;wwwroot</ContentTargetFolders>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <PackagePath>contentFiles\any\any\wwwroot\</PackagePath>
+      <PackageCopyToOutput>true</PackageCopyToOutput>    
+      <CopyToOutputDirectory>true</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
