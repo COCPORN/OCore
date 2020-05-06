@@ -13,7 +13,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using OCore.Diagnostics;
-using OCore.Dashboard;
+//using OCore.Dashboard;
 
 namespace OCore.Setup
 {
@@ -67,7 +67,7 @@ namespace OCore.Setup
                 b.AddMemoryGrainStorageAsDefault();
                 b.AddOCoreAuthorization();
                 b.AddOCoreDeveloperDiagnostics();
-                b.AddOCoreDashboard();
+                //b.AddOCoreDashboard();
                 b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
 
                 siloConfigurationDelegate?.Invoke(b);

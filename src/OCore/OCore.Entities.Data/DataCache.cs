@@ -41,6 +41,9 @@ namespace OCore.Entities.Data
             {
                 if (DateTimeOffset.UtcNow - RefreshedAt > CacheFor)
                 {
+                    // TODO: Is this dubious for deadlocking? I wouldn't think
+                    // so, but I have seen "strange behavior", and I think this is
+                    // the only place where ContinueWith is used.
                     dataSource.Read().ContinueWith(x =>
                     {
                         data = x.Result;
