@@ -1,5 +1,7 @@
 # OCore
 
+![CI](https://github.com/COCPORN/OCore/workflows/CI/badge.svg)
+
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
 
 ## Hello World
