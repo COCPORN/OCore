@@ -25,12 +25,23 @@ namespace OCore.Http.OpenApi
 
         bool StripInternal { get; set; }
 
-        public OpenApiHandler(string title, string version, bool stripInternal, bool loadDocumentationXml = true)
+        string servicePrefix { get; set; }
+
+        string dataEntityPrefix { get; set; }
+
+        public OpenApiHandler(string title,
+            string version, 
+            bool stripInternal, 
+            bool loadDocumentationXml = true, 
+            string servicePrefix = "/services",
+            string dataEntityPrefix = "/data")
         {
             Title = title;
             Version = version;
             StripInternal = stripInternal;
             LoadDocumentationXml = loadDocumentationXml;
+            this.servicePrefix = servicePrefix;
+            this.dataEntityPrefix = dataEntityPrefix;
         }
 
         internal async Task Dispatch(HttpContext context)
@@ -46,7 +57,8 @@ namespace OCore.Http.OpenApi
 
                 await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(openApiDocumentation), 0, openApiDocumentation.Length);
                 await context.Response.Body.FlushAsync();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 var exc = ex.ToString();
                 await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(exc), 0, exc.Length);
@@ -96,15 +108,15 @@ namespace OCore.Http.OpenApi
 
             foreach (var resource in resourceList)
             {
-                if (StripInternal == true 
+                if (StripInternal == true
                     && resource.BaseResource.StartsWith("OCore")) continue;
                 if (resource is ServiceResource)
                 {
-                    AddServiceResource(paths, resource);
+                    AddServiceResource(paths, resource, servicePrefix);
                 }
                 else if (resource is DataEntityResource dataEntityResource)
                 {
-                    AddDataEntityResource(paths, dataEntityResource);
+                    AddDataEntityResource(paths, dataEntityResource, dataEntityPrefix);
                 }
             }
 
@@ -112,11 +124,11 @@ namespace OCore.Http.OpenApi
 
         }
 
-        private void AddDataEntityResource(OpenApiPaths paths, DataEntityResource dataEntityResource)
+        private void AddDataEntityResource(OpenApiPaths paths, DataEntityResource dataEntityResource, string dataEntityPrefix)
         {
             if (dataEntityResource.BaseResource != dataEntityResource.ResourcePath)
             {
-                paths.Add($"/{dataEntityResource.ResourcePath}", new OpenApiPathItem
+                paths.Add($"{dataEntityPrefix}/{dataEntityResource.ResourcePath}", new OpenApiPathItem
                 {
                     Operations = new Dictionary<OperationType, OpenApiOperation>
                     {
@@ -184,9 +196,9 @@ namespace OCore.Http.OpenApi
             }
         }
 
-        private static void AddServiceResource(OpenApiPaths paths, Resource resource)
+        private static void AddServiceResource(OpenApiPaths paths, Resource resource, string servicePrefix)
         {
-            paths.Add($"/{resource.ResourcePath}", new OpenApiPathItem
+            paths.Add($"{servicePrefix}/{resource.ResourcePath}", new OpenApiPathItem
             {
                 Operations = new Dictionary<OperationType, OpenApiOperation>
                     {
