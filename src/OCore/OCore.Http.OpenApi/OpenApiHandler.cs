@@ -30,9 +30,9 @@ namespace OCore.Http.OpenApi
         string dataEntityPrefix { get; set; }
 
         public OpenApiHandler(string title,
-            string version, 
-            bool stripInternal, 
-            bool loadDocumentationXml = true, 
+            string version,
+            bool stripInternal,
+            bool loadDocumentationXml = true,
             string servicePrefix = "/services",
             string dataEntityPrefix = "/data")
         {
@@ -135,6 +135,7 @@ namespace OCore.Http.OpenApi
                         {
                             OperationType.Post, new OpenApiOperation
                             {
+                                Tags = new List<OpenApiTag> { new OpenApiTag { Name = dataEntityResource.BaseResource, Description = "DataEntity" } },
                                 Description = dataEntityResource.BaseResource,
                                 Summary = $"{dataEntityResource.MethodInfo.DeclaringType.FullName}.{dataEntityResource.MethodInfo.Name}"
                             }
@@ -153,6 +154,7 @@ namespace OCore.Http.OpenApi
                         operations.Add(OperationType.Get,
                             new OpenApiOperation
                             {
+                                Tags = new List<OpenApiTag> { new OpenApiTag { Name = dataEntityResource.BaseResource, Description = "DataEntity" } },
                                 Description = dataEntityResource.BaseResource,
                                 Summary = $"{dataEntityResource.MethodInfo.DeclaringType.FullName}.{dataEntityResource.MethodInfo.Name}"
                             });
@@ -163,6 +165,7 @@ namespace OCore.Http.OpenApi
                         operations.Add(OperationType.Post,
                                new OpenApiOperation
                                {
+                                   Tags = new List<OpenApiTag> { new OpenApiTag { Name = dataEntityResource.BaseResource, Description = "DataEntity" } },
                                    Description = dataEntityResource.BaseResource,
                                    Summary = $"{dataEntityResource.MethodInfo.DeclaringType.FullName}.{dataEntityResource.MethodInfo.Name}"
                                });
@@ -173,6 +176,7 @@ namespace OCore.Http.OpenApi
                         operations.Add(OperationType.Put,
                                 new OpenApiOperation
                                 {
+                                    Tags = new List<OpenApiTag> { new OpenApiTag { Name = dataEntityResource.BaseResource, Description = "DataEntity" } },
                                     Description = dataEntityResource.BaseResource,
                                     Summary = $"{dataEntityResource.MethodInfo.DeclaringType.FullName}.{dataEntityResource.MethodInfo.Name}"
                                 });
@@ -183,13 +187,14 @@ namespace OCore.Http.OpenApi
                         operations.Add(OperationType.Delete,
                                 new OpenApiOperation
                                 {
+                                    Tags = new List<OpenApiTag> { new OpenApiTag { Name = dataEntityResource.BaseResource, Description = "DataEntity" } },
                                     Description = dataEntityResource.BaseResource,
                                     Summary = $"{dataEntityResource.MethodInfo.DeclaringType.FullName}.{dataEntityResource.MethodInfo.Name}"
                                 });
                     }
 
                     paths.Add($"/{dataEntityResource.BaseResource}", new OpenApiPathItem
-                    {
+                    {                        
                         Operations = operations
                     });
                 }
@@ -205,6 +210,7 @@ namespace OCore.Http.OpenApi
                         {
                             OperationType.Post, new OpenApiOperation
                             {
+                                Tags = new List<OpenApiTag> { new OpenApiTag { Name = resource.BaseResource, Description = "Service" } },
                                 Description = resource.BaseResource,
                                 Summary = $"{resource.MethodInfo.DeclaringType.FullName}.{resource.MethodInfo.Name}",
                                 Responses = new OpenApiResponses
