@@ -21,6 +21,10 @@ namespace OCore.Setup
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseRouting();
             app.UseDefaultOCore();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api-docs", "OCore Developer API");
+            });
             //app.UseOCoreDashboard(env);
         }
     }
