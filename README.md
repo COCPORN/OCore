@@ -50,8 +50,9 @@ POST http://localhost:9000/services/HelloWorld/SayHelloTo
 "COCPORN"
 ```
 
+You can also visit http://localhost:9000/swagger to see the OpenApi generated docs.
 
-**nuget packages** do exist, but they are not yet in sync with the source code as it is too early to do a real release regime. Use the source for now.
+**nuget packages** are built automatically when version numbers are increased.
 
 Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
 
