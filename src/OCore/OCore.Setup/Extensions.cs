@@ -21,14 +21,16 @@ namespace OCore.DefaultSetup
                 .AddServiceRouter();
         }
 
-        public static void UseDefaultOCore(this IApplicationBuilder app)
+        public static void UseDefaultOCore(this IApplicationBuilder app, 
+            string appTitle = "OCore app development",
+            string version = "Development")
         {
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapServices("services");
                 endpoints.MapDataEntities("data");
                 endpoints.MapDeveloperOpenApi("api-docs", 
-                    "OCore app development", 
+                    "OCore app development",
                     "Development");
             });
         }
