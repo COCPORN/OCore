@@ -61,7 +61,7 @@ namespace OCore.Core
                     Type = KeyType.LongCompound
                 };             
             }
-            throw new InvalidOperationException("Unable to create key from grain");
+            throw new InvalidOperationException($"Unable to create key from grain: {grain.ToString()}");
         }
 
         public override bool Equals(object obj)
