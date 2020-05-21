@@ -30,8 +30,8 @@ namespace OCore.DefaultSetup
                 endpoints.MapServices("services");
                 endpoints.MapDataEntities("data");
                 endpoints.MapDeveloperOpenApi("api-docs", 
-                    "OCore app development",
-                    "Development");
+                    appTitle,
+                    version);
             });
         }
 
