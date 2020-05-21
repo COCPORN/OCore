@@ -30,7 +30,7 @@ namespace OCore.Core
         public static Key FromGrain(IAddressable grain)
         {
             if (grain is IGrainWithStringKey)
-            {                            
+            {
                 return new Key { String = grain.GetPrimaryKeyString(), Type = KeyType.String };
             }
             else if (grain is IGrainWithGuidCompoundKey)
@@ -59,9 +59,12 @@ namespace OCore.Core
                     Long = @long,
                     Extension = keyExtension,
                     Type = KeyType.LongCompound
-                };             
+                };
             }
-            throw new InvalidOperationException($"Unable to create key from grain: {grain.ToString()}");
+            else
+            {
+                return new Key { String = grain.ToString() };
+            }
         }
 
         public override bool Equals(object obj)
@@ -87,7 +90,7 @@ namespace OCore.Core
 
         public override string ToString()
         {
-            switch (Type) 
+            switch (Type)
             {
                 case KeyType.String:
                     return $"String: {String}";
