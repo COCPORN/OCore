@@ -54,53 +54,6 @@ You can also visit http://localhost:9000/swagger to see the OpenApi generated do
 
 **nuget packages** are built automatically when version numbers are increased.
 
-Features (partially to come, look at this as a TODO list in no particular order, this will be removed when Trello is fully populated):
-
-## Implemented
-
-- Service publishing (cluster boundaries defined over HTTP)
-  - Run Authorization and Action filters
-  - Service Client
-- Data entities
-  - Key strategies for sandboxing
-  - Projected data entities (customer profile should become "contact", for instance)
-  - Auto CRUD
-  - HTTP exposure
-  - Automatic fan-out
-  + Authorization-and Action-filters
-  - Client side caching
-- Event aggregation and handling (under test)
-
-## Committed
-
-- Data entities
-  - [Not started] Subscription over SignalR 
-  - Exception filters
-- Authentication
-  - User accounts with optional tenancy
-  - API keys
-    - Resource bound
-    - Rate limiting
-- Authorization
-- Multi tenancy
-- Rich entities (Grain subclassing to add more information in backing store)
-- OpenAPI support with autoculling of resources based on API-key/token
-
-## Planned
-
-- Collection querying (for select backends)
-- Audited entities
-- Event sources entities
-- Data polling on entities
-
-## Brainstorming
-
-- Idempotent actions
-- https://github.com/microsoft/RulesEngine ? 
-- Mermaid export of call graph
-- Diagnostics collection
-- GraphQL over Data Entities
-
 ## Motivation
 
 Programming is fun. Plumbing is not.
