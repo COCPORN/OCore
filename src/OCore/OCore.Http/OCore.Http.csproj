@@ -6,12 +6,12 @@
     <LangVersion>latest</LangVersion>
     <IsPackable>true</IsPackable>        
     <PackageId>OCore.Http</PackageId>
-    <Version>0.1.0-preview</Version>
+    <Version>0.1.1-preview</Version>
     <Authors>COCPORN</Authors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.2.2" />
   </ItemGroup>
 
   <ItemGroup>
