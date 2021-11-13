@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29324.140
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Services", "OCore.Services\OCore.Services.csproj", "{E55DDE20-3AF7-46D5-8986-80CB0523F418}"
 EndProject
@@ -35,17 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.OpenApi", "OCore
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.Abstractions", "OCore.Http.Abstractions\OCore.Http.Abstractions.csproj", "{C4BCC4AC-F9AD-4120-B028-71848A5774F3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{7C319875-448C-44AE-B1BF-863F6FE88DA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Diagnostics", "OCore.Diagnostics\OCore.Diagnostics.csproj", "{B566D41D-D48C-4F3B-896C-E2EBF0F035A0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B4A5ADB4-5D23-42A5-8F97-49C4B1BA4E22}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{E759C56E-02C3-41F1-BAA4-9D54320E7ABD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataEntities", "DataEntities", "{E586CCCB-0EE8-40DA-93D0-4292A40B9AFF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Diagnostics", "OCore.Diagnostics\OCore.Diagnostics.csproj", "{B566D41D-D48C-4F3B-896C-E2EBF0F035A0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Dashboard", "OCore.Dashboard\OCore.Dashboard.csproj", "{CE7904B5-0252-4042-9D5B-CC6B0DEA54A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Dashboard", "OCore.Dashboard\OCore.Dashboard.csproj", "{CE7904B5-0252-4042-9D5B-CC6B0DEA54A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -128,11 +120,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{B4A5ADB4-5D23-42A5-8F97-49C4B1BA4E22} = {7C319875-448C-44AE-B1BF-863F6FE88DA4}
-		{E759C56E-02C3-41F1-BAA4-9D54320E7ABD} = {7C319875-448C-44AE-B1BF-863F6FE88DA4}
-		{E586CCCB-0EE8-40DA-93D0-4292A40B9AFF} = {7C319875-448C-44AE-B1BF-863F6FE88DA4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1769AFD-BFB2-4F50-9BEA-21BA9779EE98}
