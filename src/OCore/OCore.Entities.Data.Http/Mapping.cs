@@ -27,15 +27,7 @@ namespace OCore.Entities.Data.Http
             // Map each grain type to a route based on the attributes
             foreach (var serviceType in dataEntitiesToMap)
             {
-                try
-                {
-                    routesCreated += MapDataEntityToRoute(routes, serviceType, prefix, payloadCompleter);
-                }
-                catch (Exception ex)
-                {
-                    throw;
-                }
-
+                routesCreated += MapDataEntityToRoute(routes, serviceType, prefix, payloadCompleter);
             }
 
             return routes;
