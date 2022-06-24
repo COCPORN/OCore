@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using OCore;
 using Orleans;
 
-namespace HelloWorld
+namespace OCore.Sample
 {
     [Service("HelloWorld")]
     public interface IHelloWorldService : IService
