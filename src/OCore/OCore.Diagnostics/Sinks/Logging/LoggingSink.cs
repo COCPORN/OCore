@@ -36,7 +36,8 @@ namespace OCore.Diagnostics.Sinks.Logging
         public Task Request(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
             if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
-            logger.LogInformation($"[{grainCallContext.Grain.Key()}] {request}");
+            // Todo FIX THIS
+            logger.LogInformation($"[{grainCallContext.Grain.ToString()}] {request}");
 
             return Task.CompletedTask;
         }

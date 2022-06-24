@@ -14,8 +14,8 @@ namespace OCore.Authorization
         public static void AddOCoreAuthorization(this ISiloBuilder siloBuilder)
         {
             siloBuilder
-                .ConfigureApplicationParts(apm => apm.AddApplicationPart(typeof(Services.AuthorizationService).Assembly)
-                    .WithReferences())
+                //.ConfigureApplicationParts(apm => apm.AddApplicationPart(typeof(Services.AuthorizationService).Assembly)
+                //    .WithReferences())
                 .ConfigureServices(services =>
                 {
                     services.AddSingleton<IIncomingGrainCallFilter, AuthorizationFilter>();

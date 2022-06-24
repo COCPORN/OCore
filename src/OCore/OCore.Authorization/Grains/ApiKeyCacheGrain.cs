@@ -3,6 +3,7 @@ using Orleans.Concurrency;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
@@ -14,11 +15,12 @@ namespace OCore.Authorization.Grains
 
         IDisposable timer;
 
-        public async override Task OnActivateAsync()
+        public async override Task OnActivateAsync(CancellationToken cancellationToken
+)
         {
             await RefreshKey(null);
             timer = RegisterTimer(RefreshKey, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
-            await base.OnActivateAsync();
+            await base.OnActivateAsync(cancellationToken);
         }
 
         private async Task RefreshKey(object arg)

@@ -1,5 +1,11 @@
-﻿namespace OCore.Authorization
+﻿using Orleans;
+using System;
+
+namespace OCore.Authorization
 {
+
+    [Serializable]
+    [GenerateSerializer]
     public class AuthorizeOptions
     {
         public string ApiKeyHeader { get; set; }

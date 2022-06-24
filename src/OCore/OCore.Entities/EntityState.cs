@@ -1,4 +1,5 @@
 ﻿using OCore.Core;
+using Orleans;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,8 @@ using System.Text;
 
 namespace OCore.Entities
 {
+    [Serializable]
+    [GenerateSerializer]
     public class EntityState<T>
     {
         public bool Created { get; set; }

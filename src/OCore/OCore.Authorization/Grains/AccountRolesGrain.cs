@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
 {
+    [Serializable]
+    [GenerateSerializer]
     public class AccountRolesState
     {
         public HashSet<string> Roles { get; set; } = new HashSet<string>();

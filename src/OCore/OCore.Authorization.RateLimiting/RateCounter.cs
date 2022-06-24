@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization.RateLimiting
 {
+
+    [Serializable]
+    [GenerateSerializer]
     class Request
     {
         public DateTimeOffset Time { get; set; }
 
         public long Size { get; set; }
     }
+
 
     public class RateCounter : Grain, IRateCounter
     {

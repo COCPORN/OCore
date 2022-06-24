@@ -1,4 +1,5 @@
 ﻿using OCore.Authorization.Abstractions;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,9 @@ namespace OCore.Authorization
     /// <summary>
     ///   All resources have an associated list of role-permissions pairs which this class is used to represent.
     /// </summary>
+
+    [Serializable]
+    [GenerateSerializer]
     public class AccessDescription : IEquatable<AccessDescription>
     {
         public string Role { get; set; }

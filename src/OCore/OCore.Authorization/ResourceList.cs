@@ -43,6 +43,8 @@ namespace OCore.Authorization
         }
     }
 
+    [Serializable]
+    [GenerateSerializer]
     public class ServiceResource : Resource
     {
         public ServiceResource(string resourceName,
@@ -54,6 +56,8 @@ namespace OCore.Authorization
         }
     }
 
+    [Serializable]
+    [GenerateSerializer]
     public class DataEntityResource : Resource
     {
         public DataEntityAttribute Attribute { get; private set; }
@@ -68,6 +72,7 @@ namespace OCore.Authorization
             Attribute = attribute;
         }
     }
+
 
     public static class ResourceEnumerator
     {

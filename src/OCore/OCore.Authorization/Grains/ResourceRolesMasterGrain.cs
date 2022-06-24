@@ -1,4 +1,5 @@
 ﻿using OCore.Entities;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
 {
+    [Serializable]
+    [GenerateSerializer]
     public class ResourceRolesMasterGrainState
     {
         public Dictionary<string, List<AccessDescription>> AccessDescriptions { get; set; } = new Dictionary<string, List<AccessDescription>>();
