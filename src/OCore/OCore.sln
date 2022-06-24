@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Diagnostics", "OCore.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Dashboard", "OCore.Dashboard\OCore.Dashboard.csproj", "{CE7904B5-0252-4042-9D5B-CC6B0DEA54A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCore.Basic", "OCore.Basic\OCore.Basic.csproj", "{FEED2341-0717-4028-AD54-A27CFDC8A76D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Sample", "OCore.Basic\OCore.Sample.csproj", "{FEED2341-0717-4028-AD54-A27CFDC8A76D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
