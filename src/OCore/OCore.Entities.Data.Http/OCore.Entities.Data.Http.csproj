@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <IsPackable>true</IsPackable>
     <PackageId>OCore.Entities.Data.Http</PackageId>
@@ -12,8 +12,9 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Core" Version="3.4.1" />
-    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="3.6.2" />
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.6.2" />
   </ItemGroup>
 
   <ItemGroup>
