@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using Orleans.ApplicationParts;
 using Orleans.Metadata;
 using Orleans;
 using System.Collections.Generic;
@@ -13,6 +12,7 @@ using System.Reflection;
 using Orleans.Runtime;
 using OCore.Authorization.Abstractions;
 using OCore.Core;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
 namespace OCore.Entities.Data.Http
 {
@@ -20,38 +20,38 @@ namespace OCore.Entities.Data.Http
     {
         public static IEndpointRouteBuilder MapDataEntities(this IEndpointRouteBuilder routes, string prefix = "")
         {
-            var appPartsMgr = routes.ServiceProvider.GetRequiredService<IApplicationPartManager>();
             var payloadCompleter = routes.ServiceProvider.GetRequiredService<IPayloadCompleter>();
-
-            var grainInterfaceFeature = appPartsMgr.CreateAndPopulateFeature<GrainInterfaceFeature>();
-
-            var dataEntitiesToMap = DiscoverDataEntitiesToMap(grainInterfaceFeature);
+            var dataEntitiesToMap = DiscoverDataEntitiesToMap();
 
             int routesCreated = 0;
             // Map each grain type to a route based on the attributes
             foreach (var serviceType in dataEntitiesToMap)
             {
-                routesCreated += MapDataEntityToRoute(routes, serviceType, prefix, payloadCompleter);
+                try
+                {
+                    routesCreated += MapDataEntityToRoute(routes, serviceType, prefix, payloadCompleter);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+
             }
 
             return routes;
         }
 
-        private static List<Type> DiscoverDataEntitiesToMap(GrainInterfaceFeature grainInterfaceFeature)
+        private static IEnumerable<Type> GetAllTypesThatImplementInterface<T>()
         {
-            var grainTypesToMap = new List<Type>();
+            return AppDomain.CurrentDomain
+            .GetAssemblies()
+            .SelectMany(x => x.GetTypes())
+            .Where(type => !type.IsInterface && (type.GetInterfaces().Contains(typeof(T)) || typeof(T).IsAssignableFrom(type)));
+        }
 
-            foreach (var grainInterfaceMetadata in grainInterfaceFeature.Interfaces)
-            {
-                var grainType = grainInterfaceMetadata.InterfaceType;
-
-                if (grainType.GetInterfaces().Contains(typeof(IDataEntity)))
-                {
-                    grainTypesToMap.Add(grainType);
-                }
-            }
-
-            return grainTypesToMap;
+        private static List<Type> DiscoverDataEntitiesToMap()
+        {
+            return GetAllTypesThatImplementInterface<IDataEntity>().ToList();
         }
 
         private static int MapDataEntityToRoute(IEndpointRouteBuilder routes, Type grainType, string prefix, IPayloadCompleter payloadCompleter)
@@ -126,7 +126,12 @@ namespace OCore.Entities.Data.Http
                 from iType in declaringType.GetInterfaces()
                 where iType.IsGenericType
                         && iType.GetGenericTypeDefinition() == typeof(IDataEntity<>)
-                select iType.GetGenericArguments()[0]).First();
+                select iType.GetGenericArguments()[0]).FirstOrDefault();
+
+            if (dataEntityType == null)
+            {
+                return 0;
+            }
 
             void Register(HttpMethod httpMethod)
             {

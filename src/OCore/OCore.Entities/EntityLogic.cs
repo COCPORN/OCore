@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Orleans;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities
 {
+    [Serializable]
+    [GenerateSerializer]
     public class EntityLogic<T> where T : new()
     {
         readonly EntityState<T> state;

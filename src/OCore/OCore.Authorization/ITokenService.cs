@@ -1,5 +1,6 @@
 ﻿using OCore.Authorization.Abstractions;
 using OCore.Services;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 namespace OCore.Authorization
 {
 
+    [Serializable]
+    [GenerateSerializer]
     public class AccountInfo
     {
         public string AccountId { get; set; }

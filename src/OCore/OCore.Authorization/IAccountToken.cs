@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization
 {
+    [Serializable]
+    [GenerateSerializer]
     public class AccountToken
     {
         public string AccountId { get; set; }

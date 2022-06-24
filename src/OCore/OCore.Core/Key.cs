@@ -15,6 +15,8 @@ namespace OCore.Core
         LongCompound
     }
 
+    [Serializable]
+    [GenerateSerializer]
     public class Key
     {
         public long? Long { get; set; }

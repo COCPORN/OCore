@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OCore.Core;
 using Orleans;
-using Orleans.ApplicationParts;
 using Orleans.Concurrency;
 using Orleans.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 
@@ -23,21 +23,33 @@ namespace OCore.Services.Http
         {
             var dispatcher = routes.ServiceProvider.GetRequiredService<ServiceRouter>();
             var logger = routes.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<ServiceRouter>();
-            var appPartsMgr = routes.ServiceProvider.GetRequiredService<IApplicationPartManager>();            
 
-            var grainInterfaceFeature = appPartsMgr.CreateAndPopulateFeature<GrainInterfaceFeature>();
-
-            var servicesToMap = DiscoverServicesToMap(grainInterfaceFeature);
+            var servicesToMap = DiscoverServicesToMap();
 
             int routesCreated = 0;
             // Map each grain type to a route based on the attributes
             foreach (var serviceType in servicesToMap)
             {
                 routesCreated += MapServiceToRoute(routes, serviceType, prefix, dispatcher, logger);
-            }            
+            }
 
             logger.LogInformation($"{routesCreated} route(s) were created for grains.");
             return routes;
+        }
+
+        private static IEnumerable<Type> GetAllTypesThatHaveAttribute<T>() where T : Attribute
+        {
+            return AppDomain
+                .CurrentDomain
+                .GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => x.GetCustomAttributes(true).Where(z => z is ServiceAttribute).Any());
+        }
+
+        private static List<Type> DiscoverServicesToMap()
+        {
+
+            return GetAllTypesThatHaveAttribute<ServiceAttribute>().ToList();
         }
 
         private static int MapServiceToRoute(IEndpointRouteBuilder routes, Type grainType, string prefix, ServiceRouter dispatcher, ILogger<ServiceRouter> logger)
@@ -63,33 +75,14 @@ namespace OCore.Services.Http
                 if (internalAttribute != null) continue;
 
                 var routePattern = RoutePatternFactory.Parse($"{prefix}/{serviceAttribute.Name}/{method.Name}");
-                var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);                
+                var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);
 
-                dispatcher.RegisterRoute(routePattern.RawText, method);    
-                              
+                dispatcher.RegisterRoute(routePattern.RawText, method);
+
                 routesRegistered++;
             }
 
             return routesRegistered;
-        }
-
-        private static List<Type> DiscoverServicesToMap(GrainInterfaceFeature grainInterfaceFeature)
-        {
-            var grainTypesToMap = new List<Type>();
-
-            foreach (var grainInterfaceMetadata in grainInterfaceFeature.Interfaces)
-            {
-                var grainType = grainInterfaceMetadata.InterfaceType;
-
-                var customAttributes = grainType.GetCustomAttributes(true);
-
-                if (customAttributes.Any(x => x.GetType() == typeof(ServiceAttribute)))
-                {
-                    grainTypesToMap.Add(grainType);
-                }
-            }
-
-            return grainTypesToMap;
         }
 
     }

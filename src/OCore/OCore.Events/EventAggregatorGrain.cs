@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OCore.Events
@@ -28,9 +29,9 @@ namespace OCore.Events
             this.options = options.Value;
         }
         
-        public override Task OnActivateAsync()
+        public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            return base.OnActivateAsync();
+            return base.OnActivateAsync(cancellationToken);
         }
 
         Dictionary<Type, List<Guid>> workerDimensions = new Dictionary<Type, List<Guid>>();
@@ -130,7 +131,7 @@ namespace OCore.Events
                 streamName += $":{streamNameSuffix}";
             }
 
-            var streamProvider = GetStreamProvider(eventTypeOptions.Item2.ProviderName ?? "BaseStreamProvider");
+            var streamProvider = this.GetStreamProvider(eventTypeOptions.Item2.ProviderName ?? "BaseStreamProvider");
 
             var stream = streamProvider.GetStream<Event<T>>(destination, streamName);
             if (eventTypeOptions.Item2.FireAndForget == true)

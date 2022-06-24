@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OCore.Events
@@ -59,9 +60,9 @@ namespace OCore.Events
             return EventAttribute?.Options?.ProviderName ?? "BaseStreamProvider";            
         }
 
-        public async override Task OnActivateAsync()
+        public async override Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            var streamProvider = GetStreamProvider(GetProviderName());
+            var streamProvider = this.GetStreamProvider(GetProviderName());
             var stream = streamProvider.GetStream<Event<T>>(this.GetPrimaryKey(), FormatStreamNamespace(EventHandlerAttribute));
             await stream.SubscribeAsync(this);
         }

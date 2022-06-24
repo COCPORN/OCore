@@ -1,10 +1,13 @@
-﻿using Orleans.Runtime;
+﻿using Orleans;
+using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Abstractions.Request
 {
+    [Serializable]
+    [GenerateSerializer]
     public class Payload
     {
         public bool IsInitialStateSatisfied { get; set; }

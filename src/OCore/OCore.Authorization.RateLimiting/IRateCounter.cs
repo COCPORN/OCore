@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Orleans;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ namespace OCore.Authorization.RateLimiting
         Task ReportDataUsage(DataUsage dataUsage);
     }
 
+
+    [Serializable]
+    [GenerateSerializer]
     public class ApiKeySettings
     {
         public TimeSpan Window { get; set; }
@@ -20,6 +24,9 @@ namespace OCore.Authorization.RateLimiting
         public TimeSpan OverageDelay { get; set; }
     }
 
+
+    [Serializable]
+    [GenerateSerializer]
     public class DataUsage
     {
         public int Bytes { get; set; }

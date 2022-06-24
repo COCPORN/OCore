@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Orleans.Runtime;
 using OCore.Authorization.Abstractions.Request;
 using OCore.Core.Extensions;
+using System.Threading;
 
 namespace OCore.Entities
 {
@@ -15,7 +16,8 @@ namespace OCore.Entities
 
         ILogger Logger => (ILogger<Entity<T>>)ServiceProvider.GetService(typeof(ILogger<Entity<T>>));
 
-        public override async Task OnActivateAsync()
+
+        public override async Task OnActivateAsync(CancellationToken cancellationToken)
         {
             entityLogic = new EntityLogic<T>(base.State,
                 base.WriteStateAsync,
@@ -42,7 +44,7 @@ namespace OCore.Entities
 
             await entityLogic.OnActivateAsync();
             activated = true;
-            await base.OnActivateAsync();
+            await base.OnActivateAsync(cancellationToken);
         }
 
         bool activated;

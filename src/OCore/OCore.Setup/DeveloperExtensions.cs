@@ -68,7 +68,7 @@ namespace OCore.Setup
                 b.AddOCoreAuthorization();
                 b.AddOCoreDeveloperDiagnostics();
                 //b.AddOCoreDashboard();
-                b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
+               //b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
 
                 siloConfigurationDelegate?.Invoke(b);
             });

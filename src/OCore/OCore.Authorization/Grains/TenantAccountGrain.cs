@@ -1,4 +1,5 @@
 ﻿using OCore.Entities;
+using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
 {
+    [Serializable]
+    [GenerateSerializer]
     public class TenantAccountState
     {
         public string TenantAccountId { get; set; }

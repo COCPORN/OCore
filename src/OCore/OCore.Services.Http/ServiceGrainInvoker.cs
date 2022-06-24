@@ -22,11 +22,16 @@ namespace OCore.Services.Http
     public class ServiceGrainInvoker : GrainInvoker
     {
 
+        private static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            AllowTrailingCommas = true
+        };
+
         public ServiceGrainInvoker(IServiceProvider serviceProvider, Type grainType, MethodInfo methodInfo) : 
             base(serviceProvider, grainType, methodInfo)
         {
         }
-
 
         protected override async Task<object[]> GetParameterList(HttpContext context)
         {
@@ -42,7 +47,7 @@ namespace OCore.Services.Http
                 else if (body[0] == '[')
                 {
 
-                    var deserialized = JsonSerializer.Deserialize<object[]>(body);
+                    var deserialized = JsonSerializer.Deserialize<object[]>(body, jsonSerializerOptions);
 
                     if (deserialized.Length > Parameters.Count)
                     {
@@ -63,7 +68,8 @@ namespace OCore.Services.Http
                     {
                         throw new InvalidOperationException($"Parameter count mismatch");
                     }
-                    parameterList.Add(JsonSerializer.Deserialize(body, Parameters[0].Type));
+
+                    parameterList.Add(JsonSerializer.Deserialize(body, Parameters[0].Type, jsonSerializerOptions));
                 }
             }
             return parameterList.ToArray();

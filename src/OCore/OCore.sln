@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Diagnostics", "OCore.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Dashboard", "OCore.Dashboard\OCore.Dashboard.csproj", "{CE7904B5-0252-4042-9D5B-CC6B0DEA54A6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Sample", "OCore.Basic\OCore.Sample.csproj", "{FEED2341-0717-4028-AD54-A27CFDC8A76D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{CE7904B5-0252-4042-9D5B-CC6B0DEA54A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE7904B5-0252-4042-9D5B-CC6B0DEA54A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE7904B5-0252-4042-9D5B-CC6B0DEA54A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEED2341-0717-4028-AD54-A27CFDC8A76D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEED2341-0717-4028-AD54-A27CFDC8A76D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEED2341-0717-4028-AD54-A27CFDC8A76D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEED2341-0717-4028-AD54-A27CFDC8A76D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

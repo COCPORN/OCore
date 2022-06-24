@@ -212,6 +212,7 @@ namespace OCore.Http.OpenApi
                             {
                                 Tags = new List<OpenApiTag> { new OpenApiTag { Name = resource.BaseResource, Description = "Service" } },
                                 Description = resource.BaseResource,
+                                RequestBody = GetRequestType(resource),
                                 Summary = $"{resource.MethodInfo.DeclaringType.FullName}.{resource.MethodInfo.Name}",
                                 Responses = new OpenApiResponses
                                 {
@@ -224,6 +225,25 @@ namespace OCore.Http.OpenApi
                     },
             });
         }
+
+        private static OpenApiRequestBody GetRequestType(Resource resource)
+        {
+            return new OpenApiRequestBody();
+
+            var body = new OpenApiRequestBody();
+            body.Content["application/json"] = new OpenApiMediaType()
+            {
+                
+            };
+
+            var parameters = resource.MethodInfo.GetParameters();
+            if (parameters.Length == 0)
+            {
+                return null;
+            }
+            return null;
+        }
+
 
         private static string GetReturnType(Resource resource)
         {

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
 {
+    [Serializable]
+    [GenerateSerializer]
     public class SystemSetupState
     {
         public bool SystemSetup { get; set; }
