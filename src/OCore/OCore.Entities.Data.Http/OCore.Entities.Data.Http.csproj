@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
     <IsPackable>true</IsPackable>
     <PackageId>OCore.Entities.Data.Http</PackageId>
-    <Version>0.1.2-preview</Version>
+    <Version>0.1.3-preview</Version>
     <Authors>COCPORN</Authors>
   </PropertyGroup>
 

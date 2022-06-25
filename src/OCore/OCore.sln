@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Events", "OCore.Event
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Idempotency", "OCore.Idempotency\OCore.Idempotency.csproj", "{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Authorization.RateLimiting", "OCore.Authorization.RateLimiting\OCore.Authorization.RateLimiting.csproj", "{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.OpenApi", "OCore.Http.OpenApi\OCore.Http.OpenApi.csproj", "{6AC82AB5-CF17-413F-B1A3-B4B87B8E56E3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OCore.Http.Abstractions", "OCore.Http.Abstractions\OCore.Http.Abstractions.csproj", "{C4BCC4AC-F9AD-4120-B028-71848A5774F3}"
@@ -97,10 +95,6 @@ Global
 		{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0EA219B-7F7C-45A0-BDE2-0A927DF05FBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C1B7301-ABAC-4693-AEF7-21F76545B8A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6AC82AB5-CF17-413F-B1A3-B4B87B8E56E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6AC82AB5-CF17-413F-B1A3-B4B87B8E56E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AC82AB5-CF17-413F-B1A3-B4B87B8E56E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
