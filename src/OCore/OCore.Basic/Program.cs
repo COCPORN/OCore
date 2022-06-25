@@ -1,6 +1,5 @@
-﻿using OCore.Services;
-using System.Threading.Tasks;
-using OCore;
+﻿using OCore.Entities.Data;
+using OCore.Services;
 using Orleans;
 
 namespace OCore.Sample
@@ -31,6 +30,33 @@ namespace OCore.Sample
     {
         [Id(0)]
         public string Name { get; set; }
+    }
+
+    [Serializable]
+    [GenerateSerializer]
+    public class ShortenedUrl
+    {
+        [Id(0)]
+        public string RedirectTo { get; set; }
+
+        [Id(1)]
+        public int TimesVisited { get; set; }
+    }
+
+    [DataEntity("ShortenedUrl", keyStrategy: KeyStrategy.Identity, dataEntityMethods: DataEntityMethods.All)]
+    public interface IShortenedUrl : IDataEntity<ShortenedUrl>
+    {
+        Task<string> Visit();
+    }
+
+    public class ShortenedUrlEntity : DataEntity<ShortenedUrl>, IShortenedUrl
+    {
+        public async Task<string> Visit()
+        {
+            State.TimesVisited++;
+            await WriteStateAsync();
+            return State.RedirectTo;
+        }
     }
 
     class Program

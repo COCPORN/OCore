@@ -21,7 +21,7 @@ namespace OCore.Diagnostics
             if (payload == null)
             {
                 payload = DiagnosticsPayload.Register(c => c.RequestSource = RequestSource.Filter);
-            }            
+            }
 
             // Update payload
             payload.HopCount++;

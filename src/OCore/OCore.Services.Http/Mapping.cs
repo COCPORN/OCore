@@ -1,18 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OCore.Core;
-using Orleans;
-using Orleans.Concurrency;
-using Orleans.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 
 namespace OCore.Services.Http
@@ -43,7 +37,8 @@ namespace OCore.Services.Http
                 .CurrentDomain
                 .GetAssemblies()
                 .SelectMany(x => x.GetTypes())
-                .Where(x => x.GetCustomAttributes(true).Where(z => z is ServiceAttribute).Any());
+                .Where(type => !string.IsNullOrEmpty(type.Namespace) &&
+                   !type.Namespace.StartsWith("OrleansCodeGen") && type.GetCustomAttributes(true).Where(z => z is ServiceAttribute).Any());
         }
 
         private static List<Type> DiscoverServicesToMap()

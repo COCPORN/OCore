@@ -1,18 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OCore.Entities.Data.Http;
-using OCore.Services;
-using OCore.Services.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting;
+using OCore.Authorization;
+using OCore.Diagnostics;
 using Orleans;
 using Orleans.Hosting;
-using OCore.Authorization;
+using Orleans.Providers;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using OCore.Diagnostics;
 //using OCore.Dashboard;
 
 namespace OCore.Setup
@@ -22,7 +19,7 @@ namespace OCore.Setup
 
         public static async Task LetsGo(Action<HostBuilder> hostConfigurationDelegate = null,
             Action<ISiloBuilder> siloConfigurationDelegate = null,
-            Action<Microsoft.Extensions.Hosting.HostBuilderContext, IServiceCollection> serviceConfigurationDelegate = null)
+            Action<HostBuilderContext, IServiceCollection> serviceConfigurationDelegate = null)
         {
             var hostBuilder = new HostBuilder();
             hostBuilder.DeveloperSetup(siloConfigurationDelegate);
@@ -64,12 +61,10 @@ namespace OCore.Setup
                 b.UseLocalhostClustering();
                 b.AddMemoryGrainStorage("PubSubStore");
                 b.AddSimpleMessageStreamProvider("BaseStreamProvider");
+                b.AddMemoryStreams<DefaultMemoryMessageBodySerializer>("MemoryStreamProvider");
                 b.AddMemoryGrainStorageAsDefault();
                 b.AddOCoreAuthorization();
                 b.AddOCoreDeveloperDiagnostics();
-                //b.AddOCoreDashboard();
-               //b.ConfigureApplicationParts(parts => parts.AddFromApplicationBaseDirectory());
-
                 siloConfigurationDelegate?.Invoke(b);
             });
         }

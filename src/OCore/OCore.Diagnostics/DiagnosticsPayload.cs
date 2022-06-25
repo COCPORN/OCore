@@ -1,8 +1,6 @@
 ﻿using Orleans;
 using Orleans.Runtime;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OCore.Diagnostics
 {
@@ -39,6 +37,8 @@ namespace OCore.Diagnostics
         Other
     }
 
+    [Serializable]
+    [GenerateSerializer]
     public class DiagnosticsPayload
     {
         public string CorrelationId { get; set; }
@@ -64,7 +64,7 @@ namespace OCore.Diagnostics
                 CorrelationId = Guid.NewGuid().ToString(),
                 CreatedAt = DateTimeOffset.UtcNow,
             };
-            configure(payload);            
+            configure(payload);
             RequestContext.Set("D", payload);
             return payload;
         }
@@ -79,11 +79,12 @@ namespace OCore.Diagnostics
             if (PreviousMethodName != null)
             {
                 return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName}.{MethodName} [{HopCount}] {CreatedAt}/{CorrelationId} {RequestSource}";
-            } else
+            }
+            else
             {
                 return $"{GrainName}.{MethodName} [{HopCount}] {CreatedAt}/{CorrelationId} {RequestSource}";
             }
-            
+
         }
     }
 }
