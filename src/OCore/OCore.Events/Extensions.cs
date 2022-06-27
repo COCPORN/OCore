@@ -1,7 +1,5 @@
 ﻿using Orleans;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace OCore.Events
 {
@@ -9,7 +7,12 @@ namespace OCore.Events
     {
         public static IEventAggregator GetEventAggregator(this IGrainFactory grainFactory)
         {
-            return grainFactory.GetGrain<IEventAggregator>(0);                
+            return grainFactory.GetGrain<IEventAggregator>(0);
+        }
+
+        public static Task RaiseEvent<T>(this IGrainFactory grainFactory, T @event, string streamNameSuffix = null)
+        {
+            return grainFactory.GetEventAggregator().Raise<T>(@event, streamNameSuffix);
         }
     }
 }

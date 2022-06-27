@@ -11,8 +11,10 @@ namespace OCore.Authorization.RateLimiting
     [GenerateSerializer]
     class Request
     {
+        [Id(0)]
         public DateTimeOffset Time { get; set; }
 
+        [Id(1)]
         public long Size { get; set; }
     }
 

@@ -3,7 +3,6 @@ using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
@@ -12,6 +11,7 @@ namespace OCore.Authorization.Grains
     [GenerateSerializer]
     public class AccountRolesState
     {
+        [Id(0)]
         public HashSet<string> Roles { get; set; } = new HashSet<string>();
     }
 

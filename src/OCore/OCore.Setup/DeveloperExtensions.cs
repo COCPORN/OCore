@@ -10,14 +10,12 @@ using Orleans.Hosting;
 using Orleans.Providers;
 using System;
 using System.Threading.Tasks;
-//using OCore.Dashboard;
 
 namespace OCore.Setup
 {
     public static class DeveloperExtensions
     {
-
-        public static async Task LetsGo(Action<HostBuilder> hostConfigurationDelegate = null,
+        public static async Task LetsGo(Action<IHostBuilder> hostConfigurationDelegate = null,
             Action<ISiloBuilder> siloConfigurationDelegate = null,
             Action<HostBuilderContext, IServiceCollection> serviceConfigurationDelegate = null)
         {
@@ -33,7 +31,7 @@ namespace OCore.Setup
             Console.ReadLine();
         }
 
-        public static void DeveloperSetup(this HostBuilder hostBuilder,
+        public static void DeveloperSetup(this IHostBuilder hostBuilder,
             Action<ISiloBuilder> siloConfigurationDelegate = null)
         {
             var configuration = new ConfigurationBuilder()

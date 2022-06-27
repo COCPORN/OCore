@@ -1,7 +1,5 @@
 ﻿using Orleans;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.RateLimiting
@@ -18,9 +16,12 @@ namespace OCore.Authorization.RateLimiting
     [GenerateSerializer]
     public class ApiKeySettings
     {
+        [Id(0)]
         public TimeSpan Window { get; set; }
+        [Id(1)]
         public long Limit { get; set; }
 
+        [Id(2)]
         public TimeSpan OverageDelay { get; set; }
     }
 
@@ -29,6 +30,7 @@ namespace OCore.Authorization.RateLimiting
     [GenerateSerializer]
     public class DataUsage
     {
+        [Id(0)]
         public int Bytes { get; set; }
     }
 }

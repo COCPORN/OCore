@@ -1,16 +1,15 @@
-﻿using Orleans;
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Orleans.Runtime;
+﻿using Microsoft.Extensions.Logging;
 using OCore.Authorization.Abstractions.Request;
 using OCore.Core.Extensions;
+using Orleans;
+using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace OCore.Entities
 {
-    public class Entity<T>: Grain<EntityState<T>>, IEntity
-        where T: new()
+    public class Entity<T> : Grain<EntityState<T>>, IEntity
+        where T : new()
     {
         EntityLogic<T> entityLogic;
 
@@ -26,7 +25,7 @@ namespace OCore.Entities
                 this,
                 Logger,
                 Version);
-            
+
             if (base.State.Created == false)
             {
                 if (GetType().GetCustomAttributes(typeof(SuppressIndexingAttribute), true).Length == 0)
@@ -104,7 +103,7 @@ namespace OCore.Entities
             return Task.FromResult(0);
         }
 
-        protected Task Delete()
+        protected virtual Task Delete()
         {
             return entityLogic.Delete();
         }

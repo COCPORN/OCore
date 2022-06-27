@@ -1,12 +1,9 @@
 ﻿using Orleans;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Entities.Data
 {
-    public interface IDataEntity : IGrainWithStringKey { } 
+    public interface IDataEntity : IGrainWithStringKey { }
 
     public interface IDataEntity<T> : IDataEntity
     {

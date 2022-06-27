@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OCore.Authorization.Abstractions
-{    
+{
+    [Serializable]
     public enum Requirements
     {
         /// <summary>
@@ -39,6 +38,7 @@ namespace OCore.Authorization.Abstractions
     }
 
     [Flags]
+    [Serializable]
     public enum Permissions
     {
         None = 0,

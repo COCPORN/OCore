@@ -1,11 +1,9 @@
 ﻿using OCore.Entities.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.DataEntities
 {
+
     public class ApiKey : DataEntity<ApiKeyState>, IApiKey
     {
         public Task Activate()
