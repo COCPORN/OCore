@@ -26,7 +26,7 @@ namespace OCore.Authorization.Abstractions.Request
         [Id(7)]
         public string ApiKey { get; set; }
         [Id(8)]
-        public List<string> ApiKeyApplications { get; set; } = new List<string>();
+        public List<string> ApiKeyApplications { get; set; }
         [Id(9)]
         public string OriginalAccountId { get; set; }
         [Id(10)]
@@ -39,7 +39,7 @@ namespace OCore.Authorization.Abstractions.Request
         [Id(13)]
         public bool IsRequestElevated { get; set; }
         [Id(14)]
-        public List<string> Roles { get; set; } = new List<string>();
+        public List<string> Roles { get; set; }
 
         public static Payload Get()
         {
