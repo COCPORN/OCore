@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OCore.Authorization.Abstractions;
 using OCore.Core;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,7 +33,7 @@ namespace OCore.Entities.Data.Http
             .GetAssemblies()
             .SelectMany(x => x.GetTypes())
             .Where(type => type.IsInterface && !string.IsNullOrEmpty(type.Namespace) &&
-                   !type.Namespace.StartsWith("OrleansCodeGen") && type.GetInterfaces().Contains(typeof(T)));
+             type.GetCustomAttribute<GeneratedCodeAttribute>() == null && type.GetInterfaces().Contains(typeof(T)));
         }
 
         private static List<Type> DiscoverDataEntitiesToMap()

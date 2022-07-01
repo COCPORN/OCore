@@ -5,9 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OCore.Core;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Reflection;
 
 namespace OCore.Services.Http
 {
@@ -38,7 +39,7 @@ namespace OCore.Services.Http
                 .GetAssemblies()
                 .SelectMany(x => x.GetTypes())
                 .Where(type => !string.IsNullOrEmpty(type.Namespace) &&
-                   !type.Namespace.StartsWith("OrleansCodeGen") && type.GetCustomAttributes(true).Where(z => z is ServiceAttribute).Any());
+                   type.GetCustomAttribute<GeneratedCodeAttribute>() == null && type.GetCustomAttributes(true).Where(z => z is ServiceAttribute).Any());
         }
 
         private static List<Type> DiscoverServicesToMap()
