@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>    
     <PackageId>OCore.Entities</PackageId>
-    <Version>0.1.3-preview</Version>
+    <Version>0.1.4-preview</Version>
     <Authors>COCPORN</Authors>
   </PropertyGroup>
 

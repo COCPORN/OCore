@@ -230,18 +230,18 @@ namespace OCore.Http.OpenApi
         {
             return new OpenApiRequestBody();
 
-            var body = new OpenApiRequestBody();
-            body.Content["application/json"] = new OpenApiMediaType()
-            {
+            //var body = new OpenApiRequestBody();
+            //body.Content["application/json"] = new OpenApiMediaType()
+            //{
                 
-            };
+            //};
 
-            var parameters = resource.MethodInfo.GetParameters();
-            if (parameters.Length == 0)
-            {
-                return null;
-            }
-            return null;
+            //var parameters = resource.MethodInfo.GetParameters();
+            //if (parameters.Length == 0)
+            //{
+            //    return null;
+            //}
+            //return null;
         }
 
 

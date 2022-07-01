@@ -4,7 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<IsPackable>true</IsPackable>
 		<PackageId>OCore.Core</PackageId>
-		<Version>0.1.4-preview</Version>
+		<Version>0.1.5-preview</Version>
 		<Authors>COCPORN</Authors>
 	</PropertyGroup>
 
