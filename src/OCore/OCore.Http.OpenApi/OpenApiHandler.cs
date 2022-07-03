@@ -131,8 +131,9 @@ namespace OCore.Http.OpenApi
         {
             if (dataEntityResource.BaseResource != dataEntityResource.ResourcePath)
             {
-                paths.Add($"{dataEntityPrefix}/{dataEntityResource.ResourcePath}", new OpenApiPathItem
+                paths.Add($"{dataEntityPrefix}/{dataEntityResource.BaseResource}/{{id}}/{dataEntityResource.MethodInfo.Name}", new OpenApiPathItem
                 {
+                    Parameters = new List<OpenApiParameter>() { new OpenApiParameter() { Name = "id", Schema = new OpenApiSchema() { Type = "string" } } },
                     Operations = new Dictionary<OperationType, OpenApiOperation>
                     {
                         {
@@ -207,8 +208,9 @@ namespace OCore.Http.OpenApi
                                 });
                     }
 
-                    paths.Add($"/{dataEntityResource.BaseResource}", new OpenApiPathItem
+                    paths.Add($"{dataEntityPrefix}/{dataEntityResource.BaseResource}/{{id}}", new OpenApiPathItem
                     {
+                        Parameters = new List<OpenApiParameter>() { new OpenApiParameter() { Name = "id", Schema = new OpenApiSchema() { Type = "string" } } },
                         Operations = operations
                     });
                 }

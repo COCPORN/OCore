@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace OCore.Authorization
 {
@@ -151,7 +150,7 @@ namespace OCore.Authorization
                 .Select(x => x as DataEntityAttribute)
                 .FirstOrDefault();
             var authorizeAttribute = methodInfo.GetCustomAttribute<AuthorizeAttribute>();
-            var dataResourceName = CreateDataResourceName(type, methodInfo);            
+            var dataResourceName = CreateDataResourceName(type, methodInfo);
             if (authorizeAttribute != null)
             {
                 return new DataEntityResource(dataResourceName, DataBaseResourceName(type), authorizeAttribute.Permissions, methodInfo, dataEntityAttribute);
@@ -164,24 +163,12 @@ namespace OCore.Authorization
 
         private static string CreateServiceResourceName(Type type, MethodInfo method)
         {
-            var serviceAttribute = type
-                .GetCustomAttributes(true)
-                .Where(z => z is ServiceAttribute)
-                .Select(x => x as ServiceAttribute)
-                .First();
-            return $"{serviceAttribute.Name}/{method.Name}";
+            return $"{ServiceBaseResourceName(type)}/{method.Name}";
         }
 
         private static string CreateDataResourceName(Type type, MethodInfo method)
         {
-            var dataEntityAttribute = type
-                .GetCustomAttributes(true)
-                .Where(z => z is DataEntityAttribute)
-                .Select(x => x as DataEntityAttribute)
-                .First();
-
-
-            return $"{dataEntityAttribute.Name}/{method.Name}";
+            return $"{DataBaseResourceName(type)}/{method.Name}";
         }
 
         static string DataBaseResourceName(Type type)
@@ -191,7 +178,6 @@ namespace OCore.Authorization
                 .Where(z => z is DataEntityAttribute)
                 .Select(x => x as DataEntityAttribute)
                 .First();
-
             return dataEntityAttribute.Name;
         }
 
@@ -202,7 +188,6 @@ namespace OCore.Authorization
              .Where(z => z is ServiceAttribute)
              .Select(x => x as ServiceAttribute)
              .First();
-
             return serviceAttribute.Name;
         }
 
@@ -224,27 +209,6 @@ namespace OCore.Authorization
                 dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}", DataBaseResourceName(type), Permissions.All, CreateMethodInfo(type, "Create"), dataEntityAttribute));
             }
 
-            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Create))
-            //{
-            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Create", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Create"), dataEntityAttribute));
-            //}
-
-            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Read))
-            //{
-            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Read", DataBaseResourceName(type), Permissions.Read, CreateMethodInfo(type, "Read"), dataEntityAttribute));
-            //}
-
-            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Update))
-            //{
-            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Update", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Update"), dataEntityAttribute));
-            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Upsert", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Upsert"), dataEntityAttribute));
-            //}
-
-            //if (dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Delete))
-            //{
-            //    dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}/Delete", DataBaseResourceName(type), Permissions.Write, CreateMethodInfo(type, "Delete"), dataEntityAttribute));
-            //}
-
             return dataResources;
         }
 
@@ -252,7 +216,6 @@ namespace OCore.Authorization
         {
             return typeof(IDataEntity<>).MakeGenericType(dataEntityType).GetMethod(method);
         }
-
     }
 
 }
