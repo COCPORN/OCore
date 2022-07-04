@@ -1,8 +1,6 @@
 ﻿using OCore.Entities;
 using Orleans;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
@@ -11,8 +9,10 @@ namespace OCore.Authorization.Grains
     [GenerateSerializer]
     public class SystemSetupState
     {
+        [Id(0)]
         public bool SystemSetup { get; set; }
 
+        [Id(1)]
         public DateTimeOffset SetupTime { get; set; }
     }
 

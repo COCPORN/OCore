@@ -2,7 +2,6 @@
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace OCore.Core
 {
@@ -19,14 +18,15 @@ namespace OCore.Core
     [GenerateSerializer]
     public class Key
     {
+        [Id(0)]
         public long? Long { get; set; }
-
+        [Id(1)]
         public string String { get; set; }
-
+        [Id(2)]
         public Guid? Guid { get; set; }
-
+        [Id(3)]
         public string Extension { get; set; }
-
+        [Id(4)]
         public KeyType Type { get; set; }
 
         public static Key FromGrain(IAddressable grain)

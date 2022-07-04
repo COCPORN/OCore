@@ -2,8 +2,6 @@
 using OCore.Services;
 using Orleans;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization
@@ -13,8 +11,10 @@ namespace OCore.Authorization
     [GenerateSerializer]
     public class AccountInfo
     {
+        [Id(0)]
         public string AccountId { get; set; }
 
+        [Id(1)]
         public string TenantId { get; set; }
     }
 

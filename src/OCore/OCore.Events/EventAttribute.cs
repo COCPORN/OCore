@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OCore.Events
 {
@@ -11,8 +8,8 @@ namespace OCore.Events
 
         public EventTypeOptions Options { get; private set; }
 
-        public EventAttribute(string name, 
-            bool fireAndForget = true,             
+        public EventAttribute(string name,
+            bool fireAndForget = true,
             int poisonLimit = 0,
             string providerName = null,
             bool stable = true,
@@ -22,7 +19,7 @@ namespace OCore.Events
             Name = name;
             Options = new EventTypeOptions
             {
-                FireAndForget = fireAndForget,                
+                FireAndForget = fireAndForget,
                 PoisonLimit = poisonLimit,
                 ProviderName = providerName,
                 Stable = stable,

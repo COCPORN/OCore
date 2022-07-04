@@ -1,15 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using OCore.Entities.Data.Http;
+using OCore.Http.OpenApi;
 using OCore.Services;
 using OCore.Services.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting;
-using Orleans;
-using Orleans.Hosting;
-using OCore.Authorization;
-using OCore.Http.OpenApi;
 
 namespace OCore.DefaultSetup
 {
@@ -21,7 +15,7 @@ namespace OCore.DefaultSetup
                 .AddServiceRouter();
         }
 
-        public static void UseDefaultOCore(this IApplicationBuilder app, 
+        public static void UseDefaultOCore(this IApplicationBuilder app,
             string appTitle = "OCore app development",
             string version = "Development")
         {
@@ -29,7 +23,7 @@ namespace OCore.DefaultSetup
             {
                 endpoints.MapServices("services");
                 endpoints.MapDataEntities("data");
-                endpoints.MapDeveloperOpenApi("api-docs", 
+                endpoints.MapDeveloperOpenApi("api-docs",
                     appTitle,
                     version);
             });

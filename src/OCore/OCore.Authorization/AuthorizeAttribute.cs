@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
 using OCore.Authorization.Abstractions;
 using OCore.Authorization.Abstractions.Request;
 using Orleans.Runtime;
@@ -47,7 +46,7 @@ namespace OCore.Authorization
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var requestPayload = new Payload { };
+            var requestPayload = new Payload();
 
             // There is now a way to set permissions and requirements
             // on a boundary that is outside the cluster. Therefore we

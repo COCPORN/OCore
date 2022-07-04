@@ -2,11 +2,8 @@
 using OCore.Authorization.Abstractions;
 using OCore.Authorization.Abstractions.Request;
 using Orleans;
-using Orleans.Runtime;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Filters
@@ -90,7 +87,7 @@ namespace OCore.Authorization.Filters
         }
 
         private async Task CheckTokenAndTenant(IIncomingGrainCallContext context, AuthorizeAttribute attribute, Payload payload)
-        {            
+        {
             await CheckTenancy(attribute, payload);
             await GetRolesForAccount(payload);
             await CheckRoles(attribute, context, payload);

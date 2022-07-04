@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview1" />
     <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="4.0.0-preview1" />
+    <PackageReference Include="Microsoft.Orleans.Sdk" Version="4.0.0-preview1" />
   </ItemGroup>
 
   <ItemGroup>

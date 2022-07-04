@@ -3,7 +3,6 @@ using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OCore.Authorization.Grains
@@ -12,6 +11,7 @@ namespace OCore.Authorization.Grains
     [GenerateSerializer]
     public class ResourceRolesMasterGrainState
     {
+        [Id(0)]
         public Dictionary<string, List<AccessDescription>> AccessDescriptions { get; set; } = new Dictionary<string, List<AccessDescription>>();
     }
 

@@ -1,18 +1,12 @@
 ﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
-using Orleans.Metadata;
-using Orleans;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.AspNetCore.Builder;
-using System.Reflection;
-using Orleans.Runtime;
 using OCore.Authorization.Abstractions;
 using OCore.Core;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace OCore.Entities.Data.Http
 {
@@ -38,7 +32,8 @@ namespace OCore.Entities.Data.Http
             return AppDomain.CurrentDomain
             .GetAssemblies()
             .SelectMany(x => x.GetTypes())
-            .Where(type => !type.IsInterface && (type.GetInterfaces().Contains(typeof(T)) || typeof(T).IsAssignableFrom(type)));
+            .Where(type => type.IsInterface && !string.IsNullOrEmpty(type.Namespace) &&
+             type.GetCustomAttribute<GeneratedCodeAttribute>() == null && type.GetInterfaces().Contains(typeof(T)));
         }
 
         private static List<Type> DiscoverDataEntitiesToMap()
@@ -67,8 +62,8 @@ namespace OCore.Entities.Data.Http
                 maxFanoutLimit = dataEntityAttribute.MaxFanoutLimit;
             }
 
-            routesRegistered = MapCustomMethods(dataEntityName, keyStrategy, maxFanoutLimit, routes, payloadCompleter, prefix, methods, routesRegistered);
-            routesRegistered = MapCrudMethods(dataEntityName, grainType, keyStrategy, maxFanoutLimit, dataEntityMethods, routes, payloadCompleter, prefix, routesRegistered);
+            routesRegistered += MapCustomMethods(dataEntityName, keyStrategy, maxFanoutLimit, routes, payloadCompleter, prefix, methods, routesRegistered);
+            routesRegistered += MapCrudMethods(dataEntityName, grainType, keyStrategy, maxFanoutLimit, dataEntityMethods, routes, payloadCompleter, prefix, routesRegistered);
 
             return routesRegistered;
         }

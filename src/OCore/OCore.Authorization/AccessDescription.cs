@@ -1,8 +1,6 @@
 ﻿using OCore.Authorization.Abstractions;
 using Orleans;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OCore.Authorization
 {
@@ -14,7 +12,9 @@ namespace OCore.Authorization
     [GenerateSerializer]
     public class AccessDescription : IEquatable<AccessDescription>
     {
+        [Id(0)]
         public string Role { get; set; }
+        [Id(1)]
         public Permissions Permissions { get; set; }
 
         public AccessDescription()
