@@ -15,7 +15,7 @@ Type:
 
 ```csharp
 using OCore.Services;
-using System.Threading.Tasks;
+await OCore.Setup.DeveloperExtensions.LetsGo();
 
 namespace HelloWorld
 {
@@ -31,12 +31,6 @@ namespace HelloWorld
         {
             return Task.FromResult($"Hello, {name}! It is a beautiful world! And you are my favorite part of it!");
         }
-    }
-
-    class Program
-    {
-        static async Task Main(string[] args) =>
-           await OCore.Setup.DeveloperExtensions.LetsGo();
     }
 }
 ```
