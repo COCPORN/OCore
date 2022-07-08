@@ -60,27 +60,29 @@ namespace OCore.Diagnostics
             }
 
             var correlationId = GetRequestContextValue<string>("D:CorrelationId", cid => cid == null ? Guid.NewGuid().ToString() : cid);
-            var previousGrainName = GetRequestContextValue<string>("D:GrainName");
-            var previousMethodName = GetRequestContextValue<string>("D:MethodName");
             var requestSource = GetRequestContextValue<string>("D:RequestSource", rs => rs == null ? RequestSource.Filter.ToString() : rs);
+            var previousGrainName = RequestContext.Get("D:GrainName") as string;
+            var previousMethodName = RequestContext.Get("D:MethodName") as string;
 
             if (RequestContext.Get("D:HopCount") is int hopCount == false)
             {
                 hopCount = 0;
-            } else
+            }
+            else
             {
                 hopCount = hopCount + 1;
             }
             RequestContext.Set("D:HopCount", hopCount);
-            
-            if (RequestContext.Get("D:CreatedAt") is DateTimeOffset createdTime == false)            
+
+            if (RequestContext.Get("D:CreatedAt") is DateTimeOffset createdTime == false)
             {
                 createdTime = DateTimeOffset.UtcNow;
                 RequestContext.Set("D:CreatedAt", createdTime);
             }
 
             var methodName = context.InterfaceMethod.Name;
-            
+
+            RequestContext.Set("D:GrainName", grainName);
             RequestContext.Set("D:MethodName", methodName);
 
             var payload = new DiagnosticsPayload
@@ -89,6 +91,7 @@ namespace OCore.Diagnostics
                 CreatedAt = createdTime,
                 HopCount = hopCount,
                 PreviousGrainName = previousGrainName,
+                PreviousMethodName = previousMethodName,
                 RequestSource = requestSource,
                 GrainName = grainName,
                 MethodName = methodName,
