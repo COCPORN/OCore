@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OCore.Diagnostics.Sinks.Logging;
 using Orleans;
 using Orleans.Hosting;
@@ -10,35 +11,25 @@ namespace OCore.Diagnostics
 {
     public static class Extensions
     {
-        static bool addedIncomingGrainCallFilter = false;
-        static object mutex = new object();
-
-        public static void AddSink<T>(this ISiloBuilder siloBuilder) where T : class, IDiagnosticsSink            
+        public static void AddDiagnosticsSink<T>(this ISiloBuilder siloBuilder) where T : class, IDiagnosticsSink
         {
             siloBuilder.ConfigureServices(
                 services =>
                 {
-                    AddDiagnosticIncomingGrainCallFilter(services);                    
+                    AddDiagnosticIncomingGrainCallFilter(services);
                     services.AddSingleton<IDiagnosticsSink, T>();
                 });
         }
 
-        public static void AddDiagnosticIncomingGrainCallFilter(IServiceCollection services)
+        public static IServiceCollection AddDiagnosticIncomingGrainCallFilter(this IServiceCollection services)
         {
-            // To be honest, I don't know if there is a more elegant way of doing this. I HAVE NO TIME! TO LEARN!
-            lock (mutex)
-            {
-                if (addedIncomingGrainCallFilter == false)
-                {
-                    services.AddSingleton<IIncomingGrainCallFilter, DiagnosticIncomingGrainCallFilter>();
-                    addedIncomingGrainCallFilter = true;
-                }
-            }
+            services.TryAddSingleton<IIncomingGrainCallFilter, DiagnosticIncomingGrainCallFilter>();
+            return services;
         }
 
         public static void AddLoggingDiagnostics(this ISiloBuilder siloBuilder)
         {
-            siloBuilder.AddSink<LoggingSink>();
+            siloBuilder.AddDiagnosticsSink<LoggingSink>();
         }
 
         public static void AddOCoreDeveloperDiagnostics(this ISiloBuilder siloBuilder)

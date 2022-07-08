@@ -15,12 +15,12 @@ namespace OCore.Diagnostics.Sinks.Logging
     {
         public bool Enabled { get; set; } = true;
 
-        public bool LogArguments { get; set; } = true;
+        public bool LogArguments { get; set; } = false;
     }
 
     public class LoggingSink : IDiagnosticsSink
     {
-        public bool IsPaused { get; set; } = true;
+        public bool IsPaused { get; set; } = false;
 
         public bool EnableOCoreInternal { get; set; } = false;
 
@@ -36,8 +36,8 @@ namespace OCore.Diagnostics.Sinks.Logging
         public Task Request(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
             if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
-            // Todo FIX THIS
-            logger.LogInformation($"[{grainCallContext.Grain.ToString()}] {request}");
+
+            logger.LogInformation(">" + request.ToString());
 
             return Task.CompletedTask;
         }
@@ -56,13 +56,17 @@ namespace OCore.Diagnostics.Sinks.Logging
 
         public Task Complete(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
-            if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
-            if (options.LogArguments == true)
+            try
             {
-                logger.LogInformation($"> {JsonConvert.SerializeObject(grainCallContext.Arguments)}\n" + 
-                    $"< {JsonConvert.SerializeObject(grainCallContext.Result)}");                
+                if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
+
+                logger.LogInformation("<" + request.ToString());
+                return Task.CompletedTask;
             }
-            return Task.CompletedTask;
+            catch
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public Task Fail(DiagnosticsPayload request, IGrainCallContext grainCallContext, Exception ex)
@@ -72,7 +76,7 @@ namespace OCore.Diagnostics.Sinks.Logging
             {
                 logger.LogError(ex, $"> {JsonConvert.SerializeObject(grainCallContext.Arguments)}");
             }
-            return Task.CompletedTask;            
+            return Task.CompletedTask;
         }
     }
 }

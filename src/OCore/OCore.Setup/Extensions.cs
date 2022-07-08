@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using OCore.Diagnostics;
 using OCore.Entities.Data.Http;
 using OCore.Http.OpenApi;
 using OCore.Services;
@@ -12,7 +13,8 @@ namespace OCore.DefaultSetup
         public static IServiceCollection AddDefaultOCore(this IServiceCollection serviceCollection)
         {
             return serviceCollection
-                .AddServiceRouter();
+                .AddServiceRouter()
+                .AddDiagnosticIncomingGrainCallFilter();                ;
         }
 
         public static void UseDefaultOCore(this IApplicationBuilder app,
