@@ -1,4 +1,5 @@
 ﻿using Orleans;
+using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,33 @@ namespace OCore.Diagnostics
             this.sinks = sinks;
         }
 
+        T GetRequestContextValue<T>(string key, Func<T, T> update = null) where T : class
+        {
+            T currentRequestContextValue = RequestContext.Get(key) as T;
+            T newRequestContextValue = currentRequestContextValue;
+
+            if (update != null)
+            {
+                newRequestContextValue = update(currentRequestContextValue);
+            }
+
+            if (currentRequestContextValue != newRequestContextValue)
+            {
+                RequestContext.Set(key, newRequestContextValue);
+                return newRequestContextValue;
+            }
+            else
+            {
+                return currentRequestContextValue;
+            }
+        }
+
         public async Task Invoke(IIncomingGrainCallContext context)
         {
             // I added this to make it possible to debug the filter because there are so many 
             // Orleans-specific messages running in the silo
-#if DEBUG
             var grainName = context.Grain.GetType().FullName;
+#if DEBUG
 
             if (grainName.StartsWith("Orleans")
                 || grainName.StartsWith("OCore")
@@ -37,31 +59,40 @@ namespace OCore.Diagnostics
                 return;
             }
 
-            var payload = DiagnosticsPayload.GetOrDefault();
+            var correlationId = GetRequestContextValue<string>("D:CorrelationId", cid => cid == null ? Guid.NewGuid().ToString() : cid);
+            var previousGrainName = GetRequestContextValue<string>("D:GrainName");
+            var previousMethodName = GetRequestContextValue<string>("D:MethodName");
+            var requestSource = GetRequestContextValue<string>("D:RequestSource", rs => rs == null ? RequestSource.Filter.ToString() : rs);
 
-            if (payload == null)
+            if (RequestContext.Get("D:HopCount") is int hopCount == false)
             {
-                payload = DiagnosticsPayload.Register(p =>
-                {
-                    p.RequestSource = RequestSource.Filter;
-                    p.GrainName = $"{context?.Grain}";
-                    p.MethodName = $"{context?.InterfaceMethod?.Name}";
-                });
-            }
-            else
+                hopCount = 0;
+            } else
             {
-                payload = DiagnosticsPayload.Register(p =>
-                {
-                    p.HopCount = payload.HopCount++;
-                    p.PreviousGrainName = payload.GrainName;
-                    p.PreviousMethodName = payload.MethodName;
-                    p.GrainName = $"{context?.Grain}";
-                    p.MethodName = $"{context?.InterfaceMethod?.Name}";
-                    p.CreatedAt = payload.CreatedAt;
-                    p.RequestSource = payload.RequestSource;
-                    p.CorrelationId = payload.CorrelationId;                    
-                });
+                hopCount = hopCount + 1;
             }
+            RequestContext.Set("D:HopCount", hopCount);
+            
+            if (RequestContext.Get("D:CreatedAt") is DateTimeOffset createdTime == false)            
+            {
+                createdTime = DateTimeOffset.UtcNow;
+                RequestContext.Set("D:CreatedAt", createdTime);
+            }
+
+            var methodName = context.InterfaceMethod.Name;
+            
+            RequestContext.Set("D:MethodName", methodName);
+
+            var payload = new DiagnosticsPayload
+            {
+                CorrelationId = correlationId,
+                CreatedAt = createdTime,
+                HopCount = hopCount,
+                PreviousGrainName = previousGrainName,
+                RequestSource = requestSource,
+                GrainName = grainName,
+                MethodName = methodName,
+            };
 
             await Task.WhenAll(sinks.Select(s => s.Request(payload, context)));
             try

@@ -1,9 +1,10 @@
 ﻿using Orleans;
-using Orleans.Runtime;
 using System;
 
 namespace OCore.Diagnostics
 {
+    [Serializable]
+    [GenerateSerializer]
     public enum RequestSource
     {
         /// <summary>
@@ -58,34 +59,17 @@ namespace OCore.Diagnostics
 
         public string MethodName { get; set; }
 
-        public RequestSource RequestSource { get; set; }
-
-        public static DiagnosticsPayload Register(Action<DiagnosticsPayload> configure)
-        {
-            var payload = new DiagnosticsPayload
-            {
-                CorrelationId = Guid.NewGuid().ToString(),
-                CreatedAt = DateTimeOffset.UtcNow,
-            };
-            configure(payload);
-            RequestContext.Set("D", payload);
-            return payload;
-        }
-
-        public static DiagnosticsPayload GetOrDefault()
-        {            
-            return RequestContext.Get("D") as DiagnosticsPayload;
-        }
+        public string RequestSource { get; set; }
 
         public override string ToString()
         {
             if (PreviousMethodName != null)
             {
-                return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName}.{MethodName} ({HopCount}) {CorrelationId} {RequestSource}";
+                return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName}.{MethodName} ({HopCount}) {CreatedAt.Ticks} {CorrelationId} {RequestSource}";
             }
             else
             {
-                return $"{GrainName}.{MethodName} ({HopCount}) {CorrelationId} {RequestSource}";
+                return $"{GrainName}.{MethodName} ({HopCount}) {CreatedAt.Ticks} {CorrelationId} {RequestSource}";
             }
 
         }
