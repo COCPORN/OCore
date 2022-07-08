@@ -54,16 +54,17 @@ namespace OCore.Setup
                 webBuilder.UseStartup<DeveloperStartup>();
             });
 
-            hostBuilder.UseOrleans(b =>
+            hostBuilder.UseOrleans(siloBuilder =>
             {
-                b.UseLocalhostClustering();
-                b.AddMemoryGrainStorage("PubSubStore");
-                b.AddSimpleMessageStreamProvider("BaseStreamProvider");
-                b.AddMemoryStreams<DefaultMemoryMessageBodySerializer>("MemoryStreamProvider");
-                b.AddMemoryGrainStorageAsDefault();
-                b.AddOCoreAuthorization();
-                b.AddOCoreDeveloperDiagnostics();
-                siloConfigurationDelegate?.Invoke(b);
+                siloBuilder.UseLocalhostClustering();
+                siloBuilder.AddMemoryGrainStorage("PubSubStore");
+                siloBuilder.AddSimpleMessageStreamProvider("BaseStreamProvider");
+                siloBuilder.AddMemoryStreams<DefaultMemoryMessageBodySerializer>("MemoryStreamProvider");
+                siloBuilder.AddMemoryGrainStorageAsDefault();
+                siloBuilder.AddOCoreAuthorization();
+                siloBuilder.AddOCoreDeveloperDiagnostics();
+                siloBuilder.ConfigureLogging(builder => builder.SetMinimumLevel(LogLevel.Information));
+                siloConfigurationDelegate?.Invoke(siloBuilder);
             });
         }
 

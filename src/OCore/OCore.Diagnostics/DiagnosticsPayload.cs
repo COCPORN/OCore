@@ -37,6 +37,9 @@ namespace OCore.Diagnostics
         Other
     }
 
+    /// <summary>
+    /// Hello. This is the official documentation: The programming interface for this is confusing at best
+    /// </summary>
     [Serializable]
     [GenerateSerializer]
     public class DiagnosticsPayload
@@ -70,7 +73,7 @@ namespace OCore.Diagnostics
         }
 
         public static DiagnosticsPayload GetOrDefault()
-        {
+        {            
             return RequestContext.Get("D") as DiagnosticsPayload;
         }
 
@@ -78,11 +81,11 @@ namespace OCore.Diagnostics
         {
             if (PreviousMethodName != null)
             {
-                return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName}.{MethodName} [{HopCount}] {CreatedAt}/{CorrelationId} {RequestSource}";
+                return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName}.{MethodName} ({HopCount}) {CorrelationId} {RequestSource}";
             }
             else
             {
-                return $"{GrainName}.{MethodName} [{HopCount}] {CreatedAt}/{CorrelationId} {RequestSource}";
+                return $"{GrainName}.{MethodName} ({HopCount}) {CorrelationId} {RequestSource}";
             }
 
         }
