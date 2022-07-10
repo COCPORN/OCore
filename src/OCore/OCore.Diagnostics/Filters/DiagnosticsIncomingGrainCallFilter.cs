@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using OCore.Diagnostics.Filters;
+using Orleans;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -97,10 +98,12 @@ namespace OCore.Diagnostics
                 MethodName = methodName,
             };
 
+            var contextTask = context.Invoke();
+
             await Task.WhenAll(sinks.Select(s => s.Request(payload, context)));
             try
             {
-                await context.Invoke();
+                await contextTask;
                 await Task.WhenAll(sinks.Select(s => s.Complete(payload, context)));
             }
             catch (Exception ex)
