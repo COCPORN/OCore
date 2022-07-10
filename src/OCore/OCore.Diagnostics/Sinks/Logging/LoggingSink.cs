@@ -37,7 +37,7 @@ namespace OCore.Diagnostics.Sinks.Logging
         {
             if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
 
-            logger.LogInformation(">" + request.ToString());
+            logger.LogInformation("> " + request.ToString());
 
             return Task.CompletedTask;
         }
@@ -46,7 +46,7 @@ namespace OCore.Diagnostics.Sinks.Logging
         {
             if (IsPaused == true || options.Enabled == false) return false;
 
-            var fullName = grainCallContext.Grain.GetType().FullName; ;
+            var fullName = grainCallContext.Grain.GetType().FullName;
 
             // Do not log internal calls
             if (fullName.StartsWith("Orleans.")) return false;
@@ -60,7 +60,13 @@ namespace OCore.Diagnostics.Sinks.Logging
             {
                 if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
 
-                logger.LogInformation("<" + request.ToString());
+                logger.LogInformation("< " + request.ToString());
+
+                if (request.HopCount == 0)
+                {
+                    logger.LogInformation($"Request completed in {(DateTimeOffset.UtcNow - request.CreatedAt).TotalMilliseconds}ms");
+                }
+
                 return Task.CompletedTask;
             }
             catch

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using OCore.Http;
 using Orleans;
+using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,10 @@ namespace OCore.Services.Http
         {
             var endpoint = (RouteEndpoint)context.GetEndpoint();
             var pattern = endpoint.RoutePattern;
+
+            RequestContext.Set("D:RequestSource", "HTTP");
+            RequestContext.Set("D:GrainName", pattern.RawText);
+            RequestContext.Set("D:CorrelationId", Guid.NewGuid().ToString()); // TODO: Get from HTTP-header
 
             var invoker = routes[pattern.RawText];
             context.RunAuthorizationFilters(invoker);

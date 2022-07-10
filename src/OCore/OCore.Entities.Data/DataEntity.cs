@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 
 namespace OCore.Entities.Data
 {
-
     public abstract class DataEntity<T> : Entity<T>, IDataEntity<T> where T : new()
     {
         public virtual Task Create(T data)

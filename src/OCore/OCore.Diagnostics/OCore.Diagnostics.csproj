@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
+    <ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
   </ItemGroup>
 
 </Project>
