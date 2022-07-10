@@ -1,7 +1,7 @@
 ﻿using Orleans;
 using System;
 
-namespace OCore.Diagnostics
+namespace OCore.Diagnostics.Filters
 {
     [Serializable]
     [GenerateSerializer]

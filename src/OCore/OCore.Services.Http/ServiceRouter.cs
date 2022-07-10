@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OCore.Http;
+using OCore.Services.Http.Options;
 using Orleans;
 using Orleans.Runtime;
 using System;
@@ -20,14 +22,17 @@ namespace OCore.Services.Http
         IClusterClient clusterClient;
         IServiceProvider serviceProvider;
         ILogger logger;
+        readonly HttpOptions httpOptions;
 
         public ServiceRouter(IClusterClient clusterClient,
             IServiceProvider serviceProvider,
-            ILogger<ServiceRouter> logger)
+            ILogger<ServiceRouter> logger,
+            IOptions<HttpOptions> options)
         {
             this.clusterClient = clusterClient;
             this.serviceProvider = serviceProvider;
             this.logger = logger;
+            this.httpOptions = options.Value;
         }
 
         readonly Dictionary<string, GrainInvoker> routes = new Dictionary<string, GrainInvoker>(StringComparer.InvariantCultureIgnoreCase);
@@ -54,7 +59,23 @@ namespace OCore.Services.Http
 
             RequestContext.Set("D:RequestSource", "HTTP");
             RequestContext.Set("D:GrainName", pattern.RawText);
-            RequestContext.Set("D:CorrelationId", Guid.NewGuid().ToString()); // TODO: Get from HTTP-header
+
+            var correlationIdKeyName = httpOptions.CorrelationIdHeader;
+
+            if (correlationIdKeyName == null)
+            {
+                correlationIdKeyName = "correlationid";
+            }
+
+            // I have a feeling this can be improved by not using FirstOrDefault
+            var correlationId = context.Request.Headers.FirstOrDefault(x => x.Key == correlationIdKeyName).Value.ToString();
+
+            if (string.IsNullOrEmpty(correlationId) == true)
+            {
+                correlationId = Guid.NewGuid().ToString();
+            }
+
+            RequestContext.Set("D:CorrelationId", correlationId);
 
             var invoker = routes[pattern.RawText];
             context.RunAuthorizationFilters(invoker);
