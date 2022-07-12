@@ -48,6 +48,12 @@ You can also visit http://localhost:9000/swagger to see the OpenApi generated do
 
 **nuget packages** are built automatically when version numbers are increased.
 
+## Goals
+
+- Programming at the speed of thought
+- Self documenting system
+- Simple transition from playground to production
+
 ## Motivation
 
 Programming is fun. Plumbing is not.
@@ -83,7 +89,7 @@ F5 is waiting for you.
 - Automatically register any `Service` with exposed HTTP endpoints at `http://localhost:9000/services/`
 - Automatically register any `DataEntity` with exposed HTTP endpoints at `http://localhost:9000/data/`
 - Start serving OpenApi documentation for services and data entities at `http://localhost:9000/api-docs/`
-- Setup authorization system with user tokens and
+- Setup authorization system with user tokens and api-keys (optional use)
 
 ## Service 
 

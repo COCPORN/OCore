@@ -28,7 +28,7 @@ namespace HelloWorld
         }
     }
 
-    [Service("CapitalizationService")]
+    [Service("Capitalization")]
     public interface INameCapitalizationService : IService
     {
         Task<string> Capitalize(string name);

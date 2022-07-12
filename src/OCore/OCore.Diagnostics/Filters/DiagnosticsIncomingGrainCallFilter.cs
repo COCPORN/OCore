@@ -17,6 +17,8 @@ namespace OCore.Diagnostics
             this.sinks = sinks;
         }
 
+        // This was a super-bad abstraction and it didn't carry where it was supposed to,
+        // it should be removed
         T GetRequestContextValue<T>(string key, Func<T, T> update = null) where T : class
         {
             T currentRequestContextValue = RequestContext.Get(key) as T;
@@ -62,6 +64,7 @@ namespace OCore.Diagnostics
 
             var correlationId = GetRequestContextValue<string>("D:CorrelationId", cid => cid == null ? Guid.NewGuid().ToString() : cid);
             var requestSource = GetRequestContextValue<string>("D:RequestSource", rs => rs == null ? RequestSource.Filter.ToString() : rs);
+
             var previousGrainName = RequestContext.Get("D:GrainName") as string;
             var previousMethodName = RequestContext.Get("D:MethodName") as string;
 
@@ -100,18 +103,36 @@ namespace OCore.Diagnostics
 
             var contextTask = context.Invoke();
 
-            await Task.WhenAll(sinks.Select(s => s.Request(payload, context)));
+            // Disregard the clusterfuck of try/catch here, I do not want any sinks failure to propagate
+            // and I do not want the sinks to slow down the main execution line. Let me know if you have a
+            // better way of solving this. Perhaps it could be reasonably logged, or perhaps we should implement
+            // some better system of handling failing components. I think it could reasonably just be added
+            // to a single list of tasks for request/fail/complete that is awaited and shut up in a finally-block.
+            try
+            {
+                await Task.WhenAll(sinks.Select(s => s.Request(payload, context)));
+            }
+            catch { }
+
             try
             {
                 await contextTask;
-                await Task.WhenAll(sinks.Select(s => s.Complete(payload, context)));
             }
             catch (Exception ex)
             {
-                await Task.WhenAll(sinks.Select(s => s.Fail(payload, context, ex)));
+                try
+                {
+                    await Task.WhenAll(sinks.Select(s => s.Fail(payload, context, ex)));
+                }
+                catch { }
                 throw;
             }
 
+            try
+            {
+                await Task.WhenAll(sinks.Select(s => s.Complete(payload, context)));
+            }
+            catch { }
         }
     }
 }
