@@ -69,7 +69,7 @@ namespace OCore.Http.OpenApi
         {
             var assemblyLocation = Assembly.GetEntryAssembly().Location;
 
-            var resourceList = ResourceEnumerator.Resources;
+            var resourceList = ResourceEnumerator.PublicResources;
 
             var apiPaths = CreateApiPaths(resourceList);
 
@@ -193,7 +193,7 @@ namespace OCore.Http.OpenApi
                                 });
                     }
 
-                    paths.Add($"/{dataEntityResource.BaseResource}", new OpenApiPathItem
+                    paths.Add($"{dataEntityPrefix}/{dataEntityResource.BaseResource}", new OpenApiPathItem
                     {                        
                         Operations = operations
                     });

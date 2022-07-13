@@ -5,6 +5,7 @@ POST http://localhost:9000/services/HelloWorld/SayHelloTo
 
 ### Say hello to the world
 POST http://localhost:9000/services/HelloWorld/ShoutHelloTo
+CorrelationId: BLUBB2
 
 "cocporn"
 
@@ -12,3 +13,6 @@ POST http://localhost:9000/services/HelloWorld/ShoutHelloTo
 POST http://localhost:9000/services/OCore.Authorization/Hello
 
 "COCPORN"
+
+### Get correlation log
+GET http://localhost:9000/data/CorrelationIdRecorder/BLUBB2

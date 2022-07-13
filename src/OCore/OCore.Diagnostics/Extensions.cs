@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using OCore.Diagnostics.Sinks.CorrelationId;
 using OCore.Diagnostics.Sinks.Logging;
 using Orleans;
 using Orleans.Hosting;
@@ -32,9 +33,15 @@ namespace OCore.Diagnostics
             siloBuilder.AddDiagnosticsSink<LoggingSink>();
         }
 
+        public static void AddGraphingDiagnostics(this ISiloBuilder siloBuilder)
+        {
+            siloBuilder.AddDiagnosticsSink<CorrelationIdRecordingSink>();
+        }
+
         public static void AddOCoreDeveloperDiagnostics(this ISiloBuilder siloBuilder)
         {
             siloBuilder.AddLoggingDiagnostics();
+            siloBuilder.AddGraphingDiagnostics();
         }
     }
 }

@@ -19,4 +19,8 @@
     <ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
