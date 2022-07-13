@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OCore.Diagnostics.Entities
@@ -51,6 +52,17 @@ namespace OCore.Diagnostics.Entities
         public CorrelationIdCallRecorder(IOptions<DiagnosticsOptions> diagnosticsOptions)
         {
             this.diagnosticsOptions = diagnosticsOptions.Value;
+   
+        }
+
+        public async override Task OnActivateAsync(CancellationToken cancellationToken)
+        {
+            await base.OnActivateAsync(cancellationToken);
+            if (diagnosticsOptions.StoreCorrelationIdData == false
+                && Created == false)
+            {
+                Created = true;
+            }            
         }
 
         public async Task Complete(string from, string to, string result)
