@@ -18,19 +18,19 @@ namespace OCore.Diagnostics.Entities
     public class CallEntry
     {
         [Id(0)]
-        public string From { get; init; }
+        public string? From { get; init; }
 
         [Id(1)]
-        public string To { get; init; }
+        public string? To { get; init; }
 
         [Id(2)]
-        public string Parameters { get; init; }
+        public string? Parameters { get; init; }
 
         [Id(3)]
-        public string Result { get; init; }
+        public string? Result { get; init; }
 
         [Id(4)]
-        public string ExceptionMessage { get; init; }
+        public string? ExceptionMessage { get; init; }
     }
 
     [Serializable]
@@ -42,7 +42,7 @@ namespace OCore.Diagnostics.Entities
         public List<CallEntry> Entries { get; set; } = new List<CallEntry>();
 
         [Id(2)]
-        public string RequestSource { get; set; }
+        public string? RequestSource { get; set; }
     }
 
     public class CorrelationIdCallRecorder : DataEntity<CorrelationIdCallRecord>, ICorrelationIdCallRecorder
@@ -65,7 +65,7 @@ namespace OCore.Diagnostics.Entities
             }            
         }
 
-        public async Task Complete(string from, string to, string result)
+        public async Task Complete(string? from, string to, string result)
         {
             State.Entries.Add(new CallEntry
             {
@@ -94,7 +94,7 @@ namespace OCore.Diagnostics.Entities
             }
         }
 
-        public async Task Request(string from, string to, string parameters)
+        public async Task Request(string? from, string to, string parameters)
         {
             State.Entries.Add(new CallEntry
             {

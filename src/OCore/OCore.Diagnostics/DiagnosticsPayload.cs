@@ -45,31 +45,31 @@ namespace OCore.Diagnostics.Filters
     [GenerateSerializer]
     public class DiagnosticsPayload
     {
-        public string CorrelationId { get; set; }
+        public string? CorrelationId { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 
         public int HopCount { get; set; }
 
-        public string PreviousGrainName { get; set; }
+        public string? PreviousGrainName { get; set; }
 
-        public string PreviousMethodName { get; set; }
+        public string? PreviousMethodName { get; set; }
 
-        public string GrainName { get; set; }
+        public string? GrainName { get; set; }
 
-        public string MethodName { get; set; }
+        public string? MethodName { get; set; }
 
-        public string RequestSource { get; set; }
+        public string? RequestSource { get; set; }
 
         public override string ToString()
         {
             if (PreviousMethodName != null)
             {
-                return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName}.{MethodName} ({HopCount}) {CreatedAt.Ticks} {CorrelationId} {RequestSource}";
+                return $"{PreviousGrainName}.{PreviousMethodName} => {GrainName!}.{MethodName} ({HopCount}) {CreatedAt.Ticks} {CorrelationId} {RequestSource}";
             }
             else
             {
-                return $"{GrainName}.{MethodName} ({HopCount}) {CreatedAt.Ticks} {CorrelationId} {RequestSource}";
+                return $"{GrainName!}.{MethodName} ({HopCount}) {CreatedAt.Ticks} {CorrelationId} {RequestSource}";
             }
 
         }

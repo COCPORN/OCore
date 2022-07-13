@@ -9,10 +9,10 @@ namespace OCore.Diagnostics.Abstractions
     public interface ICorrelationIdCallRecorder : IDataEntity<CorrelationIdCallRecord>
     {
         [Internal]
-        Task Request(string from, string to, string parameters);
+        Task Request(string? from, string to, string parameters);
 
         [Internal]
-        Task Complete(string from, string to, string result);
+        Task Complete(string? from, string to, string result);
 
         [Internal]
         Task Fail(string methodName, string message);

@@ -47,7 +47,9 @@ namespace OCore.Diagnostics.Sinks.Logging
         {
             if (IsPaused == true || options.Enabled == false) return false;
 
-            var fullName = grainCallContext.Grain.GetType().FullName;
+            var fullName = grainCallContext?.Grain?.GetType()?.FullName;
+
+            if (fullName == null) return false;
 
             // Do not log internal calls
             if (fullName.StartsWith("Orleans.")) return false;

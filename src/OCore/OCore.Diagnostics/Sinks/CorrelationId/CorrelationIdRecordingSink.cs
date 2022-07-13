@@ -31,14 +31,14 @@ namespace OCore.Diagnostics.Sinks.CorrelationId
             var result = JsonConvert.SerializeObject(grainCallContext.Result);
 
             // Flip MethodName and PreviousMethodName here as it is working its way down the call stack
-            await recorderGrain.Complete(request.MethodName, request.PreviousMethodName, result);
+            await recorderGrain.Complete(request.MethodName, request.PreviousMethodName!, result);
         }
 
         public async Task Fail(DiagnosticsPayload request, IGrainCallContext grainCallContext, Exception ex)
         {
             var recorderGrain = grainFactory.GetDataEntity<ICorrelationIdCallRecorder>(request.CorrelationId);
 
-            await recorderGrain.Fail(request.MethodName, ex.Message);
+            await recorderGrain.Fail(request.MethodName!, ex.Message);
         }
 
         public async Task Request(DiagnosticsPayload request, IGrainCallContext grainCallContext)
@@ -62,7 +62,7 @@ namespace OCore.Diagnostics.Sinks.CorrelationId
 
             var parameters = sb.ToString();
 
-            await recorderGrain.Request(request.PreviousMethodName, request.MethodName, parameters);
+            await recorderGrain.Request(request.PreviousMethodName, request.MethodName!, parameters);
         }
     }
 }

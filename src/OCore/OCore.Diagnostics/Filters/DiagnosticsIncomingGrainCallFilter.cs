@@ -19,10 +19,10 @@ namespace OCore.Diagnostics
 
         // This was a super-bad abstraction and it didn't carry where it was supposed to,
         // it should be removed
-        T GetRequestContextValue<T>(string key, Func<T, T> update = null) where T : class
+        T? GetRequestContextValue<T>(string key, Func<T?, T>? update = null) where T : class
         {
-            T currentRequestContextValue = RequestContext.Get(key) as T;
-            T newRequestContextValue = currentRequestContextValue;
+            T? currentRequestContextValue = RequestContext.Get(key) as T;
+            T? newRequestContextValue = currentRequestContextValue;
 
             if (update != null)
             {
@@ -44,7 +44,7 @@ namespace OCore.Diagnostics
         {
             // I added this to make it possible to debug the filter because there are so many 
             // Orleans-specific messages running in the silo
-            var grainName = context.Grain.GetType().FullName;
+            var grainName = context.Grain.GetType().FullName ?? throw new NullReferenceException("Unable to get grain name");
 #if DEBUG
 
             if (grainName.StartsWith("Orleans")
