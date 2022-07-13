@@ -1,4 +1,6 @@
-﻿using OCore.Diagnostics.Abstractions;
+﻿using Microsoft.Extensions.Options;
+using OCore.Diagnostics.Abstractions;
+using OCore.Diagnostics.Options;
 using OCore.Entities.Data;
 using Orleans;
 using Orleans.Runtime;
@@ -44,6 +46,13 @@ namespace OCore.Diagnostics.Entities
 
     public class CorrelationIdCallRecorder : DataEntity<CorrelationIdCallRecord>, ICorrelationIdCallRecorder
     {
+        readonly DiagnosticsOptions diagnosticsOptions;
+
+        public CorrelationIdCallRecorder(IOptions<DiagnosticsOptions> diagnosticsOptions)
+        {
+            this.diagnosticsOptions = diagnosticsOptions.Value;
+        }
+
         public async Task Complete(string from, string to, string result)
         {
             State.Entries.Add(new CallEntry
@@ -53,7 +62,10 @@ namespace OCore.Diagnostics.Entities
                 Result = result
             });
 
-            await WriteStateAsync();
+            if (diagnosticsOptions.StoreCorrelationIdData == true)
+            {
+                await WriteStateAsync();
+            }
         }
 
         public async Task Fail(string methodName, string message)
@@ -64,7 +76,10 @@ namespace OCore.Diagnostics.Entities
                 ExceptionMessage = message
             });
 
-            await WriteStateAsync();
+            if (diagnosticsOptions.StoreCorrelationIdData == true)
+            {
+                await WriteStateAsync();
+            }
         }
 
         public async Task Request(string from, string to, string parameters)
@@ -81,7 +96,10 @@ namespace OCore.Diagnostics.Entities
                 State.RequestSource = RequestContext.Get("D:RequestSource") as string;
             }
 
-            await WriteStateAsync();
+            if (diagnosticsOptions.StoreCorrelationIdData == true)
+            {
+                await WriteStateAsync();
+            }
         }
 
         public Task<string> ToMermaid()
