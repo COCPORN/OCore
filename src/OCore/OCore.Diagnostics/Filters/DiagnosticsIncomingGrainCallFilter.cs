@@ -1,4 +1,6 @@
-﻿using OCore.Diagnostics.Filters;
+﻿using Microsoft.Extensions.Logging;
+using OCore.Core.Extensions;
+using OCore.Diagnostics.Filters;
 using Orleans;
 using Orleans.Runtime;
 using System;
@@ -10,11 +12,14 @@ namespace OCore.Diagnostics
 {
     public class DiagnosticIncomingGrainCallFilter : IIncomingGrainCallFilter
     {
-        IEnumerable<IDiagnosticsSink> sinks;
+        readonly IEnumerable<IDiagnosticsSink> sinks;
+        readonly ILogger logger;
 
-        public DiagnosticIncomingGrainCallFilter(IEnumerable<IDiagnosticsSink> sinks)
+        public DiagnosticIncomingGrainCallFilter(IEnumerable<IDiagnosticsSink> sinks,
+            ILogger<DiagnosticIncomingGrainCallFilter> logger)
         {
             this.sinks = sinks;
+            this.logger = logger;
         }
 
         // This was a super-bad abstraction and it didn't carry where it was supposed to,
@@ -103,16 +108,7 @@ namespace OCore.Diagnostics
 
             var contextTask = context.Invoke();
 
-            // Disregard the clusterfuck of try/catch here, I do not want any sinks failure to propagate
-            // and I do not want the sinks to slow down the main execution line. Let me know if you have a
-            // better way of solving this. Perhaps it could be reasonably logged, or perhaps we should implement
-            // some better system of handling failing components. I think it could reasonably just be added
-            // to a single list of tasks for request/fail/complete that is awaited and shut up in a finally-block.
-            try
-            {
-                await Task.WhenAll(sinks.Select(s => s.Request(payload, context)));
-            }
-            catch { }
+            Task.WhenAll(sinks.Select(s => s.Request(payload, context))).FireAndForget(logger);
 
             try
             {
@@ -120,19 +116,11 @@ namespace OCore.Diagnostics
             }
             catch (Exception ex)
             {
-                try
-                {
-                    await Task.WhenAll(sinks.Select(s => s.Fail(payload, context, ex)));
-                }
-                catch { }
+                Task.WhenAll(sinks.Select(s => s.Fail(payload, context, ex))).FireAndForget(logger);
                 throw;
             }
 
-            try
-            {
-                await Task.WhenAll(sinks.Select(s => s.Complete(payload, context)));
-            }
-            catch { }
+            Task.WhenAll(sinks.Select(s => s.Complete(payload, context))).FireAndForget(logger);
         }
     }
 }
