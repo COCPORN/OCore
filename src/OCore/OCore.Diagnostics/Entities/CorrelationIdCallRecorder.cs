@@ -51,8 +51,7 @@ namespace OCore.Diagnostics.Entities
 
         public CorrelationIdCallRecorder(IOptions<DiagnosticsOptions> diagnosticsOptions)
         {
-            this.diagnosticsOptions = diagnosticsOptions.Value;
-   
+            this.diagnosticsOptions = diagnosticsOptions.Value;   
         }
 
         public async override Task OnActivateAsync(CancellationToken cancellationToken)
