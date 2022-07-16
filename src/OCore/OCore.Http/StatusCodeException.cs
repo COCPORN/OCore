@@ -8,8 +8,6 @@ namespace OCore.Http
 {
     public class StatusCodeException : Exception
     {
-
-
         public StatusCodeException(HttpStatusCode statusCode)
         {
             StatusCode = statusCode;

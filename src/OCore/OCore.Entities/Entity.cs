@@ -50,7 +50,11 @@ namespace OCore.Entities
 
         protected DateTimeOffset CreatedAt => base.State.CreatedAt;
 
-        protected bool Created => base.State.Created;
+        protected bool Created
+        {
+            get => base.State.Created;
+            set => base.State.Created = value;
+        }
 
         protected DateTimeOffset UpdatedAt => base.State.UpdatedAt;
 

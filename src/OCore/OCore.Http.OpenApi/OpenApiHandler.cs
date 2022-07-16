@@ -1,19 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.OpenApi;
-using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Models;
-using OCore.Authorization;
-using OCore.Entities.Data;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-namespace OCore.Http.OpenApi
+﻿namespace OCore.Http.OpenApi
 {
     public class OpenApiHandler
     {
@@ -65,7 +50,7 @@ namespace OCore.Http.OpenApi
         {
             var assemblyLocation = Assembly.GetEntryAssembly().Location;
 
-            var resourceList = ResourceEnumerator.Resources;
+            var resourceList = ResourceEnumerator.PublicResources;
             var resolver = new JsonSerializerDataContractResolver(new JsonSerializerOptions());
             var schemaGenerator = new SchemaGenerator(new SchemaGeneratorOptions(), resolver);
             var schemaRepository = new SchemaRepository();

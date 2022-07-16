@@ -44,20 +44,20 @@ namespace OCore.Services.Http
 
         private static List<Type> DiscoverServicesToMap()
         {
-
             return GetAllTypesThatHaveAttribute<ServiceAttribute>().ToList();
         }
 
         private static int MapServiceToRoute(IEndpointRouteBuilder routes, Type grainType, string prefix, ServiceRouter dispatcher, ILogger<ServiceRouter> logger)
         {
-            logger.LogInformation($"Mapping routes for service '{grainType.FullName}'");
-
             var internalAttribute = (InternalAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(InternalAttribute)).SingleOrDefault();
 
             if (internalAttribute != null)
             {
+                logger.LogInformation($"Service '{grainType.FullName}' is internal");                
                 return 0;
             }
+
+            logger.LogInformation($"Mapping routes for service '{grainType.FullName}'");
 
             var serviceAttribute = (ServiceAttribute)grainType.GetCustomAttributes(true).Where(attr => attr.GetType() == typeof(ServiceAttribute)).SingleOrDefault();
 
@@ -70,8 +70,11 @@ namespace OCore.Services.Http
 
                 if (internalAttribute != null) continue;
 
-                var routePattern = RoutePatternFactory.Parse($"{prefix}/{serviceAttribute.Name}/{method.Name}");
-                var route = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);
+                var route = $"{prefix}/{serviceAttribute.Name}/{method.Name}";
+                var routePattern = RoutePatternFactory.Parse(route);
+                var routeEndpoint = routes.MapPost(routePattern.RawText, dispatcher.Dispatch);
+
+                logger.LogInformation($" => '{grainType.FullName}': {route}");
 
                 dispatcher.RegisterRoute(routePattern.RawText, method);
 
