@@ -1,4 +1,19 @@
-﻿namespace OCore.Http.OpenApi
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi.Models;
+using OCore.Authorization;
+using OCore.Entities.Data;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace OCore.Http.OpenApi
 {
     public class OpenApiHandler
     {

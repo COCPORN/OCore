@@ -1,4 +1,14 @@
-﻿namespace OCore.Authorization
+﻿using OCore.Authorization.Abstractions;
+using OCore.Core;
+using OCore.Entities.Data;
+using OCore.Services;
+using Orleans;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+namespace OCore.Authorization
 {
 
     public abstract class Resource
@@ -59,6 +69,7 @@
     [GenerateSerializer]
     public class DataEntityResource : Resource
     {
+        [Id(0)]
         public DataEntityAttribute Attribute { get; private set; }
 
         public DataEntityResource(string resourceName,
