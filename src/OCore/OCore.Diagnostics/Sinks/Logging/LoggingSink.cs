@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using OCore.Core.Extensions;
+using OCore.Diagnostics.Filters;
 using Orleans;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,12 @@ namespace OCore.Diagnostics.Sinks.Logging
     {
         public bool Enabled { get; set; } = true;
 
-        public bool LogArguments { get; set; } = true;
+        public bool LogArguments { get; set; } = false;
     }
 
     public class LoggingSink : IDiagnosticsSink
     {
-        public bool IsPaused { get; set; } = true;
+        public bool IsPaused { get; set; } = false;
 
         public bool EnableOCoreInternal { get; set; } = false;
 
@@ -36,8 +37,8 @@ namespace OCore.Diagnostics.Sinks.Logging
         public Task Request(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
             if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
-            // Todo FIX THIS
-            logger.LogInformation($"[{grainCallContext.Grain.ToString()}] {request}");
+
+            logger.LogInformation("> " + request.ToString());
 
             return Task.CompletedTask;
         }
@@ -46,7 +47,9 @@ namespace OCore.Diagnostics.Sinks.Logging
         {
             if (IsPaused == true || options.Enabled == false) return false;
 
-            var fullName = grainCallContext.Grain.GetType().FullName; ;
+            var fullName = grainCallContext?.Grain?.GetType()?.FullName;
+
+            if (fullName == null) return false;
 
             // Do not log internal calls
             if (fullName.StartsWith("Orleans.")) return false;
@@ -56,13 +59,23 @@ namespace OCore.Diagnostics.Sinks.Logging
 
         public Task Complete(DiagnosticsPayload request, IGrainCallContext grainCallContext)
         {
-            if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
-            if (options.LogArguments == true)
+            try
             {
-                logger.LogInformation($"> {JsonConvert.SerializeObject(grainCallContext.Arguments)}\n" + 
-                    $"< {JsonConvert.SerializeObject(grainCallContext.Result)}");                
+                if (CheckWhetherToLog(grainCallContext) == false) return Task.CompletedTask;
+
+                logger.LogInformation("< " + request.ToString());
+
+                if (request.HopCount == 0)
+                {
+                    logger.LogInformation($"Request completed in {(DateTimeOffset.UtcNow - request.CreatedAt).TotalMilliseconds}ms");
+                }
+
+                return Task.CompletedTask;
             }
-            return Task.CompletedTask;
+            catch
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public Task Fail(DiagnosticsPayload request, IGrainCallContext grainCallContext, Exception ex)
@@ -72,7 +85,7 @@ namespace OCore.Diagnostics.Sinks.Logging
             {
                 logger.LogError(ex, $"> {JsonConvert.SerializeObject(grainCallContext.Arguments)}");
             }
-            return Task.CompletedTask;            
+            return Task.CompletedTask;
         }
     }
 }

@@ -15,7 +15,7 @@ Type:
 
 ```csharp
 using OCore.Services;
-using System.Threading.Tasks;
+await OCore.Setup.DeveloperExtensions.LetsGo();
 
 namespace HelloWorld
 {
@@ -32,12 +32,6 @@ namespace HelloWorld
             return Task.FromResult($"Hello, {name}! It is a beautiful world! And you are my favorite part of it!");
         }
     }
-
-    class Program
-    {
-        static async Task Main(string[] args) =>
-           await OCore.Setup.DeveloperExtensions.LetsGo();
-    }
 }
 ```
 
@@ -53,6 +47,12 @@ POST http://localhost:9000/services/HelloWorld/SayHelloTo
 You can also visit http://localhost:9000/swagger to see the OpenApi generated docs.
 
 **nuget packages** are built automatically when version numbers are increased.
+
+## Goals
+
+- Programming at the speed of thought
+- Self documenting system
+- Simple transition from playground to production
 
 ## Motivation
 
@@ -89,7 +89,7 @@ F5 is waiting for you.
 - Automatically register any `Service` with exposed HTTP endpoints at `http://localhost:9000/services/`
 - Automatically register any `DataEntity` with exposed HTTP endpoints at `http://localhost:9000/data/`
 - Start serving OpenApi documentation for services and data entities at `http://localhost:9000/api-docs/`
-- Setup authorization system with user tokens and
+- Setup authorization system with user tokens and api-keys (optional use)
 
 ## Service 
 

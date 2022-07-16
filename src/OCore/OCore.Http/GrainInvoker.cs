@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Orleans;
+using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipelines;
@@ -75,12 +76,19 @@ namespace OCore.Http
 
             await grainCall;
 
+            var correlationId = RequestContext.Get("D:CorrelationId") as string;
+
+            if (correlationId != null)
+            {
+                context.Response.Headers.Add("CorrelationId", correlationId);
+            }
+
             if (GetResult != null)
             {
                 object result = GetResult.Invoke(null, new[] { grainCall });
                 if (result != null)
                 {
-                    context.Response.ContentType = "application/json";
+                    context.Response.ContentType = "application/json";                    
 
                     await Serialize(result, context.Response.BodyWriter);
                 }
@@ -128,6 +136,14 @@ namespace OCore.Http
             }
 
             context.Response.ContentType = "application/json";
+
+            var correlationId = RequestContext.Get("D:CorrelationId") as string;
+
+            if (correlationId != null)
+            {
+                context.Response.Headers.Add("CorrelationId", correlationId);
+            }
+
             await Serialize(results, context.Response.BodyWriter);
         }
 

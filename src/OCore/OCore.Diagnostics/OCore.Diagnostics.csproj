@@ -1,21 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>true</IsPackable>
-    <PackageId>OCore.Diagnostics</PackageId>
-    <Version>0.0.4-preview</Version>
-    <Authors>COCPORN</Authors>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<IsPackable>true</IsPackable>
+		<PackageId>OCore.Diagnostics</PackageId>
+		<Version>0.0.4-preview</Version>
+		<Authors>COCPORN</Authors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview1" />
-    <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="4.0.0-preview1" />
-    <PackageReference Include="Microsoft.Orleans.Sdk" Version="4.0.0-preview1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview1" />
+		<PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="4.0.0-preview1" />
+		<PackageReference Include="Microsoft.Orleans.Sdk" Version="4.0.0-preview1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
+		<ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Services\" />
+	</ItemGroup>
 
 </Project>

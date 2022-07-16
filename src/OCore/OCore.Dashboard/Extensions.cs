@@ -14,7 +14,7 @@ namespace OCore.Dashboard
     {
         public static void AddOCoreDashboard(this ISiloBuilder siloBuilder)
         {
-            siloBuilder.AddSink<DashboardSink>();
+            siloBuilder.AddDiagnosticsSink<DashboardSink>();
         }
 
         public static void UseOCoreDashboard(this IApplicationBuilder app, IHostEnvironment env, string requestPath = "/admin")

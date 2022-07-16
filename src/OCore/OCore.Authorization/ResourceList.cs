@@ -1,13 +1,4 @@
-﻿using OCore.Authorization.Abstractions;
-using OCore.Entities.Data;
-using OCore.Services;
-using Orleans;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace OCore.Authorization
+﻿namespace OCore.Authorization
 {
 
     public abstract class Resource
@@ -30,15 +21,19 @@ namespace OCore.Authorization
 
         public MethodInfo MethodInfo { get; private set; }
 
+        public bool IsPublic { get; private set; }
+
         public Resource(string resourceName,
             string baseResource,
             Permissions permission,
-            MethodInfo methodInfo)
+            MethodInfo methodInfo,
+            bool isPublic)
         {
             ResourcePath = resourceName;
             Permissions = permission;
             BaseResource = baseResource;
             MethodInfo = methodInfo;
+            IsPublic = isPublic;
         }
     }
 
@@ -49,8 +44,13 @@ namespace OCore.Authorization
         public ServiceResource(string resourceName,
             string baseResource,
             Permissions permission,
-            MethodInfo methodInfo)
-            : base(resourceName, baseResource, permission, methodInfo)
+            MethodInfo methodInfo,
+            bool isPublic)
+            : base(resourceName,
+                  baseResource,
+                  permission,
+                  methodInfo,
+                  isPublic)
         {
         }
     }
@@ -65,8 +65,9 @@ namespace OCore.Authorization
             string baseResource,
             Permissions permission,
             MethodInfo methodInfo,
-            DataEntityAttribute attribute)
-            : base(resourceName, baseResource, permission, methodInfo)
+            DataEntityAttribute attribute,
+            bool isPublic)
+            : base(resourceName, baseResource, permission, methodInfo, isPublic)
         {
             Attribute = attribute;
         }
@@ -91,7 +92,17 @@ namespace OCore.Authorization
             }
         }
 
-        static List<Resource> FindDataEntityResources()
+        public static List<Resource> PublicResources
+        {
+            get
+            {
+                return FindServiceResources(false)
+                        .Concat(FindDataEntityResources(false))
+                        .ToList();
+            }
+        }
+
+        static List<Resource> FindDataEntityResources(bool includePrivate = true)
         {
             var interfaces = AppDomain
               .CurrentDomain
@@ -105,6 +116,10 @@ namespace OCore.Authorization
             var dataEntityInterfaces = interfaces
               .Where(x => x.GetCustomAttributes(true).Where(z => z is DataEntityAttribute).Any());
 
+            dataEntityInterfaces = dataEntityInterfaces
+                .Where(x => includePrivate == true
+                       || x.GetCustomAttributes(true).Where(z => z is InternalAttribute).Any() == false);
+
             var dataResourcesFromMethod = dataEntityInterfaces
                 .SelectMany(x => x.GetMethods()
                     .Select(y => GetDataResourceFromMethod(x, y))).ToList();
@@ -116,7 +131,7 @@ namespace OCore.Authorization
         }
 
 
-        static List<Resource> FindServiceResources()
+        static List<Resource> FindServiceResources(bool includePrivate = true)
         {
             return AppDomain
                 .CurrentDomain
@@ -125,6 +140,7 @@ namespace OCore.Authorization
                 .Where(x => x.IsSubclassOf(typeof(Service)))
                 .SelectMany(x => x.GetInterfaces())
                 .Where(x => x.GetCustomAttributes(true).Where(z => z is ServiceAttribute).Any())
+                .Where(x => includePrivate == true || x.GetCustomAttributes(true).Where(z => z is InternalAttribute).Any() == false)
                 .SelectMany(x => x.GetMethods()
                     .Select(y => GetServiceResourceFromMethod(x, y))).ToList();
         }
@@ -132,13 +148,15 @@ namespace OCore.Authorization
         private static Resource GetServiceResourceFromMethod(Type type, MethodInfo methodInfo)
         {
             var authorizeAttribute = methodInfo.GetCustomAttribute<AuthorizeAttribute>();
+            var isPublic = methodInfo.GetCustomAttribute<InternalAttribute>() == null;
+
             if (authorizeAttribute != null)
             {
-                return new ServiceResource(CreateServiceResourceName(type, methodInfo), ServiceBaseResourceName(type), authorizeAttribute.Permissions, methodInfo);
+                return new ServiceResource(CreateServiceResourceName(type, methodInfo), ServiceBaseResourceName(type), authorizeAttribute.Permissions, methodInfo, isPublic);
             }
             else
             {
-                return new ServiceResource(CreateServiceResourceName(type, methodInfo), ServiceBaseResourceName(type), Permissions.All, methodInfo);
+                return new ServiceResource(CreateServiceResourceName(type, methodInfo), ServiceBaseResourceName(type), Permissions.All, methodInfo, isPublic);
             }
         }
 
@@ -150,14 +168,16 @@ namespace OCore.Authorization
                 .Select(x => x as DataEntityAttribute)
                 .FirstOrDefault();
             var authorizeAttribute = methodInfo.GetCustomAttribute<AuthorizeAttribute>();
+            var isPublic = methodInfo.GetCustomAttribute<InternalAttribute>() == null;
             var dataResourceName = CreateDataResourceName(type, methodInfo);
+
             if (authorizeAttribute != null)
             {
-                return new DataEntityResource(dataResourceName, DataBaseResourceName(type), authorizeAttribute.Permissions, methodInfo, dataEntityAttribute);
+                return new DataEntityResource(dataResourceName, DataBaseResourceName(type), authorizeAttribute.Permissions, methodInfo, dataEntityAttribute, isPublic);
             }
             else
             {
-                return new DataEntityResource(dataResourceName, DataBaseResourceName(type), Permissions.All, methodInfo, dataEntityAttribute);
+                return new DataEntityResource(dataResourceName, DataBaseResourceName(type), Permissions.All, methodInfo, dataEntityAttribute, isPublic);
             }
         }
 
@@ -191,7 +211,7 @@ namespace OCore.Authorization
             return serviceAttribute.Name;
         }
 
-        private static List<Resource> GetDataResourceFromCrud(Type type)
+        private static List<Resource> GetDataResourceFromCrud(Type type, bool includePrivate = false)
         {
             var dataEntityAttribute = type
                 .GetCustomAttributes(true)
@@ -206,7 +226,7 @@ namespace OCore.Authorization
                 || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Update)
                 || dataEntityAttribute.DataEntityMethods.HasFlag(DataEntityMethods.Delete))
             {
-                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}", DataBaseResourceName(type), Permissions.All, CreateMethodInfo(type, "Create"), dataEntityAttribute));
+                dataResources.Add(new DataEntityResource($"{dataEntityAttribute.Name}", DataBaseResourceName(type), Permissions.All, CreateMethodInfo(type, "Create"), dataEntityAttribute, true));
             }
 
             return dataResources;
