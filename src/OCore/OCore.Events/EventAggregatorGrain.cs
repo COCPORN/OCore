@@ -7,20 +7,18 @@ using Orleans.Streams;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace OCore.Events
 {
-    [StatelessWorker(1)]        
+    [StatelessWorker(1)]
     public class EventAggregatorGrain : Grain, IEventAggregator
     {
         readonly ILogger logger;
         EventOptions options;
-        
+
 
         public EventAggregatorGrain(ILogger<EventAggregatorGrain> logger,
             IOptions<EventOptions> options)
@@ -28,7 +26,7 @@ namespace OCore.Events
             this.logger = logger;
             this.options = options.Value;
         }
-        
+
         public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             return base.OnActivateAsync(cancellationToken);
@@ -108,7 +106,7 @@ namespace OCore.Events
                 {
                     throw new InvalidOperationException("Event class is missing [Event(...)] attribute");
                 }
-                if (options?.EventTypes != null 
+                if (options?.EventTypes != null
                     && options.EventTypes.TryGetValue(eventAttribute.Name, out var eventTypeConfig))
                 {
                     eventTypeOptions = (eventAttribute.Name, eventTypeConfig);
@@ -136,7 +134,7 @@ namespace OCore.Events
             var stream = streamProvider.GetStream<Event<T>>(destination, streamName);
             if (eventTypeOptions.Item2.FireAndForget == true)
             {
-                stream.OnNextAsync(EnvelopeEvent(@event)).FireAndForget(logger);             
+                stream.OnNextAsync(EnvelopeEvent(@event)).FireAndForget(logger);
             }
             else
             {
