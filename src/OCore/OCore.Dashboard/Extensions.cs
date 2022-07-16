@@ -33,8 +33,10 @@ namespace OCore.Dashboard
                         ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cachePeriod}");
                     }
                 });
-            } catch (Exception ex) {
-                System.Console.WriteLine($"Unable to setup Dashboard: {ex.ToString()}");
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine($"Unable to setup Dashboard: {ex}");
             }
         }
     }
