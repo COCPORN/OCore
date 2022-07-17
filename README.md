@@ -1,6 +1,6 @@
 # OCore
 
-![CI](https://github.com/COCPORN/OCore/workflows/Packages/badge.svg)
+![CI](https://github.com/COCPORN/OCore/workflows/Packages/badge.svg) ![Discord Shield](https://discordapp.com/api/guilds/989817170768826418/widget.png?style=shield)
 
 Opinionated and experimental application stack built on Microsoft Orleans and friends.
 
