@@ -31,6 +31,9 @@ namespace OCore.Diagnostics.Entities
 
         [Id(4)]
         public string? ExceptionMessage { get; init; }
+
+        [Id(5)]
+        public string? ExceptionType { get; init; }
     }
 
     [Serializable]
@@ -79,12 +82,13 @@ namespace OCore.Diagnostics.Entities
             }
         }
 
-        public async Task Fail(string methodName, string message)
+        public async Task Fail(string methodName, string exceptionType, string message)
         {
             State.Entries.Add(new CallEntry
             {
                 From = methodName,
-                ExceptionMessage = message
+                ExceptionMessage = message,
+                ExceptionType = exceptionType
             });
 
             if (diagnosticsOptions.StoreCorrelationIdData == true)
@@ -169,7 +173,11 @@ namespace OCore.Diagnostics.Entities
 
                 if (entry.ExceptionMessage != null)
                 {
-                    sb.AppendLine($"   {from}-x-{to}: {entry.ExceptionMessage}");
+                    sb.AppendLine($"   {from}-x-{to}: {entry.ExceptionType}: {entry.ExceptionMessage}");
+                    if (entry.To == null)
+                    {
+                        break;
+                    }
                 }
             }
 

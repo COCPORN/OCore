@@ -76,9 +76,7 @@ namespace OCore.Http
 
             await grainCall;
 
-            var correlationId = RequestContext.Get("D:CorrelationId") as string;
-
-            if (correlationId != null)
+            if (RequestContext.Get("D:CorrelationId") is string correlationId)
             {
                 context.Response.Headers.Add("CorrelationId", correlationId);
             }
@@ -137,9 +135,7 @@ namespace OCore.Http
 
             context.Response.ContentType = "application/json";
 
-            var correlationId = RequestContext.Get("D:CorrelationId") as string;
-
-            if (correlationId != null)
+            if (RequestContext.Get("D:CorrelationId") is string correlationId)
             {
                 context.Response.Headers.Add("CorrelationId", correlationId);
             }

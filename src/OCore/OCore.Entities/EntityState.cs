@@ -13,6 +13,7 @@ namespace OCore.Entities
 
         [Id(1)]
         public DateTimeOffset CreatedAt { get; set; }
+
         [Id(2)]
         public DateTimeOffset UpdatedAt { get; set; }
 

@@ -15,7 +15,7 @@ namespace OCore.Diagnostics.Abstractions
         Task Complete(string? from, string to, string result);
 
         [Internal]
-        Task Fail(string methodName, string message);
+        Task Fail(string methodName, string exceptionType, string message);
 
         Task<string> ToMermaid();
     }

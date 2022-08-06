@@ -13,10 +13,8 @@ namespace HelloWorld
 
     public class HelloWorldService : Service, IHelloWorldService
     {
-        public Task<string> SayHelloTo(string name)
-        {
-            return Task.FromResult($"Hello, {name}! It is a beautiful world! And you are my favorite part of it!");
-        }
+        public Task<string> SayHelloTo(string name) 
+            => Task.FromResult($"Hello, {name}!");        
 
         public async Task<string> ShoutHelloTo(string name)
         {
@@ -24,7 +22,9 @@ namespace HelloWorld
 
             var capitalizedName = await capitalizationService.Capitalize(name);
 
-            return $"Hello, {capitalizedName}! It is a beautiful world! And you are my favorite part of it!";
+            var helloWorldService = GetService<IHelloWorldService>();
+
+            return await helloWorldService.SayHelloTo(capitalizedName);
         }
     }
 
@@ -38,6 +38,7 @@ namespace HelloWorld
     {
         public Task<string> Capitalize(string name)
         {
+            throw new ArgumentException(nameof(name));
             return Task.FromResult(name.ToUpper());
         }
     }

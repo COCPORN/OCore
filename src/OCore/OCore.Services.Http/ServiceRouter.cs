@@ -60,23 +60,6 @@ namespace OCore.Services.Http
             RequestContext.Set("D:RequestSource", "HTTP");
             RequestContext.Set("D:GrainName", pattern.RawText);
 
-            var correlationIdKeyName = httpOptions.CorrelationIdHeader;
-
-            if (correlationIdKeyName == null)
-            {
-                correlationIdKeyName = "correlationid";
-            }
-
-            // I have a feeling this can be improved by not using FirstOrDefault
-            var correlationId = context.Request.Headers.FirstOrDefault(x => x.Key == correlationIdKeyName).Value.ToString();
-
-            if (string.IsNullOrEmpty(correlationId) == true)
-            {
-                correlationId = Guid.NewGuid().ToString();
-            }
-
-            RequestContext.Set("D:CorrelationId", correlationId);
-
             var invoker = routes[pattern.RawText];
             context.RunAuthorizationFilters(invoker);
             context.RunActionFiltersExecuting(invoker);

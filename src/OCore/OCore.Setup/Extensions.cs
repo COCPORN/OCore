@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using OCore.Diagnostics;
+using OCore.Diagnostics.Middleware;
 using OCore.Entities.Data.Http;
 using OCore.Http.OpenApi;
 using OCore.Services;
@@ -28,7 +29,7 @@ namespace OCore.DefaultSetup
                 endpoints.MapDeveloperOpenApi("api-docs",
                     appTitle,
                     version);
-            });
+            });            
         }
 
     }

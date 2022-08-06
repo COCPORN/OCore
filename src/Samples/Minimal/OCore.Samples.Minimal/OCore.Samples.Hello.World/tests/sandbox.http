@@ -1,12 +1,12 @@
 ### Say hello to the world
 POST http://localhost:9000/services/HelloWorld/SayHelloTo
 
-"cocporn"
+".NET Chapter"
 
-### Say hello to the world
+### Shout hello to the world
 POST http://localhost:9000/services/HelloWorld/ShoutHelloTo
 
-"cocporn"
+"Lars Thomas"
 
 ### Say hello to the world
 POST http://localhost:9000/services/OCore.Authorization/Hello
@@ -14,9 +14,12 @@ POST http://localhost:9000/services/OCore.Authorization/Hello
 "COCPORN"
 
 ### Get correlation log
-GET http://localhost:9000/data/CorrelationIdRecorder/BLUBB2
-
-"COCPORN"
+GET http://localhost:9000/data/CorrelationIdRecorder/a0105c24-8df2-41e3-b613-36f4a8f4ff1f
 
 ### Get correlation log
-POST http://localhost:9000/data/CorrelationIdRecorder/0562d5f8-2cd7-4fc8-a51e-ad1c7390bcbd/tomermaid
+POST http://localhost:9000/data/CorrelationIdRecorder/BLUBB2/tomermaid
+CorrelationId: CID
+
+### Get correlation log
+POST http://localhost:9000/data/CorrelationIdRecorder/Blubb/tomermaid
+CorrelationId: CID

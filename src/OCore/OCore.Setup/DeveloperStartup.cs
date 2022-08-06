@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 //using OCore.Dashboard;
 using OCore.DefaultSetup;
+using OCore.Diagnostics.Middleware;
 
 namespace OCore.Setup
 {
@@ -18,9 +19,10 @@ namespace OCore.Setup
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
+            app.UseMiddleware(typeof(CorrelationIdProviderMiddleware));
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseRouting();
-            app.UseDefaultOCore();
+            app.UseDefaultOCore();            
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/api-docs", "OCore Developer API");
