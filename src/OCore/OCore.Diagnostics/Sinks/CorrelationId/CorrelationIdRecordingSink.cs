@@ -38,7 +38,11 @@ namespace OCore.Diagnostics.Sinks.CorrelationId
         {
             var recorderGrain = grainFactory.GetDataEntity<ICorrelationIdCallRecorder>(request.CorrelationId);
 
-            await recorderGrain.Fail(request.MethodName!, ex.GetType().ToString(), ex.Message);
+            await recorderGrain.Fail(
+                request.MethodName!, 
+                request.PreviousMethodName!, 
+                ex.GetType().ToString(), 
+                ex.Message);
         }
 
         public async Task Request(DiagnosticsPayload request, IGrainCallContext grainCallContext)

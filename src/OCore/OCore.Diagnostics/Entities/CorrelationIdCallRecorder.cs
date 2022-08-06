@@ -82,11 +82,14 @@ namespace OCore.Diagnostics.Entities
             }
         }
 
-        public async Task Fail(string methodName, string exceptionType, string message)
+        public async Task Fail(string methodName, 
+            string previousMedhodName,
+            string exceptionType, string message)
         {
             State.Entries.Add(new CallEntry
             {
                 From = methodName,
+                To = previousMedhodName,
                 ExceptionMessage = message,
                 ExceptionType = exceptionType
             });
@@ -173,11 +176,7 @@ namespace OCore.Diagnostics.Entities
 
                 if (entry.ExceptionMessage != null)
                 {
-                    sb.AppendLine($"   {from}-x-{to}: {entry.ExceptionType}: {entry.ExceptionMessage}");
-                    if (entry.To == null)
-                    {
-                        break;
-                    }
+                    sb.AppendLine($"   {from}-x-{to}: {entry.ExceptionType}: {entry.ExceptionMessage}");      
                 }
             }
 
