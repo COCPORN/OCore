@@ -7,7 +7,8 @@ namespace OCore.Diagnostics
 {
     /// <summary>
     /// Implement this to have the diagnostic system deliver
-    /// diagnostic messages to you
+    /// diagnostic messages to you. This sink lives in the context
+    /// of the grain filters
     /// </summary>
     public interface IDiagnosticsSink
     {

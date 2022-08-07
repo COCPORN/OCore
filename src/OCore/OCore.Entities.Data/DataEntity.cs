@@ -1,5 +1,8 @@
-﻿using Orleans;
+﻿using OCore.Entities.Data.Extensions;
+using Orleans;
 using System.Threading.Tasks;
+
+#nullable enable
 
 namespace OCore.Entities.Data
 {
@@ -16,6 +19,11 @@ namespace OCore.Entities.Data
             {
                 throw new DataCreationException($"DataEntity already created: {this.GetPrimaryKeyString()}/{typeof(T)}");
             }
+        }
+
+        public T1 Get<T1>() where T1 : IDataEntity, new()
+        {            
+            return GrainFactory.GetDataEntity<T1>(this.GetPrimaryKeyString());
         }
 
         public virtual Task<T> Read()

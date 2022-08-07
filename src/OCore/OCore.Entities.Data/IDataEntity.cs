@@ -1,9 +1,14 @@
 ﻿using Orleans;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace OCore.Entities.Data
 {
-    public interface IDataEntity : IGrainWithStringKey { }
+    public interface IDataEntity : IGrainWithStringKey
+    {
+        T Get<T>() where T: IDataEntity, new();
+    }
 
     public interface IDataEntity<T> : IDataEntity
     {
