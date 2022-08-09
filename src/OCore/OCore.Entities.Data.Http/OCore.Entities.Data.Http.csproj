@@ -1,27 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <IsPackable>true</IsPackable>
-    <PackageId>OCore.Entities.Data.Http</PackageId>
-    <Version>0.1.3-preview</Version>
-    <Authors>COCPORN</Authors>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<IsPackable>true</IsPackable>
+		<PackageId>OCore.Entities.Data.Http</PackageId>
+		<Version>0.1.3-preview</Version>
+		<Authors>COCPORN</Authors>
+	</PropertyGroup>
 
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Orleans.Core" Version="4.0.0-preview1" />
-    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Orleans.Core" Version="4.0.0-preview2" />
+		<PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview2" />
+		<PackageReference Include="Microsoft.Orleans.Sdk" Version="4.0.0-preview2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj" />
-    <ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
-    <ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
-    <ProjectReference Include="..\OCore.Http\OCore.Http.csproj" />    
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\OCore.Authorization.Abstractions\OCore.Authorization.Abstractions.csproj" />
+		<ProjectReference Include="..\OCore.Core\OCore.Core.csproj" />
+		<ProjectReference Include="..\OCore.Entities.Data\OCore.Entities.Data.csproj" />
+		<ProjectReference Include="..\OCore.Http\OCore.Http.csproj" />
+	</ItemGroup>
 
 </Project>

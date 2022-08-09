@@ -1,4 +1,8 @@
-﻿using OCore.Services;
+﻿using OCore.Entities.Data;
+using OCore.Entities.Data.Extensions;
+using OCore.Services;
+using Orleans;
+
 await OCore.Setup.DeveloperExtensions.LetsGo();
 
 namespace HelloWorld
@@ -19,19 +23,15 @@ namespace HelloWorld
         public async Task<string> ShoutHelloTo(string name)
         {
             var capitalizationService = GetService<INameCapitalizationService>();
-            try
-            {
 
-                var capitalizedName = await capitalizationService.Capitalize(name);
+            //var lookupCounter = GrainFactory.GetDataEntity<ILookupCounter>(name);
+            //await lookupCounter.IncreaseLookups();
 
-                var helloWorldService = GetService<IHelloWorldService>();
+            var capitalizedName = await capitalizationService.Capitalize(name);
 
-                return await helloWorldService.SayHelloTo(capitalizedName);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new NullReferenceException("Blubb", ex);
-            }
+            var helloWorldService = GetService<IHelloWorldService>();
+
+            return await helloWorldService.SayHelloTo(capitalizedName);
         }
     }
 
@@ -44,9 +44,32 @@ namespace HelloWorld
     public class NameCapitalizationService : Service, INameCapitalizationService
     {
         public Task<string> Capitalize(string name)
-        {
-            //throw new ArgumentException(nameof(name)); // Use to test exception graphing
+        {            
             return Task.FromResult(name.ToUpper());
         }
     }
+
+    //[Serializable]
+    //[GenerateSerializer]
+    //public class LookupData
+    //{
+    //    [Id(0)]
+    //    public int Lookups { get; set; }
+    //}
+
+
+    //[DataEntity("LookupCounter")]
+    //public interface ILookupCounter : IDataEntity<LookupData>
+    //{
+    //    Task IncreaseLookups();
+    //}
+
+    //public class LookupCounter : DataEntity<LookupData>, ILookupCounter
+    //{
+    //    public Task IncreaseLookups()
+    //    {
+    //        State.Lookups++;
+    //        return WriteStateAsync();
+    //    }
+    //}
 }
