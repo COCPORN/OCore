@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <IsPackable>true</IsPackable>    
-    <PackageId>OCore.Services</PackageId>
-    <Version>0.1.2-preview</Version>
-    <Authors>COCPORN</Authors>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<IsPackable>true</IsPackable>
+		<PackageId>OCore.Services</PackageId>
+		<Version>0.1.2-preview</Version>
+		<Authors>COCPORN</Authors>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="Microsoft.Orleans.Sdk" Version="4.0.0-preview2" />
-    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Orleans.Sdk" Version="4.0.0-preview2" />
+		<PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview2" />
+	</ItemGroup>
 
 </Project>

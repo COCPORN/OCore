@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OCore.Authorization;
 using OCore.Diagnostics;
-using Orleans;
 using Orleans.Hosting;
 using Orleans.Providers;
 using System;
@@ -52,13 +51,12 @@ namespace OCore.Setup
             {
                 webBuilder.UseUrls("http://*:9000");
                 webBuilder.UseStartup<DeveloperStartup>();
-            });
+            });            
 
-            hostBuilder.UseOrleans(siloBuilder =>
+            hostBuilder.UseOrleans((hostBuilderContext, siloBuilder) =>
             {
                 siloBuilder.UseLocalhostClustering();
-                siloBuilder.AddMemoryGrainStorage("PubSubStore");
-                siloBuilder.AddSimpleMessageStreamProvider("BaseStreamProvider");
+                siloBuilder.AddMemoryGrainStorage("PubSubStore");                
                 siloBuilder.AddMemoryStreams<DefaultMemoryMessageBodySerializer>("MemoryStreamProvider");
                 siloBuilder.AddMemoryGrainStorageAsDefault();
                 siloBuilder.AddOCoreAuthorization();

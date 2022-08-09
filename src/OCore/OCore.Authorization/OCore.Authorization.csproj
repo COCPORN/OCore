@@ -13,7 +13,7 @@
 		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Orleans.Sdk" Version="4.0.0-preview2" />
 		<PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="4.0.0-preview2" />
-		<PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="4.0.0-preview2" />
+		<PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="4.0.0-preview2" />
 	</ItemGroup>
 
 	<ItemGroup>
