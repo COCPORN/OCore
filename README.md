@@ -46,6 +46,23 @@ POST http://localhost:9000/services/HelloWorld/SayHelloTo
 
 You can also visit http://localhost:9000/swagger to see the OpenApi generated docs.
 
+If you look at the CorrelationId-header in the response, you can paste it into your HTTP testing tool like this:
+
+```http
+### Get correlation log
+POST http://localhost:9000/data/CorrelationIdRecorder/[INSERT ID HERE]/tomermaid
+```
+
+...and you will see it returns whatever sensible Mermaid diagram:
+
+```mermaid
+sequenceDiagram
+   participant HTTP
+   participant SayHelloTo
+   HTTP->>+SayHelloTo: ("COCPORN")   
+   SayHelloTo->>-HTTP: ("Hello, COCPORN")
+```
+
 **nuget packages** are built automatically when version numbers are increased.
 
 ## Goals
